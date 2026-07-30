@@ -1,0 +1,45 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+secrets/
+*.jks
+*.keystore
+*.pem
+*.key
+key.properties
+
+# Editors and operating systems
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Flutter and Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+coverage/
+
+# Android
+local.properties
+**/.gradle/
+**/captures/
+
+# Go
+bin/
+*.test
+*.out
+
+# Local data and logs
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# Temporary files
+*.tmp
+*.swp

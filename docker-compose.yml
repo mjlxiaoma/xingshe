@@ -1,0 +1,4 @@
+name: xingshe
+
+# Services are intentionally added during the infrastructure initialization task.
+services: {}

@@ -1,0 +1,6 @@
+openapi: 3.0.3
+info:
+  title: XingShe API
+  version: 0.0.0
+  description: Placeholder contract; endpoints are added by later API tasks.
+paths: {}
