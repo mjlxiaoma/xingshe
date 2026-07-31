@@ -35,3 +35,69 @@ func (h *AuthHandler) SendEmailCode(c *gin.Context) {
 	}
 	JSON(c, http.StatusOK, CodeOK, "success", gin.H{})
 }
+
+func (h *AuthHandler) Login(c *gin.Context) {
+	var request struct {
+		Email    string `json:"email" binding:"required,email,max=255"`
+		Code     string `json:"code" binding:"required,len=6,numeric"`
+		DeviceID string `json:"device_id" binding:"required,max=128"`
+	}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		Error(c, http.StatusBadRequest, CodeValidationError, "请求参数有误")
+		return
+	}
+	session, err := h.auth.Login(c.Request.Context(), request.Email, request.Code, request.DeviceID)
+	if errors.Is(err, service.ErrCodeInvalid) {
+		Error(c, http.StatusBadRequest, CodeCodeInvalid, "验证码不正确")
+		return
+	}
+	if errors.Is(err, service.ErrCodeExpired) {
+		Error(c, http.StatusBadRequest, CodeCodeExpired, "验证码已过期")
+		return
+	}
+	if errors.Is(err, service.ErrLoginRateLimited) {
+		Error(c, http.StatusTooManyRequests, CodeRateLimited, "尝试次数过多，请稍后再试")
+		return
+	}
+	if err != nil {
+		Error(c, http.StatusInternalServerError, CodeInternalError, "服务器内部错误")
+		return
+	}
+	JSON(c, http.StatusOK, CodeOK, "success", session)
+}
+
+func (h *AuthHandler) Refresh(c *gin.Context) {
+	var request struct {
+		RefreshToken string `json:"refresh_token" binding:"required,max=512"`
+		DeviceID     string `json:"device_id" binding:"required,max=128"`
+	}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		Error(c, http.StatusBadRequest, CodeValidationError, "请求参数有误")
+		return
+	}
+	session, err := h.auth.Refresh(c.Request.Context(), request.RefreshToken, request.DeviceID)
+	if errors.Is(err, service.ErrInvalidToken) {
+		Error(c, http.StatusUnauthorized, CodeInvalidToken, "登录已失效，请重新登录")
+		return
+	}
+	if err != nil {
+		Error(c, http.StatusInternalServerError, CodeInternalError, "服务器内部错误")
+		return
+	}
+	JSON(c, http.StatusOK, CodeOK, "success", session)
+}
+
+func (h *AuthHandler) Logout(c *gin.Context) {
+	var request struct {
+		RefreshToken string `json:"refresh_token" binding:"required,max=512"`
+	}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		Error(c, http.StatusBadRequest, CodeValidationError, "请求参数有误")
+		return
+	}
+	if err := h.auth.Logout(c.Request.Context(), request.RefreshToken); err != nil && !errors.Is(err, service.ErrInvalidToken) {
+		Error(c, http.StatusInternalServerError, CodeInternalError, "服务器内部错误")
+		return
+	}
+	JSON(c, http.StatusOK, CodeOK, "success", gin.H{})
+}

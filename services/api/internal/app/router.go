@@ -14,7 +14,11 @@ func NewRouter(auth *handler.AuthHandler) *gin.Engine {
 	router.GET("/healthz", func(c *gin.Context) {
 		handler.JSON(c, http.StatusOK, handler.CodeOK, "success", gin.H{"status": "ok"})
 	})
-	router.POST("/api/v1/auth/email-code", auth.SendEmailCode)
+	authRoutes := router.Group("/api/v1/auth")
+	authRoutes.POST("/email-code", auth.SendEmailCode)
+	authRoutes.POST("/login", auth.Login)
+	authRoutes.POST("/refresh", auth.Refresh)
+	authRoutes.POST("/logout", auth.Logout)
 	router.NoRoute(func(c *gin.Context) {
 		handler.Error(c, http.StatusNotFound, handler.CodeResourceNotFound, "资源不存在")
 	})

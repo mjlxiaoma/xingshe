@@ -4,15 +4,18 @@ import (
 	"crypto/rand"
 	"log/slog"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mjlxiaoma/xingshe/services/api/internal/handler"
+	"github.com/mjlxiaoma/xingshe/services/api/internal/service"
 )
 
 const (
 	RequestIDKey    = "request_id"
 	RequestIDHeader = "X-Request-ID"
+	UserIDKey       = "user_id"
 )
 
 func RequestID() gin.HandlerFunc {
@@ -20,6 +23,25 @@ func RequestID() gin.HandlerFunc {
 		requestID := rand.Text()
 		c.Set(RequestIDKey, requestID)
 		c.Header(RequestIDHeader, requestID)
+		c.Next()
+	}
+}
+
+func Authenticate(auth *service.AuthService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		parts := strings.Fields(c.GetHeader("Authorization"))
+		if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
+			handler.Error(c, http.StatusUnauthorized, handler.CodeUnauthorized, "请先登录")
+			c.Abort()
+			return
+		}
+		userID, err := auth.VerifyAccessToken(parts[1])
+		if err != nil {
+			handler.Error(c, http.StatusUnauthorized, handler.CodeInvalidToken, "登录已失效，请重新登录")
+			c.Abort()
+			return
+		}
+		c.Set(UserIDKey, userID)
 		c.Next()
 	}
 }

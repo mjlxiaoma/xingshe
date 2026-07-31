@@ -43,6 +43,8 @@ Copy-Item .env.example .env
 
 `.env` 已被 Git 忽略。启动 API 前必须替换至少 32 字符的 `JWT_SECRET`；开发环境使用不输出验证码或邮箱的 Mock Mailer，生产邮件实现接入前 SMTP 变量保持为空；启用地图前必须填写 `AMAP_ANDROID_KEY`。真实 Key、密码、Token、Keystore、轨迹和照片不得提交。
 
+`JWT_ACCESS_TTL` 和 `JWT_REFRESH_TTL` 使用 Go duration 格式，默认分别为 `2h` 和 `720h`。
+
 `MOBILE_API_BASE_URL` 默认使用 Android 模拟器访问宿主机的地址 `10.0.2.2`。真机应改为开发机的局域网地址，并确保防火墙仅允许可信网络。
 
 ## 3. 启动完整本地栈

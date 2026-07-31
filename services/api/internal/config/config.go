@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Config struct {
@@ -14,6 +15,8 @@ type Config struct {
 	DatabaseURL  string
 	RedisAddress string
 	JWTSecret    string
+	AccessTTL    time.Duration
+	RefreshTTL   time.Duration
 	SMTPHost     string
 	SMTPPort     int
 	SMTPUser     string
@@ -27,6 +30,14 @@ func Load() (Config, error) {
 		return Config{}, err
 	}
 	smtpPort, err := port("SMTP_PORT", 587)
+	if err != nil {
+		return Config{}, err
+	}
+	accessTTL, err := duration("JWT_ACCESS_TTL", 2*time.Hour)
+	if err != nil {
+		return Config{}, err
+	}
+	refreshTTL, err := duration("JWT_REFRESH_TTL", 30*24*time.Hour)
 	if err != nil {
 		return Config{}, err
 	}
@@ -52,12 +63,26 @@ func Load() (Config, error) {
 		DatabaseURL:  databaseURL,
 		RedisAddress: redisAddress,
 		JWTSecret:    jwtSecret,
+		AccessTTL:    accessTTL,
+		RefreshTTL:   refreshTTL,
 		SMTPHost:     strings.TrimSpace(os.Getenv("SMTP_HOST")),
 		SMTPPort:     smtpPort,
 		SMTPUser:     strings.TrimSpace(os.Getenv("SMTP_USER")),
 		SMTPPassword: os.Getenv("SMTP_PASSWORD"),
 		SMTPFrom:     strings.TrimSpace(os.Getenv("SMTP_FROM")),
 	}, nil
+}
+
+func duration(name string, fallback time.Duration) (time.Duration, error) {
+	value := strings.TrimSpace(os.Getenv(name))
+	if value == "" {
+		return fallback, nil
+	}
+	parsed, err := time.ParseDuration(value)
+	if err != nil || parsed <= 0 {
+		return 0, fmt.Errorf("%s must be a positive duration", name)
+	}
+	return parsed, nil
 }
 
 func port(name string, fallback int) (int, error) {

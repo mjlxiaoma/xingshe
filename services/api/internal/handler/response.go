@@ -14,6 +14,11 @@ const (
 	CodeResourceNotFound = "RESOURCE_NOT_FOUND"
 	CodeInternalError    = "INTERNAL_ERROR"
 	CodeCodeTooFrequent  = "AUTH_CODE_TOO_FREQUENT"
+	CodeCodeInvalid      = "AUTH_CODE_INVALID"
+	CodeCodeExpired      = "AUTH_CODE_EXPIRED"
+	CodeInvalidToken     = "AUTH_INVALID_TOKEN"
+	CodeUnauthorized     = "AUTH_UNAUTHORIZED"
+	CodeRateLimited      = "RATE_LIMITED"
 )
 
 func JSON(c *gin.Context, status int, code string, message string, data any) {

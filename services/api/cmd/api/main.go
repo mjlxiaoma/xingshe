@@ -52,7 +52,7 @@ func run() error {
 	if err := redisClient.Ping(ctx).Err(); err != nil {
 		return errors.New("Redis is unavailable")
 	}
-	auth := service.NewAuthService(database, redisClient, service.DevelopmentMailer{}, cfg.JWTSecret)
+	auth := service.NewAuthService(database, redisClient, service.DevelopmentMailer{}, cfg.JWTSecret, cfg.AccessTTL, cfg.RefreshTTL)
 	authHandler := handler.NewAuthHandler(auth)
 	server := &http.Server{
 		Addr:              cfg.Address,
