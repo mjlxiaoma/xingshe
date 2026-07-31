@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mjlxiaoma/xingshe/services/api/internal/handler"
 	"github.com/mjlxiaoma/xingshe/services/api/internal/middleware"
 )
 
@@ -14,7 +15,7 @@ func TestHealthz(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodGet, "/healthz", nil)
 
-	NewRouter().ServeHTTP(recorder, request)
+	NewRouter(handler.NewAuthHandler(nil)).ServeHTTP(recorder, request)
 
 	if recorder.Code != http.StatusOK {
 		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusOK)
@@ -31,7 +32,7 @@ func TestHealthz(t *testing.T) {
 func TestNotFoundUsesErrorContract(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	recorder := httptest.NewRecorder()
-	NewRouter().ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/missing", nil))
+	NewRouter(handler.NewAuthHandler(nil)).ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/missing", nil))
 
 	want := `{"code":"RESOURCE_NOT_FOUND","message":"资源不存在","data":null}`
 	if recorder.Code != http.StatusNotFound || recorder.Body.String() != want {

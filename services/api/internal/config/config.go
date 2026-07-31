@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -37,12 +38,20 @@ func Load() (Config, error) {
 	if redisAddress == "" {
 		redisAddress = "127.0.0.1:6379"
 	}
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if len(jwtSecret) < 32 || jwtSecret == "replace-with-at-least-32-random-characters" {
+		return Config{}, errors.New("JWT_SECRET must be a unique value with at least 32 characters")
+	}
+	databaseURL := strings.TrimSpace(os.Getenv("DATABASE_URL"))
+	if databaseURL == "" {
+		return Config{}, errors.New("DATABASE_URL is required")
+	}
 	return Config{
 		Address:      fmt.Sprintf(":%d", apiPort),
 		Environment:  environment,
-		DatabaseURL:  strings.TrimSpace(os.Getenv("DATABASE_URL")),
+		DatabaseURL:  databaseURL,
 		RedisAddress: redisAddress,
-		JWTSecret:    os.Getenv("JWT_SECRET"),
+		JWTSecret:    jwtSecret,
 		SMTPHost:     strings.TrimSpace(os.Getenv("SMTP_HOST")),
 		SMTPPort:     smtpPort,
 		SMTPUser:     strings.TrimSpace(os.Getenv("SMTP_USER")),

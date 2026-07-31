@@ -1,14 +1,21 @@
 package main
 
 import (
+	"context"
+	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/mjlxiaoma/xingshe/services/api/internal/app"
 	"github.com/mjlxiaoma/xingshe/services/api/internal/config"
+	"github.com/mjlxiaoma/xingshe/services/api/internal/handler"
+	"github.com/mjlxiaoma/xingshe/services/api/internal/service"
+	"github.com/redis/go-redis/v9"
 )
 
 func main() {
@@ -16,19 +23,42 @@ func main() {
 	slog.SetDefault(logger)
 	gin.SetMode(gin.ReleaseMode)
 
-	cfg, err := config.Load()
-	if err != nil {
-		logger.Error("invalid configuration", "error", err)
-		os.Exit(1)
-	}
-	server := &http.Server{
-		Addr:              cfg.Address,
-		Handler:           app.NewRouter(),
-		ReadHeaderTimeout: 5 * time.Second,
-	}
-	logger.Info("api starting", "address", cfg.Address, "environment", cfg.Environment)
-	if err := server.ListenAndServe(); err != nil {
+	if err := run(); err != nil {
 		logger.Error("api stopped", "error", err)
 		os.Exit(1)
 	}
+}
+
+func run() error {
+	cfg, err := config.Load()
+	if err != nil {
+		return fmt.Errorf("invalid configuration: %w", err)
+	}
+	if cfg.Environment == "production" {
+		return errors.New("production SMTP mailer is not configured")
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	database, err := pgxpool.New(ctx, cfg.DatabaseURL)
+	if err != nil {
+		return errors.New("database configuration is invalid")
+	}
+	defer database.Close()
+	if err := database.Ping(ctx); err != nil {
+		return errors.New("database is unavailable")
+	}
+	redisClient := redis.NewClient(&redis.Options{Addr: cfg.RedisAddress})
+	defer redisClient.Close()
+	if err := redisClient.Ping(ctx).Err(); err != nil {
+		return errors.New("Redis is unavailable")
+	}
+	auth := service.NewAuthService(database, redisClient, service.DevelopmentMailer{}, cfg.JWTSecret)
+	authHandler := handler.NewAuthHandler(auth)
+	server := &http.Server{
+		Addr:              cfg.Address,
+		Handler:           app.NewRouter(authHandler),
+		ReadHeaderTimeout: 5 * time.Second,
+	}
+	slog.Info("api starting", "address", cfg.Address, "environment", cfg.Environment)
+	return server.ListenAndServe()
 }

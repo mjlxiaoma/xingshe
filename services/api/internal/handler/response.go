@@ -13,6 +13,7 @@ const (
 	CodeValidationError  = "VALIDATION_ERROR"
 	CodeResourceNotFound = "RESOURCE_NOT_FOUND"
 	CodeInternalError    = "INTERNAL_ERROR"
+	CodeCodeTooFrequent  = "AUTH_CODE_TOO_FREQUENT"
 )
 
 func JSON(c *gin.Context, status int, code string, message string, data any) {

@@ -1,6 +1,74 @@
 openapi: 3.0.3
 info:
   title: XingShe API
-  version: 0.0.0
-  description: Placeholder contract; endpoints are added by later API tasks.
-paths: {}
+  version: 0.1.0
+paths:
+  /api/v1/auth/email-code:
+    post:
+      operationId: sendEmailVerificationCode
+      summary: Send an email verification code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailCodeRequest'
+      responses:
+        '200':
+          description: Code accepted for delivery
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Invalid email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Code requested too frequently
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    EmailCodeRequest:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 255
+    SuccessResponse:
+      type: object
+      required: [code, message, data]
+      properties:
+        code:
+          type: string
+          enum: [OK]
+        message:
+          type: string
+          example: success
+        data:
+          type: object
+    ErrorResponse:
+      type: object
+      required: [code, message, data]
+      properties:
+        code:
+          type: string
+          enum: [VALIDATION_ERROR, AUTH_CODE_TOO_FREQUENT, INTERNAL_ERROR]
+        message:
+          type: string
+        data:
+          type: object
+          nullable: true

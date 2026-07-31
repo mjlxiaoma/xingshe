@@ -41,7 +41,7 @@ $env:GOSUMDB='sum.golang.google.cn'
 Copy-Item .env.example .env
 ```
 
-`.env` 已被 Git 忽略。开始 API 认证开发前必须替换 `JWT_SECRET`；启用邮件登录前必须填写 SMTP 变量；启用地图前必须填写 `AMAP_ANDROID_KEY`。真实 Key、密码、Token、Keystore、轨迹和照片不得提交。
+`.env` 已被 Git 忽略。启动 API 前必须替换至少 32 字符的 `JWT_SECRET`；开发环境使用不输出验证码或邮箱的 Mock Mailer，生产邮件实现接入前 SMTP 变量保持为空；启用地图前必须填写 `AMAP_ANDROID_KEY`。真实 Key、密码、Token、Keystore、轨迹和照片不得提交。
 
 `MOBILE_API_BASE_URL` 默认使用 Android 模拟器访问宿主机的地址 `10.0.2.2`。真机应改为开发机的局域网地址，并确保防火墙仅允许可信网络。
 
@@ -92,7 +92,7 @@ $env:API_PORT='8080'
 go run ./cmd/api
 ```
 
-API 会读取 `APP_ENV`、数据库、Redis、JWT 和 SMTP 环境变量，并校验 API/SMTP 端口。尚未启用的 JWT 与 SMTP 凭据可以为空；对应功能任务接入时会增加必填校验。
+API 会读取 `APP_ENV`、数据库、Redis、JWT 和 SMTP 环境变量，校验 API/SMTP 端口，并在数据库、Redis 或 JWT 配置不可用时拒绝启动。生产 SMTP 发送器尚未接入，因此 `APP_ENV=production` 会明确报错。
 
 ## 5. 启动 Flutter Android
 
