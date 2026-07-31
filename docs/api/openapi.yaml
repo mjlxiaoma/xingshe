@@ -3,6 +3,17 @@ info:
   title: XingShe API
   version: 0.1.0
 paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      summary: Check API health
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
   /api/v1/auth/email-code:
     post:
       operationId: sendEmailVerificationCode
@@ -505,6 +516,23 @@ components:
           example: success
         data:
           type: object
+    HealthResponse:
+      type: object
+      required: [code, message, data]
+      properties:
+        code:
+          type: string
+          enum: [OK]
+        message:
+          type: string
+          example: success
+        data:
+          type: object
+          required: [status]
+          properties:
+            status:
+              type: string
+              enum: [ok]
     LoginResponse:
       type: object
       required: [code, message, data]
@@ -583,7 +611,7 @@ components:
       properties:
         code:
           type: string
-          enum: [VALIDATION_ERROR, AUTH_CODE_INVALID, AUTH_CODE_EXPIRED, AUTH_CODE_TOO_FREQUENT, AUTH_INVALID_TOKEN, AUTH_UNAUTHORIZED, INTERNAL_ERROR, RATE_LIMITED]
+          enum: [VALIDATION_ERROR, AUTH_INVALID_TOKEN, AUTH_EMAIL_NOT_ALLOWED, AUTH_CODE_INVALID, AUTH_CODE_EXPIRED, AUTH_CODE_TOO_FREQUENT, AUTH_UNAUTHORIZED, RESOURCE_NOT_FOUND, RESOURCE_CONFLICT, INTERNAL_ERROR, RATE_LIMITED]
         message:
           type: string
         data:
