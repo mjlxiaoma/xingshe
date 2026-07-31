@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'core/permissions/app_permissions.dart';
+
 void main() => runApp(const ProviderScope(child: XingSheApp()));
 
 const _primary = Color(0xFF2D6B3F);
@@ -23,6 +25,10 @@ final _router = GoRouter(
         GoRoute(path: '/trip', builder: (_, _) => const _TripPage()),
         GoRoute(path: '/me', builder: (_, _) => const _ProfilePage()),
       ],
+    ),
+    GoRoute(
+      path: '/permissions',
+      builder: (_, _) => const PermissionExplanationPage(),
     ),
   ],
 );
