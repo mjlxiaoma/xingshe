@@ -2,9 +2,13 @@ package service
 
 import (
 	"context"
+	"errors"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+var ErrSpotNotFound = errors.New("shooting spot not found")
 
 type Spot struct {
 	ID               string   `json:"id"`
@@ -96,4 +100,21 @@ func (s *SpotService) List(ctx context.Context, query SpotQuery) (SpotList, erro
 		result.Items = append(result.Items, spot)
 	}
 	return result, rows.Err()
+}
+
+func (s *SpotService) Get(ctx context.Context, spotID string) (Spot, error) {
+	var spot Spot
+	err := s.database.QueryRow(ctx, `
+		SELECT id, name, description, latitude, longitude, coordinate_system,
+			address, cover_url, best_time, tags
+		FROM shooting_spots
+		WHERE id = $1 AND status = 1
+	`, spotID).Scan(
+		&spot.ID, &spot.Name, &spot.Description, &spot.Latitude, &spot.Longitude,
+		&spot.CoordinateSystem, &spot.Address, &spot.CoverURL, &spot.BestTime, &spot.Tags,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return Spot{}, ErrSpotNotFound
+	}
+	return spot, err
 }

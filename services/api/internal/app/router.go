@@ -24,6 +24,7 @@ func NewRouter(authHandler *handler.AuthHandler, authService *service.AuthServic
 	meRoutes.GET("", authHandler.Me)
 	meRoutes.PATCH("", authHandler.UpdateMe)
 	router.GET("/api/v1/spots", spotHandler.List)
+	router.GET("/api/v1/spots/:spotId", spotHandler.Detail)
 	router.NoRoute(func(c *gin.Context) {
 		handler.Error(c, http.StatusNotFound, handler.CodeResourceNotFound, "资源不存在")
 	})

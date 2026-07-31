@@ -27,3 +27,14 @@ func TestSpotListRejectsInvalidQuery(t *testing.T) {
 		}
 	}
 }
+
+func TestSpotDetailRejectsInvalidID(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	recorder := httptest.NewRecorder()
+	router := gin.New()
+	router.GET("/spots/:spotId", NewSpotHandler(nil).Detail)
+	router.ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/spots/not-a-uuid", nil))
+	if recorder.Code != http.StatusBadRequest || !strings.Contains(recorder.Body.String(), CodeValidationError) {
+		t.Fatalf("status = %d, body = %s", recorder.Code, recorder.Body.String())
+	}
+}

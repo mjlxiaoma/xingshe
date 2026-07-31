@@ -243,6 +243,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/spots/{spotId}:
+    get:
+      operationId: getShootingSpot
+      summary: Get a shooting spot
+      parameters:
+        - name: spotId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Shooting spot details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpotResponse'
+        '400':
+          description: Invalid spot ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Shooting spot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
     bearerAuth:
@@ -446,6 +476,18 @@ components:
           example: success
         data:
           $ref: '#/components/schemas/SpotList'
+    SpotResponse:
+      type: object
+      required: [code, message, data]
+      properties:
+        code:
+          type: string
+          enum: [OK]
+        message:
+          type: string
+          example: success
+        data:
+          $ref: '#/components/schemas/ShootingSpot'
     ErrorResponse:
       type: object
       required: [code, message, data]

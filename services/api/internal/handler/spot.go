@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 
@@ -51,4 +52,24 @@ func (h *SpotHandler) List(c *gin.Context) {
 		return
 	}
 	JSON(c, http.StatusOK, CodeOK, "success", result)
+}
+
+func (h *SpotHandler) Detail(c *gin.Context) {
+	var request struct {
+		SpotID string `uri:"spotId" binding:"required,uuid"`
+	}
+	if err := c.ShouldBindUri(&request); err != nil {
+		Error(c, http.StatusBadRequest, CodeValidationError, "机位编号格式不正确")
+		return
+	}
+	spot, err := h.spots.Get(c.Request.Context(), request.SpotID)
+	if errors.Is(err, service.ErrSpotNotFound) {
+		Error(c, http.StatusNotFound, CodeResourceNotFound, "机位不存在")
+		return
+	}
+	if err != nil {
+		Error(c, http.StatusInternalServerError, CodeInternalError, "服务器内部错误")
+		return
+	}
+	JSON(c, http.StatusOK, CodeOK, "success", spot)
 }
