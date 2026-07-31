@@ -84,7 +84,7 @@ $env:API_PORT='8080'
 go run ./cmd/api
 ```
 
-当前健康检查只读取 `API_PORT`；B01 会接入数据库、Redis、JWT 和 SMTP 配置校验。
+API 会读取 `APP_ENV`、数据库、Redis、JWT 和 SMTP 环境变量，并校验 API/SMTP 端口。尚未启用的 JWT 与 SMTP 凭据可以为空；对应功能任务接入时会增加必填校验。
 
 ## 5. 启动 Flutter Android
 

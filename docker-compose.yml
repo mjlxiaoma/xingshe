@@ -38,6 +38,7 @@ services:
         GOPROXY: ${GOPROXY:-https://proxy.golang.org,direct}
         GOSUMDB: ${GOSUMDB:-sum.golang.org}
     environment:
+      APP_ENV: ${APP_ENV:-development}
       API_PORT: "8080"
       DATABASE_URL: postgres://${POSTGRES_USER:-xingshe}:${POSTGRES_PASSWORD:-xingshe-local-only}@postgres:5432/${POSTGRES_DB:-xingshe}?sslmode=disable
       REDIS_ADDR: redis:6379

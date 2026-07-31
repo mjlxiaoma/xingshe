@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mjlxiaoma/xingshe/services/api/internal/middleware"
 )
 
 func TestHealthz(t *testing.T) {
@@ -21,5 +22,19 @@ func TestHealthz(t *testing.T) {
 	want := `{"code":"OK","message":"success","data":{"status":"ok"}}`
 	if recorder.Body.String() != want {
 		t.Fatalf("body = %s, want %s", recorder.Body.String(), want)
+	}
+	if recorder.Header().Get(middleware.RequestIDHeader) == "" {
+		t.Fatal("missing request ID")
+	}
+}
+
+func TestNotFoundUsesErrorContract(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	recorder := httptest.NewRecorder()
+	NewRouter().ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/missing", nil))
+
+	want := `{"code":"RESOURCE_NOT_FOUND","message":"资源不存在","data":null}`
+	if recorder.Code != http.StatusNotFound || recorder.Body.String() != want {
+		t.Fatalf("status = %d, body = %s", recorder.Code, recorder.Body.String())
 	}
 }

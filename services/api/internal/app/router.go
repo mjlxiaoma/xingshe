@@ -5,13 +5,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mjlxiaoma/xingshe/services/api/internal/handler"
+	"github.com/mjlxiaoma/xingshe/services/api/internal/middleware"
 )
 
 func NewRouter() *gin.Engine {
 	router := gin.New()
-	router.Use(gin.Logger(), gin.Recovery())
+	router.Use(middleware.RequestID(), middleware.Logger(), middleware.Recovery())
 	router.GET("/healthz", func(c *gin.Context) {
-		handler.JSON(c, http.StatusOK, "OK", "success", gin.H{"status": "ok"})
+		handler.JSON(c, http.StatusOK, handler.CodeOK, "success", gin.H{"status": "ok"})
+	})
+	router.NoRoute(func(c *gin.Context) {
+		handler.Error(c, http.StatusNotFound, handler.CodeResourceNotFound, "资源不存在")
 	})
 	return router
 }
