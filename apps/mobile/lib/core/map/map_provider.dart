@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MapConfig {
   static const amapAndroidKey = String.fromEnvironment('AMAP_ANDROID_KEY');
+
+  static bool get isConfigured => amapAndroidKey.trim().isNotEmpty;
 }
 
 @immutable
@@ -52,8 +54,50 @@ abstract interface class MapProvider {
 }
 
 final mapProviderProvider = Provider<MapProvider>(
-  (_) => const MockMapProvider(),
+  (_) => const AndroidMapProvider(),
 );
+
+class AndroidMapProvider implements MapProvider {
+  const AndroidMapProvider();
+
+  @override
+  Widget buildMap(BuildContext context, MapScene scene) {
+    if (!MapConfig.isConfigured) {
+      return const ColoredBox(
+        key: Key('amap-missing-key'),
+        color: Color(0xFFEAF0E8),
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.key_off, size: 48, color: Color(0xFF2D6B3F)),
+                SizedBox(height: 12),
+                Text(
+                  '尚未配置高德地图 Android Key',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+                SizedBox(height: 6),
+                Text(
+                  '请通过 AMAP_ANDROID_KEY 本地编译参数配置',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Color(0xFF667268), fontSize: 11),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    return const ColoredBox(
+      key: Key('amap-sdk-pending'),
+      color: Color(0xFFEAF0E8),
+      child: Center(child: Text('高德地图 SDK 适配器等待本地验收')),
+    );
+  }
+}
 
 class MockMapProvider implements MapProvider {
   const MockMapProvider();

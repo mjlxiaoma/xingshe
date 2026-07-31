@@ -4,9 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:xingshe/core/map/map_provider.dart';
 
 void main() {
-  testWidgets('mock map provider renders an abstract map scene', (
-    tester,
-  ) async {
+  testWidgets('Android provider reports a missing AMap key', (tester) async {
     const scene = MapScene(
       center: MapCoordinate(latitude: 30.2741, longitude: 120.1551),
       markers: [
@@ -35,7 +33,27 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const Key('mock-map-provider')), findsOneWidget);
+    expect(find.byKey(const Key('amap-missing-key')), findsOneWidget);
+    expect(find.text('尚未配置高德地图 Android Key'), findsOneWidget);
     expect(provider, isA<MapProvider>());
+  });
+
+  testWidgets('mock provider remains available for isolated tests', (
+    tester,
+  ) async {
+    const provider = MockMapProvider();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => provider.buildMap(
+            context,
+            const MapScene(
+              center: MapCoordinate(latitude: 30.2741, longitude: 120.1551),
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(find.byKey(const Key('mock-map-provider')), findsOneWidget);
   });
 }

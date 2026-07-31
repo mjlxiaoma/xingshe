@@ -114,7 +114,7 @@ $env:AMAP_ANDROID_KEY=''
 flutter run -d emulator-5554 --dart-define=MOBILE_API_BASE_URL=$env:MOBILE_API_BASE_URL --dart-define=AMAP_ANDROID_KEY=$env:AMAP_ANDROID_KEY
 ```
 
-`MOBILE_API_BASE_URL` 和 `AMAP_ANDROID_KEY` 是编译期配置；真机运行时将 API 地址改为开发机局域网地址，并从被忽略的 `.env` 读取真实高德 Key 后通过 `--dart-define` 传入。D05 阶段未接入地图 SDK，空 Key 使用可编译的 Mock Provider。
+`MOBILE_API_BASE_URL` 和 `AMAP_ANDROID_KEY` 是编译期配置；真机运行时将 API 地址改为开发机局域网地址，并从被忽略的 `.env` 读取真实高德 Key 后通过 `--dart-define` 传入。F01 阶段在空 Key 时使用可编译的 Android 占位适配器并显示开发提示；配置 Key 后继续完成真实 SDK 初始化和地图验收。
 
 真机运行：
 
