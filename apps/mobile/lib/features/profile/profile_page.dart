@@ -155,7 +155,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
               style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
             ),
             IconButton.filledTonal(
-              onPressed: null,
+              onPressed: () => context.push('/settings'),
               icon: const Icon(Icons.settings),
               tooltip: '设置',
             ),
@@ -239,10 +239,11 @@ class _AuthenticatedProfile extends ConsumerWidget {
           detail: '查看已收藏的摄影机位',
         ),
         const _MenuItem(icon: Icons.route, title: '本地行程', detail: '轨迹与照片仅在设备中'),
-        const _MenuItem(
+        _MenuItem(
           icon: Icons.shield,
           title: '隐私与权限',
           detail: '查看定位和照片权限',
+          onTap: () => context.push('/settings'),
         ),
         const _MenuItem(icon: Icons.help, title: '帮助与反馈', detail: '常见问题与版本信息'),
         const SizedBox(height: 8),
@@ -392,11 +393,13 @@ class _MenuItem extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.detail,
+    this.onTap,
   });
 
   final IconData icon;
   final String title;
   final String detail;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) => ListTile(
@@ -417,6 +420,7 @@ class _MenuItem extends StatelessWidget {
     ),
     subtitle: Text(detail, style: const TextStyle(fontSize: 10)),
     trailing: const Icon(Icons.chevron_right),
+    onTap: onTap,
   );
 }
 

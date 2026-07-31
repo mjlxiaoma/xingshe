@@ -8,6 +8,7 @@ import 'core/auth/auth_session.dart';
 import 'features/auth/email_login_page.dart';
 import 'features/auth/verification_page.dart';
 import 'features/profile/profile_page.dart';
+import 'features/settings/settings_pages.dart';
 
 void main() => runApp(const ProviderScope(child: XingSheApp()));
 
@@ -40,6 +41,8 @@ final _router = GoRouter(
       path: '/verify',
       builder: (_, state) => VerificationPage(email: state.extra as String),
     ),
+    GoRoute(path: '/settings', builder: (_, _) => const SettingsPage()),
+    GoRoute(path: '/privacy', builder: (_, _) => const PrivacyPage()),
   ],
 );
 
