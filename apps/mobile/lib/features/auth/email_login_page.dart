@@ -299,9 +299,10 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
         .read(emailCodeRequestProvider.notifier)
         .send(_emailController.text);
     if (sent && mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('验证码已发送')));
+      context.push(
+        '/verify',
+        extra: _emailController.text.trim().toLowerCase(),
+      );
     }
   }
 

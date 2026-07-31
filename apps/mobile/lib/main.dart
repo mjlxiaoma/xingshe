@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import 'core/map/map_provider.dart';
 import 'core/permissions/app_permissions.dart';
+import 'core/auth/auth_session.dart';
 import 'features/auth/email_login_page.dart';
+import 'features/auth/verification_page.dart';
 
 void main() => runApp(const ProviderScope(child: XingSheApp()));
 
@@ -33,14 +35,24 @@ final _router = GoRouter(
       builder: (_, _) => const PermissionExplanationPage(),
     ),
     GoRoute(path: '/login', builder: (_, _) => const EmailLoginPage()),
+    GoRoute(
+      path: '/verify',
+      builder: (_, state) => VerificationPage(email: state.extra as String),
+    ),
   ],
 );
 
-class XingSheApp extends StatelessWidget {
+class XingSheApp extends ConsumerWidget {
   const XingSheApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(authSessionProvider, (previous, next) {
+      if (previous?.value == true && next.value == false) {
+        _router.go('/login');
+      }
+    });
+    ref.watch(authSessionProvider);
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: '行摄',

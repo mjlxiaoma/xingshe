@@ -1,10 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../auth/token_store.dart';
+import '../auth/auth_session.dart';
 import 'api_client.dart';
 
-final tokenStoreProvider = Provider<TokenStore>((_) => TokenStore());
-
 final apiClientProvider = Provider<ApiClient>(
-  (ref) => ApiClient(tokenStore: ref.watch(tokenStoreProvider)),
+  (ref) => ApiClient(
+    tokenStore: ref.watch(tokenStoreProvider),
+    onSessionExpired: () => ref.read(authSessionProvider.notifier).expire(),
+  ),
 );
