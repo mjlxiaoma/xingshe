@@ -46,6 +46,29 @@ func Authenticate(auth *service.AuthService) gin.HandlerFunc {
 	}
 }
 
+func OptionalAuthenticate(auth *service.AuthService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if strings.TrimSpace(c.GetHeader("Authorization")) == "" {
+			c.Next()
+			return
+		}
+		parts := strings.Fields(c.GetHeader("Authorization"))
+		if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
+			handler.Error(c, http.StatusUnauthorized, handler.CodeInvalidToken, "登录已失效，请重新登录")
+			c.Abort()
+			return
+		}
+		userID, err := auth.VerifyAccessToken(parts[1])
+		if err != nil {
+			handler.Error(c, http.StatusUnauthorized, handler.CodeInvalidToken, "登录已失效，请重新登录")
+			c.Abort()
+			return
+		}
+		c.Set(UserIDKey, userID)
+		c.Next()
+	}
+}
+
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		started := time.Now()

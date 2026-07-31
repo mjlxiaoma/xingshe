@@ -50,3 +50,14 @@ func TestCurrentUserRequiresAuthentication(t *testing.T) {
 		t.Fatalf("status = %d, body = %s", recorder.Code, recorder.Body.String())
 	}
 }
+
+func TestFavoriteRequiresAuthentication(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	recorder := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodPost, "/api/v1/spots/10000000-0000-4000-8000-000000000001/favorite", nil)
+	NewRouter(handler.NewAuthHandler(nil), nil, nil).ServeHTTP(recorder, request)
+
+	if recorder.Code != http.StatusUnauthorized || !strings.Contains(recorder.Body.String(), handler.CodeUnauthorized) {
+		t.Fatalf("status = %d, body = %s", recorder.Code, recorder.Body.String())
+	}
+}

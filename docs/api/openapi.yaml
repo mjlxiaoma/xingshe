@@ -273,6 +273,75 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/spots/{spotId}/favorite:
+    parameters:
+      - name: spotId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      operationId: favoriteShootingSpot
+      summary: Favorite a shooting spot
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Spot favorited or already favorited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Shooting spot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      operationId: unfavoriteShootingSpot
+      summary: Remove a shooting spot favorite
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Favorite removed or already absent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/me/favorite-spots:
+    get:
+      operationId: listFavoriteShootingSpots
+      summary: List the current user's favorite shooting spots
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Favorite shooting spots
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavoriteSpotListResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
     bearerAuth:
@@ -396,6 +465,14 @@ components:
         total:
           type: integer
           format: int64
+    FavoriteSpotList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShootingSpot'
     TokenData:
       type: object
       required: [access_token, refresh_token, expires_in]
@@ -488,6 +565,18 @@ components:
           example: success
         data:
           $ref: '#/components/schemas/ShootingSpot'
+    FavoriteSpotListResponse:
+      type: object
+      required: [code, message, data]
+      properties:
+        code:
+          type: string
+          enum: [OK]
+        message:
+          type: string
+          example: success
+        data:
+          $ref: '#/components/schemas/FavoriteSpotList'
     ErrorResponse:
       type: object
       required: [code, message, data]

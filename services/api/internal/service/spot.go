@@ -26,6 +26,7 @@ type Spot struct {
 }
 
 type SpotQuery struct {
+	UserID    string
 	Latitude  *float64
 	Longitude *float64
 	Radius    float64
@@ -78,12 +79,14 @@ func (s *SpotService) List(ctx context.Context, query SpotQuery) (SpotList, erro
 	}
 	rows, err := s.database.Query(ctx, spotSearch+`
 		SELECT id, name, description, latitude, longitude, coordinate_system,
-			address, cover_url, best_time, tags, distance_meters
+			address, cover_url, best_time, tags,
+			EXISTS (SELECT 1 FROM user_favorite_spots favorites WHERE favorites.user_id = $6 AND favorites.spot_id = spots.id),
+			distance_meters
 		FROM spots
 		WHERE NOT $1 OR distance_meters <= $5
 		ORDER BY CASE WHEN $1 THEN distance_meters END NULLS LAST, created_at DESC, id
-		LIMIT $6 OFFSET $7
-	`, append(args, query.PageSize, (query.Page-1)*query.PageSize)...)
+		LIMIT $7 OFFSET $8
+	`, append(args, optionalID(query.UserID), query.PageSize, (query.Page-1)*query.PageSize)...)
 	if err != nil {
 		return SpotList{}, err
 	}
@@ -93,7 +96,7 @@ func (s *SpotService) List(ctx context.Context, query SpotQuery) (SpotList, erro
 		if err := rows.Scan(
 			&spot.ID, &spot.Name, &spot.Description, &spot.Latitude, &spot.Longitude,
 			&spot.CoordinateSystem, &spot.Address, &spot.CoverURL, &spot.BestTime,
-			&spot.Tags, &spot.DistanceMeters,
+			&spot.Tags, &spot.IsFavorited, &spot.DistanceMeters,
 		); err != nil {
 			return SpotList{}, err
 		}
@@ -102,19 +105,82 @@ func (s *SpotService) List(ctx context.Context, query SpotQuery) (SpotList, erro
 	return result, rows.Err()
 }
 
-func (s *SpotService) Get(ctx context.Context, spotID string) (Spot, error) {
+func (s *SpotService) Get(ctx context.Context, spotID, userID string) (Spot, error) {
 	var spot Spot
 	err := s.database.QueryRow(ctx, `
 		SELECT id, name, description, latitude, longitude, coordinate_system,
-			address, cover_url, best_time, tags
+			address, cover_url, best_time, tags,
+			EXISTS (SELECT 1 FROM user_favorite_spots favorites WHERE favorites.user_id = $2 AND favorites.spot_id = shooting_spots.id)
 		FROM shooting_spots
 		WHERE id = $1 AND status = 1
-	`, spotID).Scan(
+	`, spotID, optionalID(userID)).Scan(
 		&spot.ID, &spot.Name, &spot.Description, &spot.Latitude, &spot.Longitude,
-		&spot.CoordinateSystem, &spot.Address, &spot.CoverURL, &spot.BestTime, &spot.Tags,
+		&spot.CoordinateSystem, &spot.Address, &spot.CoverURL, &spot.BestTime, &spot.Tags, &spot.IsFavorited,
 	)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Spot{}, ErrSpotNotFound
 	}
 	return spot, err
+}
+
+func (s *SpotService) Favorite(ctx context.Context, userID, spotID string) error {
+	var exists bool
+	err := s.database.QueryRow(ctx, `
+		WITH spot AS (
+			SELECT id FROM shooting_spots WHERE id = $2 AND status = 1
+		), inserted AS (
+			INSERT INTO user_favorite_spots (user_id, spot_id)
+			SELECT $1, id FROM spot
+			ON CONFLICT (user_id, spot_id) DO NOTHING
+		)
+		SELECT EXISTS (SELECT 1 FROM spot)
+	`, userID, spotID).Scan(&exists)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return ErrSpotNotFound
+	}
+	return nil
+}
+
+func (s *SpotService) Unfavorite(ctx context.Context, userID, spotID string) error {
+	_, err := s.database.Exec(ctx, `
+		DELETE FROM user_favorite_spots WHERE user_id = $1 AND spot_id = $2
+	`, userID, spotID)
+	return err
+}
+
+func (s *SpotService) Favorites(ctx context.Context, userID string) ([]Spot, error) {
+	rows, err := s.database.Query(ctx, `
+		SELECT spots.id, spots.name, spots.description, spots.latitude, spots.longitude,
+			spots.coordinate_system, spots.address, spots.cover_url, spots.best_time, spots.tags
+		FROM user_favorite_spots favorites
+		JOIN shooting_spots spots ON spots.id = favorites.spot_id AND spots.status = 1
+		WHERE favorites.user_id = $1
+		ORDER BY favorites.created_at DESC, spots.id
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	spots := []Spot{}
+	for rows.Next() {
+		spot := Spot{IsFavorited: true}
+		if err := rows.Scan(
+			&spot.ID, &spot.Name, &spot.Description, &spot.Latitude, &spot.Longitude,
+			&spot.CoordinateSystem, &spot.Address, &spot.CoverURL, &spot.BestTime, &spot.Tags,
+		); err != nil {
+			return nil, err
+		}
+		spots = append(spots, spot)
+	}
+	return spots, rows.Err()
+}
+
+func optionalID(value string) any {
+	if value == "" {
+		return nil
+	}
+	return value
 }

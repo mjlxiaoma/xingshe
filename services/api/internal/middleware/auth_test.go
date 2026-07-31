@@ -35,3 +35,24 @@ func TestAuthenticateProtectsRoute(t *testing.T) {
 		t.Fatalf("valid token status = %d", authorized.Code)
 	}
 }
+
+func TestOptionalAuthenticateAllowsAnonymousAndRejectsInvalidToken(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	auth := service.NewAuthService(nil, nil, nil, "0123456789abcdef0123456789abcdef", 2*time.Hour, 30*24*time.Hour)
+	router := gin.New()
+	router.Use(OptionalAuthenticate(auth))
+	router.GET("/public", func(c *gin.Context) { c.Status(http.StatusNoContent) })
+
+	anonymous := httptest.NewRecorder()
+	router.ServeHTTP(anonymous, httptest.NewRequest(http.MethodGet, "/public", nil))
+	if anonymous.Code != http.StatusNoContent {
+		t.Fatalf("anonymous status = %d", anonymous.Code)
+	}
+	invalid := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodGet, "/public", nil)
+	request.Header.Set("Authorization", "Bearer invalid")
+	router.ServeHTTP(invalid, request)
+	if invalid.Code != http.StatusUnauthorized {
+		t.Fatalf("invalid token status = %d", invalid.Code)
+	}
+}

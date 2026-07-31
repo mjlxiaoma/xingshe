@@ -44,6 +44,7 @@ func (h *SpotHandler) List(c *gin.Context) {
 		radius = *request.Radius
 	}
 	result, err := h.spots.List(c.Request.Context(), service.SpotQuery{
+		UserID:   c.GetString("user_id"),
 		Latitude: request.Latitude, Longitude: request.Longitude, Radius: radius,
 		Keyword: strings.TrimSpace(request.Keyword), Page: page, PageSize: pageSize,
 	})
@@ -55,14 +56,11 @@ func (h *SpotHandler) List(c *gin.Context) {
 }
 
 func (h *SpotHandler) Detail(c *gin.Context) {
-	var request struct {
-		SpotID string `uri:"spotId" binding:"required,uuid"`
-	}
-	if err := c.ShouldBindUri(&request); err != nil {
-		Error(c, http.StatusBadRequest, CodeValidationError, "机位编号格式不正确")
+	spotID, ok := h.spotID(c)
+	if !ok {
 		return
 	}
-	spot, err := h.spots.Get(c.Request.Context(), request.SpotID)
+	spot, err := h.spots.Get(c.Request.Context(), spotID, c.GetString("user_id"))
 	if errors.Is(err, service.ErrSpotNotFound) {
 		Error(c, http.StatusNotFound, CodeResourceNotFound, "机位不存在")
 		return
@@ -72,4 +70,51 @@ func (h *SpotHandler) Detail(c *gin.Context) {
 		return
 	}
 	JSON(c, http.StatusOK, CodeOK, "success", spot)
+}
+
+func (h *SpotHandler) Favorite(c *gin.Context) {
+	spotID, ok := h.spotID(c)
+	if !ok {
+		return
+	}
+	if err := h.spots.Favorite(c.Request.Context(), c.GetString("user_id"), spotID); errors.Is(err, service.ErrSpotNotFound) {
+		Error(c, http.StatusNotFound, CodeResourceNotFound, "机位不存在")
+		return
+	} else if err != nil {
+		Error(c, http.StatusInternalServerError, CodeInternalError, "服务器内部错误")
+		return
+	}
+	JSON(c, http.StatusOK, CodeOK, "success", gin.H{})
+}
+
+func (h *SpotHandler) Unfavorite(c *gin.Context) {
+	spotID, ok := h.spotID(c)
+	if !ok {
+		return
+	}
+	if err := h.spots.Unfavorite(c.Request.Context(), c.GetString("user_id"), spotID); err != nil {
+		Error(c, http.StatusInternalServerError, CodeInternalError, "服务器内部错误")
+		return
+	}
+	JSON(c, http.StatusOK, CodeOK, "success", gin.H{})
+}
+
+func (h *SpotHandler) Favorites(c *gin.Context) {
+	spots, err := h.spots.Favorites(c.Request.Context(), c.GetString("user_id"))
+	if err != nil {
+		Error(c, http.StatusInternalServerError, CodeInternalError, "服务器内部错误")
+		return
+	}
+	JSON(c, http.StatusOK, CodeOK, "success", gin.H{"items": spots})
+}
+
+func (h *SpotHandler) spotID(c *gin.Context) (string, bool) {
+	var request struct {
+		SpotID string `uri:"spotId" binding:"required,uuid"`
+	}
+	if err := c.ShouldBindUri(&request); err != nil {
+		Error(c, http.StatusBadRequest, CodeValidationError, "机位编号格式不正确")
+		return "", false
+	}
+	return request.SpotID, true
 }
