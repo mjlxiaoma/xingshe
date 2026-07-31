@@ -109,8 +109,11 @@ flutter test
 flutter build apk --debug
 flutter emulators --launch xingshe_api_36
 flutter devices
-flutter run -d emulator-5554
+$env:MOBILE_API_BASE_URL='http://10.0.2.2:8080/api/v1'
+flutter run -d emulator-5554 --dart-define=MOBILE_API_BASE_URL=$env:MOBILE_API_BASE_URL
 ```
+
+`MOBILE_API_BASE_URL` 是编译期配置；真机运行时将其改为开发机局域网地址，并同样通过 `--dart-define` 传入。
 
 真机运行：
 
