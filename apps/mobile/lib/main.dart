@@ -7,6 +7,7 @@ import 'core/permissions/app_permissions.dart';
 import 'core/auth/auth_session.dart';
 import 'features/auth/email_login_page.dart';
 import 'features/auth/verification_page.dart';
+import 'features/profile/profile_page.dart';
 
 void main() => runApp(const ProviderScope(child: XingSheApp()));
 
@@ -27,7 +28,7 @@ final _router = GoRouter(
         GoRoute(path: '/', builder: (_, _) => const _HomePage()),
         GoRoute(path: '/map', builder: (_, _) => const _MapPage()),
         GoRoute(path: '/trip', builder: (_, _) => const _TripPage()),
-        GoRoute(path: '/me', builder: (_, _) => const _ProfilePage()),
+        GoRoute(path: '/me', builder: (_, _) => const ProfilePage()),
       ],
     ),
     GoRoute(
@@ -282,20 +283,6 @@ class _TripPage extends StatelessWidget {
       title: '开始一次新的行摄',
       icon: Icons.route,
       detail: '轨迹和照片默认只保存在本机',
-    );
-  }
-}
-
-class _ProfilePage extends StatelessWidget {
-  const _ProfilePage();
-
-  @override
-  Widget build(BuildContext context) {
-    return const _SimplePage(
-      eyebrow: '我的',
-      title: '常用功能',
-      icon: Icons.person,
-      detail: '本地行程 · 收藏机位 · 隐私与权限',
     );
   }
 }
