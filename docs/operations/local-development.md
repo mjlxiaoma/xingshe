@@ -69,7 +69,15 @@ curl.exe --fail http://127.0.0.1:8080/healthz
 {"code":"OK","message":"success","data":{"status":"ok"}}
 ```
 
-当前 A04 尚无数据库迁移。B02 完成后，迁移和回滚命令将在此处补充；不要使用自动建表代替迁移。
+从 `services/api` 执行数据库迁移：
+
+```powershell
+$env:DATABASE_URL='postgres://xingshe:change-me-for-local-development@127.0.0.1:5432/xingshe?sslmode=disable'
+go run ./cmd/migrate up
+go run ./cmd/migrate down
+```
+
+`down` 每次只回滚一个版本。正常开发使用 `up`；不要使用自动建表代替迁移。
 
 ## 4. 单独运行 API
 
