@@ -1,4 +1,66 @@
 name: xingshe
 
-# Services are intentionally added during the infrastructure initialization task.
-services: {}
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-xingshe}
+      POSTGRES_USER: ${POSTGRES_USER:-xingshe}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-xingshe-local-only}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    image: xingshe-api:local
+    build:
+      context: ./services/api
+      args:
+        GOPROXY: ${GOPROXY:-https://proxy.golang.org,direct}
+        GOSUMDB: ${GOSUMDB:-sum.golang.org}
+    environment:
+      API_PORT: "8080"
+      DATABASE_URL: postgres://${POSTGRES_USER:-xingshe}:${POSTGRES_PASSWORD:-xingshe-local-only}@postgres:5432/${POSTGRES_DB:-xingshe}?sslmode=disable
+      REDIS_ADDR: redis:6379
+      JWT_SECRET: ${JWT_SECRET:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+    ports:
+      - "127.0.0.1:${API_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  postgres_data:
+  redis_data:

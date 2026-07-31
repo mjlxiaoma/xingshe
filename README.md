@@ -1,16 +1,16 @@
 # XingShe
 
 XingShe is a local-first Android tool for planning and recording photography trips.
-The repository is currently an architecture-only scaffold: no mobile app, API,
-database, or container service has been initialized yet.
+The repository contains a Flutter Android app, a Go API, and a Docker Compose
+development stack with PostgreSQL and Redis.
 
 ## Repository layout
 
-- `apps/mobile/`: planned Flutter Android client
-- `services/api/`: planned Go API service
-- `packages/api_client/`: planned generated or shared API client
+- `apps/mobile/`: Flutter Android client
+- `services/api/`: Go API service
+- `packages/api_client/`: generated or shared API client
 - `docs/`: architecture, API, product, ADR, and operations documents
-- `infra/`: planned local and deployment infrastructure configuration
+- `infra/`: local and deployment infrastructure configuration
 
 ## Local setup
 
@@ -19,9 +19,15 @@ git clone https://github.com/mjlxiaoma/xingshe.git
 cd xingshe
 ```
 
-Flutter, Go, PostgreSQL, and Redis setup commands will be added when their
-projects are initialized. There is intentionally no runnable application in
-this scaffold. If GNU Make is available, `make help` prints the same status.
+Copy `.env.example` to `.env`, then start and verify the local services:
+
+```sh
+docker compose up -d --build
+curl http://127.0.0.1:8080/healthz
+```
+
+See [docs/operations/local-development.md](docs/operations/local-development.md)
+for tool installation, Android, validation, shutdown, and troubleshooting steps.
 
 ## Product boundaries
 
