@@ -186,6 +186,63 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/spots:
+    get:
+      operationId: listShootingSpots
+      summary: List shooting spots
+      parameters:
+        - name: latitude
+          in: query
+          schema:
+            type: number
+            minimum: -90
+            maximum: 90
+        - name: longitude
+          in: query
+          schema:
+            type: number
+            minimum: -180
+            maximum: 180
+        - name: radius
+          in: query
+          description: Search radius in meters; requires latitude and longitude
+          schema:
+            type: number
+            exclusiveMinimum: true
+            minimum: 0
+            maximum: 500000
+            default: 50000
+        - name: keyword
+          in: query
+          schema:
+            type: string
+            maxLength: 128
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Paged shooting spots
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpotListResponse'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
     bearerAuth:
@@ -255,6 +312,60 @@ components:
           type: string
           minLength: 1
           maxLength: 64
+    ShootingSpot:
+      type: object
+      required: [id, name, description, latitude, longitude, coordinate_system, address, cover_url, best_time, tags, is_favorited]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        coordinate_system:
+          type: string
+          enum: [GCJ02, WGS84]
+        address:
+          type: string
+          nullable: true
+        cover_url:
+          type: string
+          nullable: true
+        best_time:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        is_favorited:
+          type: boolean
+        distance_meters:
+          type: number
+          format: double
+          nullable: true
+    SpotList:
+      type: object
+      required: [items, page, page_size, total]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShootingSpot'
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total:
+          type: integer
+          format: int64
     TokenData:
       type: object
       required: [access_token, refresh_token, expires_in]
@@ -323,6 +434,18 @@ components:
           example: success
         data:
           $ref: '#/components/schemas/User'
+    SpotListResponse:
+      type: object
+      required: [code, message, data]
+      properties:
+        code:
+          type: string
+          enum: [OK]
+        message:
+          type: string
+          example: success
+        data:
+          $ref: '#/components/schemas/SpotList'
     ErrorResponse:
       type: object
       required: [code, message, data]

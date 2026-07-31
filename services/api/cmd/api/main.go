@@ -54,9 +54,10 @@ func run() error {
 	}
 	auth := service.NewAuthService(database, redisClient, service.DevelopmentMailer{}, cfg.JWTSecret, cfg.AccessTTL, cfg.RefreshTTL)
 	authHandler := handler.NewAuthHandler(auth)
+	spots := service.NewSpotService(database)
 	server := &http.Server{
 		Addr:              cfg.Address,
-		Handler:           app.NewRouter(authHandler, auth),
+		Handler:           app.NewRouter(authHandler, auth, handler.NewSpotHandler(spots)),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 	slog.Info("api starting", "address", cfg.Address, "environment", cfg.Environment)

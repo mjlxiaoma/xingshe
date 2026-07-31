@@ -9,7 +9,7 @@ import (
 	"github.com/mjlxiaoma/xingshe/services/api/internal/service"
 )
 
-func NewRouter(authHandler *handler.AuthHandler, authService *service.AuthService) *gin.Engine {
+func NewRouter(authHandler *handler.AuthHandler, authService *service.AuthService, spotHandler *handler.SpotHandler) *gin.Engine {
 	router := gin.New()
 	router.Use(middleware.RequestID(), middleware.Logger(), middleware.Recovery())
 	router.GET("/healthz", func(c *gin.Context) {
@@ -23,6 +23,7 @@ func NewRouter(authHandler *handler.AuthHandler, authService *service.AuthServic
 	meRoutes := router.Group("/api/v1/me", middleware.Authenticate(authService))
 	meRoutes.GET("", authHandler.Me)
 	meRoutes.PATCH("", authHandler.UpdateMe)
+	router.GET("/api/v1/spots", spotHandler.List)
 	router.NoRoute(func(c *gin.Context) {
 		handler.Error(c, http.StatusNotFound, handler.CodeResourceNotFound, "资源不存在")
 	})
