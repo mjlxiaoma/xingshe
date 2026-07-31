@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'core/map/map_provider.dart';
 import 'core/permissions/app_permissions.dart';
+import 'features/auth/email_login_page.dart';
 
 void main() => runApp(const ProviderScope(child: XingSheApp()));
 
@@ -31,6 +32,7 @@ final _router = GoRouter(
       path: '/permissions',
       builder: (_, _) => const PermissionExplanationPage(),
     ),
+    GoRoute(path: '/login', builder: (_, _) => const EmailLoginPage()),
   ],
 );
 
