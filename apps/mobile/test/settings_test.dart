@@ -20,16 +20,16 @@ void main() {
       String? revoked;
       final container = ProviderContainer(
         overrides: [
-        tokenStoreProvider.overrideWithValue(store),
-        revokeSessionProvider.overrideWithValue((token) async {
-          revoked = token;
-          throw Exception('offline');
-        }),
+          tokenStoreProvider.overrideWithValue(store),
+          revokeSessionProvider.overrideWithValue((token) async {
+            revoked = token;
+            throw Exception('offline');
+          }),
         ],
       );
       addTearDown(container.dispose);
 
-    await expectLater(container.read(logoutProvider)(), throwsException);
+      await expectLater(container.read(logoutProvider)(), throwsException);
 
       expect(revoked, 'refresh');
       expect(await store.readTokens(), isNull);
