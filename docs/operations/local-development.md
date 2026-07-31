@@ -110,10 +110,11 @@ flutter build apk --debug
 flutter emulators --launch xingshe_api_36
 flutter devices
 $env:MOBILE_API_BASE_URL='http://10.0.2.2:8080/api/v1'
-flutter run -d emulator-5554 --dart-define=MOBILE_API_BASE_URL=$env:MOBILE_API_BASE_URL
+$env:AMAP_ANDROID_KEY=''
+flutter run -d emulator-5554 --dart-define=MOBILE_API_BASE_URL=$env:MOBILE_API_BASE_URL --dart-define=AMAP_ANDROID_KEY=$env:AMAP_ANDROID_KEY
 ```
 
-`MOBILE_API_BASE_URL` 是编译期配置；真机运行时将其改为开发机局域网地址，并同样通过 `--dart-define` 传入。
+`MOBILE_API_BASE_URL` 和 `AMAP_ANDROID_KEY` 是编译期配置；真机运行时将 API 地址改为开发机局域网地址，并从被忽略的 `.env` 读取真实高德 Key 后通过 `--dart-define` 传入。D05 阶段未接入地图 SDK，空 Key 使用可编译的 Mock Provider。
 
 真机运行：
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'core/map/map_provider.dart';
 import 'core/permissions/app_permissions.dart';
 
 void main() => runApp(const ProviderScope(child: XingSheApp()));
@@ -216,15 +217,23 @@ class _HomePage extends StatelessWidget {
   }
 }
 
-class _MapPage extends StatelessWidget {
+class _MapPage extends ConsumerWidget {
   const _MapPage();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final map = ref.watch(mapProviderProvider);
     return SafeArea(
       child: Stack(
         children: [
-          const ColoredBox(color: Color(0xFFEAF0E8), child: SizedBox.expand()),
+          Positioned.fill(
+            child: map.buildMap(
+              context,
+              const MapScene(
+                center: MapCoordinate(latitude: 30.2741, longitude: 120.1551),
+              ),
+            ),
+          ),
           Positioned(
             left: 16,
             right: 16,
@@ -242,9 +251,6 @@ class _MapPage extends StatelessWidget {
                 trailing: Icon(Icons.tune, color: _primary),
               ),
             ),
-          ),
-          const Center(
-            child: Icon(Icons.map_outlined, size: 64, color: _primary),
           ),
         ],
       ),
