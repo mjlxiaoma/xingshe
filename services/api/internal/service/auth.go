@@ -26,6 +26,7 @@ var (
 	ErrCodeExpired      = errors.New("verification code is expired")
 	ErrInvalidToken     = errors.New("token is invalid")
 	ErrLoginRateLimited = errors.New("login attempts are rate limited")
+	ErrUserNotFound     = errors.New("user not found")
 )
 
 type Mailer interface {
@@ -243,6 +244,33 @@ func (s *AuthService) Logout(ctx context.Context, refreshToken string) error {
 		return ErrInvalidToken
 	}
 	return nil
+}
+
+func (s *AuthService) CurrentUser(ctx context.Context, userID string) (User, error) {
+	var user User
+	err := s.database.QueryRow(ctx, `
+		SELECT id, email, nickname, avatar_url
+		FROM users
+		WHERE id = $1 AND status = 1
+	`, userID).Scan(&user.ID, &user.Email, &user.Nickname, &user.AvatarURL)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return User{}, ErrUserNotFound
+	}
+	return user, err
+}
+
+func (s *AuthService) UpdateNickname(ctx context.Context, userID, nickname string) (User, error) {
+	var user User
+	err := s.database.QueryRow(ctx, `
+		UPDATE users
+		SET nickname = $2, updated_at = now()
+		WHERE id = $1 AND status = 1
+		RETURNING id, email, nickname, avatar_url
+	`, userID, nickname).Scan(&user.ID, &user.Email, &user.Nickname, &user.AvatarURL)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return User{}, ErrUserNotFound
+	}
+	return user, err
 }
 
 func (s *AuthService) NewAccessToken(userID string) (string, error) {

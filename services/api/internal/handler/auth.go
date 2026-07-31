@@ -101,3 +101,32 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 	}
 	JSON(c, http.StatusOK, CodeOK, "success", gin.H{})
 }
+
+func (h *AuthHandler) Me(c *gin.Context) {
+	user, err := h.auth.CurrentUser(c.Request.Context(), c.GetString("user_id"))
+	h.userResponse(c, user, err)
+}
+
+func (h *AuthHandler) UpdateMe(c *gin.Context) {
+	var request struct {
+		Nickname string `json:"nickname" binding:"required,min=1,max=64"`
+	}
+	if err := c.ShouldBindJSON(&request); err != nil || strings.TrimSpace(request.Nickname) == "" {
+		Error(c, http.StatusBadRequest, CodeValidationError, "昵称长度必须为 1 到 64 个字符")
+		return
+	}
+	user, err := h.auth.UpdateNickname(c.Request.Context(), c.GetString("user_id"), strings.TrimSpace(request.Nickname))
+	h.userResponse(c, user, err)
+}
+
+func (h *AuthHandler) userResponse(c *gin.Context, user service.User, err error) {
+	if errors.Is(err, service.ErrUserNotFound) {
+		Error(c, http.StatusNotFound, CodeResourceNotFound, "用户不存在")
+		return
+	}
+	if err != nil {
+		Error(c, http.StatusInternalServerError, CodeInternalError, "服务器内部错误")
+		return
+	}
+	JSON(c, http.StatusOK, CodeOK, "success", user)
+}

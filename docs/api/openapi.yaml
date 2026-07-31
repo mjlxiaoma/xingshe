@@ -137,6 +137,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/me:
+    get:
+      operationId: getCurrentUser
+      summary: Get the current user profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      operationId: updateCurrentUser
+      summary: Update the current user profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: Updated user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Invalid nickname
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
     bearerAuth:
@@ -198,6 +247,14 @@ components:
         avatar_url:
           type: string
           nullable: true
+    UpdateUserRequest:
+      type: object
+      required: [nickname]
+      properties:
+        nickname:
+          type: string
+          minLength: 1
+          maxLength: 64
     TokenData:
       type: object
       required: [access_token, refresh_token, expires_in]
@@ -254,6 +311,18 @@ components:
           example: success
         data:
           $ref: '#/components/schemas/TokenData'
+    UserResponse:
+      type: object
+      required: [code, message, data]
+      properties:
+        code:
+          type: string
+          enum: [OK]
+        message:
+          type: string
+          example: success
+        data:
+          $ref: '#/components/schemas/User'
     ErrorResponse:
       type: object
       required: [code, message, data]

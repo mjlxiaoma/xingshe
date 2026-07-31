@@ -56,7 +56,7 @@ func run() error {
 	authHandler := handler.NewAuthHandler(auth)
 	server := &http.Server{
 		Addr:              cfg.Address,
-		Handler:           app.NewRouter(authHandler),
+		Handler:           app.NewRouter(authHandler, auth),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 	slog.Info("api starting", "address", cfg.Address, "environment", cfg.Environment)

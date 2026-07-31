@@ -24,3 +24,18 @@ func TestSendEmailCodeRejectsInvalidEmail(t *testing.T) {
 		t.Fatalf("status = %d, body = %s", recorder.Code, recorder.Body.String())
 	}
 }
+
+func TestUpdateMeRejectsInvalidNickname(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	recorder := httptest.NewRecorder()
+	router := gin.New()
+	router.PATCH("/me", NewAuthHandler(nil).UpdateMe)
+	request := httptest.NewRequest(http.MethodPatch, "/me", strings.NewReader(`{"nickname":"   "}`))
+	request.Header.Set("Content-Type", "application/json")
+
+	router.ServeHTTP(recorder, request)
+
+	if recorder.Code != http.StatusBadRequest || !strings.Contains(recorder.Body.String(), CodeValidationError) {
+		t.Fatalf("status = %d, body = %s", recorder.Code, recorder.Body.String())
+	}
+}

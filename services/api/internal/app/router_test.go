@@ -3,6 +3,7 @@ package app
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ func TestHealthz(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodGet, "/healthz", nil)
 
-	NewRouter(handler.NewAuthHandler(nil)).ServeHTTP(recorder, request)
+	NewRouter(handler.NewAuthHandler(nil), nil).ServeHTTP(recorder, request)
 
 	if recorder.Code != http.StatusOK {
 		t.Fatalf("status = %d, want %d", recorder.Code, http.StatusOK)
@@ -32,10 +33,20 @@ func TestHealthz(t *testing.T) {
 func TestNotFoundUsesErrorContract(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	recorder := httptest.NewRecorder()
-	NewRouter(handler.NewAuthHandler(nil)).ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/missing", nil))
+	NewRouter(handler.NewAuthHandler(nil), nil).ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/missing", nil))
 
 	want := `{"code":"RESOURCE_NOT_FOUND","message":"资源不存在","data":null}`
 	if recorder.Code != http.StatusNotFound || recorder.Body.String() != want {
+		t.Fatalf("status = %d, body = %s", recorder.Code, recorder.Body.String())
+	}
+}
+
+func TestCurrentUserRequiresAuthentication(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	recorder := httptest.NewRecorder()
+	NewRouter(handler.NewAuthHandler(nil), nil).ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/api/v1/me", nil))
+
+	if recorder.Code != http.StatusUnauthorized || !strings.Contains(recorder.Body.String(), handler.CodeUnauthorized) {
 		t.Fatalf("status = %d, body = %s", recorder.Code, recorder.Body.String())
 	}
 }
