@@ -21,7 +21,7 @@ func main() {
 
 func run(args []string) error {
 	if len(args) != 1 || (args[0] != "up" && args[0] != "down") {
-		return errors.New("usage: go run ./cmd/migrate up|down")
+		return errors.New("usage: xingshe-migrate up|down")
 	}
 	databaseURL := strings.TrimSpace(os.Getenv("DATABASE_URL"))
 	if databaseURL == "" {
