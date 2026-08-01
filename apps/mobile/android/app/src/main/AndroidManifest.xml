@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <application
+        android:allowBackup="false"
         android:label="行摄"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

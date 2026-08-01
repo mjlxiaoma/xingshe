@@ -18,6 +18,15 @@ class $LocalTripsTable extends LocalTrips
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _spotIdMeta = const VerificationMeta('spotId');
+  @override
+  late final GeneratedColumn<String> spotId = GeneratedColumn<String>(
+    'spot_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -120,6 +129,7 @@ class $LocalTripsTable extends LocalTrips
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    spotId,
     title,
     startedAt,
     endedAt,
@@ -146,6 +156,12 @@ class $LocalTripsTable extends LocalTrips
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('spot_id')) {
+      context.handle(
+        _spotIdMeta,
+        spotId.isAcceptableOrUnknown(data['spot_id']!, _spotIdMeta),
+      );
     }
     if (data.containsKey('title')) {
       context.handle(
@@ -233,6 +249,10 @@ class $LocalTripsTable extends LocalTrips
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      spotId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}spot_id'],
+      ),
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -280,6 +300,7 @@ class $LocalTripsTable extends LocalTrips
 
 class LocalTrip extends DataClass implements Insertable<LocalTrip> {
   final String id;
+  final String? spotId;
   final String title;
   final DateTime startedAt;
   final DateTime? endedAt;
@@ -291,6 +312,7 @@ class LocalTrip extends DataClass implements Insertable<LocalTrip> {
   final DateTime updatedAt;
   const LocalTrip({
     required this.id,
+    this.spotId,
     required this.title,
     required this.startedAt,
     this.endedAt,
@@ -305,6 +327,9 @@ class LocalTrip extends DataClass implements Insertable<LocalTrip> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    if (!nullToAbsent || spotId != null) {
+      map['spot_id'] = Variable<String>(spotId);
+    }
     map['title'] = Variable<String>(title);
     map['started_at'] = Variable<DateTime>(startedAt);
     if (!nullToAbsent || endedAt != null) {
@@ -324,6 +349,9 @@ class LocalTrip extends DataClass implements Insertable<LocalTrip> {
   LocalTripsCompanion toCompanion(bool nullToAbsent) {
     return LocalTripsCompanion(
       id: Value(id),
+      spotId: spotId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(spotId),
       title: Value(title),
       startedAt: Value(startedAt),
       endedAt: endedAt == null && nullToAbsent
@@ -347,6 +375,7 @@ class LocalTrip extends DataClass implements Insertable<LocalTrip> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return LocalTrip(
       id: serializer.fromJson<String>(json['id']),
+      spotId: serializer.fromJson<String?>(json['spotId']),
       title: serializer.fromJson<String>(json['title']),
       startedAt: serializer.fromJson<DateTime>(json['startedAt']),
       endedAt: serializer.fromJson<DateTime?>(json['endedAt']),
@@ -363,6 +392,7 @@ class LocalTrip extends DataClass implements Insertable<LocalTrip> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'spotId': serializer.toJson<String?>(spotId),
       'title': serializer.toJson<String>(title),
       'startedAt': serializer.toJson<DateTime>(startedAt),
       'endedAt': serializer.toJson<DateTime?>(endedAt),
@@ -377,6 +407,7 @@ class LocalTrip extends DataClass implements Insertable<LocalTrip> {
 
   LocalTrip copyWith({
     String? id,
+    Value<String?> spotId = const Value.absent(),
     String? title,
     DateTime? startedAt,
     Value<DateTime?> endedAt = const Value.absent(),
@@ -388,6 +419,7 @@ class LocalTrip extends DataClass implements Insertable<LocalTrip> {
     DateTime? updatedAt,
   }) => LocalTrip(
     id: id ?? this.id,
+    spotId: spotId.present ? spotId.value : this.spotId,
     title: title ?? this.title,
     startedAt: startedAt ?? this.startedAt,
     endedAt: endedAt.present ? endedAt.value : this.endedAt,
@@ -403,6 +435,7 @@ class LocalTrip extends DataClass implements Insertable<LocalTrip> {
   LocalTrip copyWithCompanion(LocalTripsCompanion data) {
     return LocalTrip(
       id: data.id.present ? data.id.value : this.id,
+      spotId: data.spotId.present ? data.spotId.value : this.spotId,
       title: data.title.present ? data.title.value : this.title,
       startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
       endedAt: data.endedAt.present ? data.endedAt.value : this.endedAt,
@@ -425,6 +458,7 @@ class LocalTrip extends DataClass implements Insertable<LocalTrip> {
   String toString() {
     return (StringBuffer('LocalTrip(')
           ..write('id: $id, ')
+          ..write('spotId: $spotId, ')
           ..write('title: $title, ')
           ..write('startedAt: $startedAt, ')
           ..write('endedAt: $endedAt, ')
@@ -441,6 +475,7 @@ class LocalTrip extends DataClass implements Insertable<LocalTrip> {
   @override
   int get hashCode => Object.hash(
     id,
+    spotId,
     title,
     startedAt,
     endedAt,
@@ -456,6 +491,7 @@ class LocalTrip extends DataClass implements Insertable<LocalTrip> {
       identical(this, other) ||
       (other is LocalTrip &&
           other.id == this.id &&
+          other.spotId == this.spotId &&
           other.title == this.title &&
           other.startedAt == this.startedAt &&
           other.endedAt == this.endedAt &&
@@ -469,6 +505,7 @@ class LocalTrip extends DataClass implements Insertable<LocalTrip> {
 
 class LocalTripsCompanion extends UpdateCompanion<LocalTrip> {
   final Value<String> id;
+  final Value<String?> spotId;
   final Value<String> title;
   final Value<DateTime> startedAt;
   final Value<DateTime?> endedAt;
@@ -481,6 +518,7 @@ class LocalTripsCompanion extends UpdateCompanion<LocalTrip> {
   final Value<int> rowid;
   const LocalTripsCompanion({
     this.id = const Value.absent(),
+    this.spotId = const Value.absent(),
     this.title = const Value.absent(),
     this.startedAt = const Value.absent(),
     this.endedAt = const Value.absent(),
@@ -494,6 +532,7 @@ class LocalTripsCompanion extends UpdateCompanion<LocalTrip> {
   });
   LocalTripsCompanion.insert({
     required String id,
+    this.spotId = const Value.absent(),
     required String title,
     required DateTime startedAt,
     this.endedAt = const Value.absent(),
@@ -512,6 +551,7 @@ class LocalTripsCompanion extends UpdateCompanion<LocalTrip> {
        updatedAt = Value(updatedAt);
   static Insertable<LocalTrip> custom({
     Expression<String>? id,
+    Expression<String>? spotId,
     Expression<String>? title,
     Expression<DateTime>? startedAt,
     Expression<DateTime>? endedAt,
@@ -525,6 +565,7 @@ class LocalTripsCompanion extends UpdateCompanion<LocalTrip> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (spotId != null) 'spot_id': spotId,
       if (title != null) 'title': title,
       if (startedAt != null) 'started_at': startedAt,
       if (endedAt != null) 'ended_at': endedAt,
@@ -540,6 +581,7 @@ class LocalTripsCompanion extends UpdateCompanion<LocalTrip> {
 
   LocalTripsCompanion copyWith({
     Value<String>? id,
+    Value<String?>? spotId,
     Value<String>? title,
     Value<DateTime>? startedAt,
     Value<DateTime?>? endedAt,
@@ -553,6 +595,7 @@ class LocalTripsCompanion extends UpdateCompanion<LocalTrip> {
   }) {
     return LocalTripsCompanion(
       id: id ?? this.id,
+      spotId: spotId ?? this.spotId,
       title: title ?? this.title,
       startedAt: startedAt ?? this.startedAt,
       endedAt: endedAt ?? this.endedAt,
@@ -571,6 +614,9 @@ class LocalTripsCompanion extends UpdateCompanion<LocalTrip> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (spotId.present) {
+      map['spot_id'] = Variable<String>(spotId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -609,6 +655,7 @@ class LocalTripsCompanion extends UpdateCompanion<LocalTrip> {
   String toString() {
     return (StringBuffer('LocalTripsCompanion(')
           ..write('id: $id, ')
+          ..write('spotId: $spotId, ')
           ..write('title: $title, ')
           ..write('startedAt: $startedAt, ')
           ..write('endedAt: $endedAt, ')
@@ -652,8 +699,33 @@ class $LocalTrackPointsTable extends LocalTrackPoints
     type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES local_trips (id)',
+      'REFERENCES local_trips (id) ON DELETE CASCADE',
     ),
+  );
+  static const VerificationMeta _nativeLogIdMeta = const VerificationMeta(
+    'nativeLogId',
+  );
+  @override
+  late final GeneratedColumn<String> nativeLogId = GeneratedColumn<String>(
+    'native_log_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _coordinateSystemMeta = const VerificationMeta(
+    'coordinateSystem',
+  );
+  @override
+  late final GeneratedColumn<String> coordinateSystem = GeneratedColumn<String>(
+    'coordinate_system',
+    aliasedName,
+    false,
+    check: () => coordinateSystem.isIn(const ['WGS84', 'GCJ02']),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('WGS84'),
   );
   static const VerificationMeta _latitudeMeta = const VerificationMeta(
     'latitude',
@@ -745,6 +817,8 @@ class $LocalTrackPointsTable extends LocalTrackPoints
   List<GeneratedColumn> get $columns => [
     id,
     tripId,
+    nativeLogId,
+    coordinateSystem,
     latitude,
     longitude,
     altitude,
@@ -776,6 +850,24 @@ class $LocalTrackPointsTable extends LocalTrackPoints
       );
     } else if (isInserting) {
       context.missing(_tripIdMeta);
+    }
+    if (data.containsKey('native_log_id')) {
+      context.handle(
+        _nativeLogIdMeta,
+        nativeLogId.isAcceptableOrUnknown(
+          data['native_log_id']!,
+          _nativeLogIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('coordinate_system')) {
+      context.handle(
+        _coordinateSystemMeta,
+        coordinateSystem.isAcceptableOrUnknown(
+          data['coordinate_system']!,
+          _coordinateSystemMeta,
+        ),
+      );
     }
     if (data.containsKey('latitude')) {
       context.handle(
@@ -850,6 +942,14 @@ class $LocalTrackPointsTable extends LocalTrackPoints
         DriftSqlType.string,
         data['${effectivePrefix}trip_id'],
       )!,
+      nativeLogId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}native_log_id'],
+      ),
+      coordinateSystem: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}coordinate_system'],
+      )!,
       latitude: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}latitude'],
@@ -894,6 +994,8 @@ class $LocalTrackPointsTable extends LocalTrackPoints
 class LocalTrackPoint extends DataClass implements Insertable<LocalTrackPoint> {
   final int id;
   final String tripId;
+  final String? nativeLogId;
+  final String coordinateSystem;
   final double latitude;
   final double longitude;
   final double? altitude;
@@ -905,6 +1007,8 @@ class LocalTrackPoint extends DataClass implements Insertable<LocalTrackPoint> {
   const LocalTrackPoint({
     required this.id,
     required this.tripId,
+    this.nativeLogId,
+    required this.coordinateSystem,
     required this.latitude,
     required this.longitude,
     this.altitude,
@@ -919,6 +1023,10 @@ class LocalTrackPoint extends DataClass implements Insertable<LocalTrackPoint> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['trip_id'] = Variable<String>(tripId);
+    if (!nullToAbsent || nativeLogId != null) {
+      map['native_log_id'] = Variable<String>(nativeLogId);
+    }
+    map['coordinate_system'] = Variable<String>(coordinateSystem);
     map['latitude'] = Variable<double>(latitude);
     map['longitude'] = Variable<double>(longitude);
     if (!nullToAbsent || altitude != null) {
@@ -942,6 +1050,10 @@ class LocalTrackPoint extends DataClass implements Insertable<LocalTrackPoint> {
     return LocalTrackPointsCompanion(
       id: Value(id),
       tripId: Value(tripId),
+      nativeLogId: nativeLogId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nativeLogId),
+      coordinateSystem: Value(coordinateSystem),
       latitude: Value(latitude),
       longitude: Value(longitude),
       altitude: altitude == null && nullToAbsent
@@ -969,6 +1081,8 @@ class LocalTrackPoint extends DataClass implements Insertable<LocalTrackPoint> {
     return LocalTrackPoint(
       id: serializer.fromJson<int>(json['id']),
       tripId: serializer.fromJson<String>(json['tripId']),
+      nativeLogId: serializer.fromJson<String?>(json['nativeLogId']),
+      coordinateSystem: serializer.fromJson<String>(json['coordinateSystem']),
       latitude: serializer.fromJson<double>(json['latitude']),
       longitude: serializer.fromJson<double>(json['longitude']),
       altitude: serializer.fromJson<double?>(json['altitude']),
@@ -985,6 +1099,8 @@ class LocalTrackPoint extends DataClass implements Insertable<LocalTrackPoint> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'tripId': serializer.toJson<String>(tripId),
+      'nativeLogId': serializer.toJson<String?>(nativeLogId),
+      'coordinateSystem': serializer.toJson<String>(coordinateSystem),
       'latitude': serializer.toJson<double>(latitude),
       'longitude': serializer.toJson<double>(longitude),
       'altitude': serializer.toJson<double?>(altitude),
@@ -999,6 +1115,8 @@ class LocalTrackPoint extends DataClass implements Insertable<LocalTrackPoint> {
   LocalTrackPoint copyWith({
     int? id,
     String? tripId,
+    Value<String?> nativeLogId = const Value.absent(),
+    String? coordinateSystem,
     double? latitude,
     double? longitude,
     Value<double?> altitude = const Value.absent(),
@@ -1010,6 +1128,8 @@ class LocalTrackPoint extends DataClass implements Insertable<LocalTrackPoint> {
   }) => LocalTrackPoint(
     id: id ?? this.id,
     tripId: tripId ?? this.tripId,
+    nativeLogId: nativeLogId.present ? nativeLogId.value : this.nativeLogId,
+    coordinateSystem: coordinateSystem ?? this.coordinateSystem,
     latitude: latitude ?? this.latitude,
     longitude: longitude ?? this.longitude,
     altitude: altitude.present ? altitude.value : this.altitude,
@@ -1023,6 +1143,12 @@ class LocalTrackPoint extends DataClass implements Insertable<LocalTrackPoint> {
     return LocalTrackPoint(
       id: data.id.present ? data.id.value : this.id,
       tripId: data.tripId.present ? data.tripId.value : this.tripId,
+      nativeLogId: data.nativeLogId.present
+          ? data.nativeLogId.value
+          : this.nativeLogId,
+      coordinateSystem: data.coordinateSystem.present
+          ? data.coordinateSystem.value
+          : this.coordinateSystem,
       latitude: data.latitude.present ? data.latitude.value : this.latitude,
       longitude: data.longitude.present ? data.longitude.value : this.longitude,
       altitude: data.altitude.present ? data.altitude.value : this.altitude,
@@ -1041,6 +1167,8 @@ class LocalTrackPoint extends DataClass implements Insertable<LocalTrackPoint> {
     return (StringBuffer('LocalTrackPoint(')
           ..write('id: $id, ')
           ..write('tripId: $tripId, ')
+          ..write('nativeLogId: $nativeLogId, ')
+          ..write('coordinateSystem: $coordinateSystem, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude, ')
           ..write('altitude: $altitude, ')
@@ -1057,6 +1185,8 @@ class LocalTrackPoint extends DataClass implements Insertable<LocalTrackPoint> {
   int get hashCode => Object.hash(
     id,
     tripId,
+    nativeLogId,
+    coordinateSystem,
     latitude,
     longitude,
     altitude,
@@ -1072,6 +1202,8 @@ class LocalTrackPoint extends DataClass implements Insertable<LocalTrackPoint> {
       (other is LocalTrackPoint &&
           other.id == this.id &&
           other.tripId == this.tripId &&
+          other.nativeLogId == this.nativeLogId &&
+          other.coordinateSystem == this.coordinateSystem &&
           other.latitude == this.latitude &&
           other.longitude == this.longitude &&
           other.altitude == this.altitude &&
@@ -1085,6 +1217,8 @@ class LocalTrackPoint extends DataClass implements Insertable<LocalTrackPoint> {
 class LocalTrackPointsCompanion extends UpdateCompanion<LocalTrackPoint> {
   final Value<int> id;
   final Value<String> tripId;
+  final Value<String?> nativeLogId;
+  final Value<String> coordinateSystem;
   final Value<double> latitude;
   final Value<double> longitude;
   final Value<double?> altitude;
@@ -1096,6 +1230,8 @@ class LocalTrackPointsCompanion extends UpdateCompanion<LocalTrackPoint> {
   const LocalTrackPointsCompanion({
     this.id = const Value.absent(),
     this.tripId = const Value.absent(),
+    this.nativeLogId = const Value.absent(),
+    this.coordinateSystem = const Value.absent(),
     this.latitude = const Value.absent(),
     this.longitude = const Value.absent(),
     this.altitude = const Value.absent(),
@@ -1108,6 +1244,8 @@ class LocalTrackPointsCompanion extends UpdateCompanion<LocalTrackPoint> {
   LocalTrackPointsCompanion.insert({
     this.id = const Value.absent(),
     required String tripId,
+    this.nativeLogId = const Value.absent(),
+    this.coordinateSystem = const Value.absent(),
     required double latitude,
     required double longitude,
     this.altitude = const Value.absent(),
@@ -1124,6 +1262,8 @@ class LocalTrackPointsCompanion extends UpdateCompanion<LocalTrackPoint> {
   static Insertable<LocalTrackPoint> custom({
     Expression<int>? id,
     Expression<String>? tripId,
+    Expression<String>? nativeLogId,
+    Expression<String>? coordinateSystem,
     Expression<double>? latitude,
     Expression<double>? longitude,
     Expression<double>? altitude,
@@ -1136,6 +1276,8 @@ class LocalTrackPointsCompanion extends UpdateCompanion<LocalTrackPoint> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (tripId != null) 'trip_id': tripId,
+      if (nativeLogId != null) 'native_log_id': nativeLogId,
+      if (coordinateSystem != null) 'coordinate_system': coordinateSystem,
       if (latitude != null) 'latitude': latitude,
       if (longitude != null) 'longitude': longitude,
       if (altitude != null) 'altitude': altitude,
@@ -1150,6 +1292,8 @@ class LocalTrackPointsCompanion extends UpdateCompanion<LocalTrackPoint> {
   LocalTrackPointsCompanion copyWith({
     Value<int>? id,
     Value<String>? tripId,
+    Value<String?>? nativeLogId,
+    Value<String>? coordinateSystem,
     Value<double>? latitude,
     Value<double>? longitude,
     Value<double?>? altitude,
@@ -1162,6 +1306,8 @@ class LocalTrackPointsCompanion extends UpdateCompanion<LocalTrackPoint> {
     return LocalTrackPointsCompanion(
       id: id ?? this.id,
       tripId: tripId ?? this.tripId,
+      nativeLogId: nativeLogId ?? this.nativeLogId,
+      coordinateSystem: coordinateSystem ?? this.coordinateSystem,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       altitude: altitude ?? this.altitude,
@@ -1181,6 +1327,12 @@ class LocalTrackPointsCompanion extends UpdateCompanion<LocalTrackPoint> {
     }
     if (tripId.present) {
       map['trip_id'] = Variable<String>(tripId.value);
+    }
+    if (nativeLogId.present) {
+      map['native_log_id'] = Variable<String>(nativeLogId.value);
+    }
+    if (coordinateSystem.present) {
+      map['coordinate_system'] = Variable<String>(coordinateSystem.value);
     }
     if (latitude.present) {
       map['latitude'] = Variable<double>(latitude.value);
@@ -1214,6 +1366,8 @@ class LocalTrackPointsCompanion extends UpdateCompanion<LocalTrackPoint> {
     return (StringBuffer('LocalTrackPointsCompanion(')
           ..write('id: $id, ')
           ..write('tripId: $tripId, ')
+          ..write('nativeLogId: $nativeLogId, ')
+          ..write('coordinateSystem: $coordinateSystem, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude, ')
           ..write('altitude: $altitude, ')
@@ -1251,8 +1405,21 @@ class $LocalTripPhotosTable extends LocalTripPhotos
     type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES local_trips (id)',
+      'REFERENCES local_trips (id) ON DELETE CASCADE',
     ),
+  );
+  static const VerificationMeta _photoSourceMeta = const VerificationMeta(
+    'photoSource',
+  );
+  @override
+  late final GeneratedColumn<String> photoSource = GeneratedColumn<String>(
+    'photo_source',
+    aliasedName,
+    false,
+    check: () => photoSource.isIn(const ['camera', 'gallery']),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('camera'),
   );
   static const VerificationMeta _filePathMeta = const VerificationMeta(
     'filePath',
@@ -1342,6 +1509,7 @@ class $LocalTripPhotosTable extends LocalTripPhotos
   List<GeneratedColumn> get $columns => [
     id,
     tripId,
+    photoSource,
     filePath,
     thumbnailPath,
     latitude,
@@ -1375,6 +1543,15 @@ class $LocalTripPhotosTable extends LocalTripPhotos
       );
     } else if (isInserting) {
       context.missing(_tripIdMeta);
+    }
+    if (data.containsKey('photo_source')) {
+      context.handle(
+        _photoSourceMeta,
+        photoSource.isAcceptableOrUnknown(
+          data['photo_source']!,
+          _photoSourceMeta,
+        ),
+      );
     }
     if (data.containsKey('file_path')) {
       context.handle(
@@ -1450,6 +1627,10 @@ class $LocalTripPhotosTable extends LocalTripPhotos
         DriftSqlType.string,
         data['${effectivePrefix}trip_id'],
       )!,
+      photoSource: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}photo_source'],
+      )!,
       filePath: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}file_path'],
@@ -1494,6 +1675,7 @@ class $LocalTripPhotosTable extends LocalTripPhotos
 class LocalTripPhoto extends DataClass implements Insertable<LocalTripPhoto> {
   final String id;
   final String tripId;
+  final String photoSource;
   final String filePath;
   final String? thumbnailPath;
   final double? latitude;
@@ -1505,6 +1687,7 @@ class LocalTripPhoto extends DataClass implements Insertable<LocalTripPhoto> {
   const LocalTripPhoto({
     required this.id,
     required this.tripId,
+    required this.photoSource,
     required this.filePath,
     this.thumbnailPath,
     this.latitude,
@@ -1519,6 +1702,7 @@ class LocalTripPhoto extends DataClass implements Insertable<LocalTripPhoto> {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['trip_id'] = Variable<String>(tripId);
+    map['photo_source'] = Variable<String>(photoSource);
     map['file_path'] = Variable<String>(filePath);
     if (!nullToAbsent || thumbnailPath != null) {
       map['thumbnail_path'] = Variable<String>(thumbnailPath);
@@ -1544,6 +1728,7 @@ class LocalTripPhoto extends DataClass implements Insertable<LocalTripPhoto> {
     return LocalTripPhotosCompanion(
       id: Value(id),
       tripId: Value(tripId),
+      photoSource: Value(photoSource),
       filePath: Value(filePath),
       thumbnailPath: thumbnailPath == null && nullToAbsent
           ? const Value.absent()
@@ -1573,6 +1758,7 @@ class LocalTripPhoto extends DataClass implements Insertable<LocalTripPhoto> {
     return LocalTripPhoto(
       id: serializer.fromJson<String>(json['id']),
       tripId: serializer.fromJson<String>(json['tripId']),
+      photoSource: serializer.fromJson<String>(json['photoSource']),
       filePath: serializer.fromJson<String>(json['filePath']),
       thumbnailPath: serializer.fromJson<String?>(json['thumbnailPath']),
       latitude: serializer.fromJson<double?>(json['latitude']),
@@ -1589,6 +1775,7 @@ class LocalTripPhoto extends DataClass implements Insertable<LocalTripPhoto> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'tripId': serializer.toJson<String>(tripId),
+      'photoSource': serializer.toJson<String>(photoSource),
       'filePath': serializer.toJson<String>(filePath),
       'thumbnailPath': serializer.toJson<String?>(thumbnailPath),
       'latitude': serializer.toJson<double?>(latitude),
@@ -1603,6 +1790,7 @@ class LocalTripPhoto extends DataClass implements Insertable<LocalTripPhoto> {
   LocalTripPhoto copyWith({
     String? id,
     String? tripId,
+    String? photoSource,
     String? filePath,
     Value<String?> thumbnailPath = const Value.absent(),
     Value<double?> latitude = const Value.absent(),
@@ -1614,6 +1802,7 @@ class LocalTripPhoto extends DataClass implements Insertable<LocalTripPhoto> {
   }) => LocalTripPhoto(
     id: id ?? this.id,
     tripId: tripId ?? this.tripId,
+    photoSource: photoSource ?? this.photoSource,
     filePath: filePath ?? this.filePath,
     thumbnailPath: thumbnailPath.present
         ? thumbnailPath.value
@@ -1629,6 +1818,9 @@ class LocalTripPhoto extends DataClass implements Insertable<LocalTripPhoto> {
     return LocalTripPhoto(
       id: data.id.present ? data.id.value : this.id,
       tripId: data.tripId.present ? data.tripId.value : this.tripId,
+      photoSource: data.photoSource.present
+          ? data.photoSource.value
+          : this.photoSource,
       filePath: data.filePath.present ? data.filePath.value : this.filePath,
       thumbnailPath: data.thumbnailPath.present
           ? data.thumbnailPath.value
@@ -1647,6 +1839,7 @@ class LocalTripPhoto extends DataClass implements Insertable<LocalTripPhoto> {
     return (StringBuffer('LocalTripPhoto(')
           ..write('id: $id, ')
           ..write('tripId: $tripId, ')
+          ..write('photoSource: $photoSource, ')
           ..write('filePath: $filePath, ')
           ..write('thumbnailPath: $thumbnailPath, ')
           ..write('latitude: $latitude, ')
@@ -1663,6 +1856,7 @@ class LocalTripPhoto extends DataClass implements Insertable<LocalTripPhoto> {
   int get hashCode => Object.hash(
     id,
     tripId,
+    photoSource,
     filePath,
     thumbnailPath,
     latitude,
@@ -1678,6 +1872,7 @@ class LocalTripPhoto extends DataClass implements Insertable<LocalTripPhoto> {
       (other is LocalTripPhoto &&
           other.id == this.id &&
           other.tripId == this.tripId &&
+          other.photoSource == this.photoSource &&
           other.filePath == this.filePath &&
           other.thumbnailPath == this.thumbnailPath &&
           other.latitude == this.latitude &&
@@ -1691,6 +1886,7 @@ class LocalTripPhoto extends DataClass implements Insertable<LocalTripPhoto> {
 class LocalTripPhotosCompanion extends UpdateCompanion<LocalTripPhoto> {
   final Value<String> id;
   final Value<String> tripId;
+  final Value<String> photoSource;
   final Value<String> filePath;
   final Value<String?> thumbnailPath;
   final Value<double?> latitude;
@@ -1703,6 +1899,7 @@ class LocalTripPhotosCompanion extends UpdateCompanion<LocalTripPhoto> {
   const LocalTripPhotosCompanion({
     this.id = const Value.absent(),
     this.tripId = const Value.absent(),
+    this.photoSource = const Value.absent(),
     this.filePath = const Value.absent(),
     this.thumbnailPath = const Value.absent(),
     this.latitude = const Value.absent(),
@@ -1716,6 +1913,7 @@ class LocalTripPhotosCompanion extends UpdateCompanion<LocalTripPhoto> {
   LocalTripPhotosCompanion.insert({
     required String id,
     required String tripId,
+    this.photoSource = const Value.absent(),
     required String filePath,
     this.thumbnailPath = const Value.absent(),
     this.latitude = const Value.absent(),
@@ -1733,6 +1931,7 @@ class LocalTripPhotosCompanion extends UpdateCompanion<LocalTripPhoto> {
   static Insertable<LocalTripPhoto> custom({
     Expression<String>? id,
     Expression<String>? tripId,
+    Expression<String>? photoSource,
     Expression<String>? filePath,
     Expression<String>? thumbnailPath,
     Expression<double>? latitude,
@@ -1746,6 +1945,7 @@ class LocalTripPhotosCompanion extends UpdateCompanion<LocalTripPhoto> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (tripId != null) 'trip_id': tripId,
+      if (photoSource != null) 'photo_source': photoSource,
       if (filePath != null) 'file_path': filePath,
       if (thumbnailPath != null) 'thumbnail_path': thumbnailPath,
       if (latitude != null) 'latitude': latitude,
@@ -1761,6 +1961,7 @@ class LocalTripPhotosCompanion extends UpdateCompanion<LocalTripPhoto> {
   LocalTripPhotosCompanion copyWith({
     Value<String>? id,
     Value<String>? tripId,
+    Value<String>? photoSource,
     Value<String>? filePath,
     Value<String?>? thumbnailPath,
     Value<double?>? latitude,
@@ -1774,6 +1975,7 @@ class LocalTripPhotosCompanion extends UpdateCompanion<LocalTripPhoto> {
     return LocalTripPhotosCompanion(
       id: id ?? this.id,
       tripId: tripId ?? this.tripId,
+      photoSource: photoSource ?? this.photoSource,
       filePath: filePath ?? this.filePath,
       thumbnailPath: thumbnailPath ?? this.thumbnailPath,
       latitude: latitude ?? this.latitude,
@@ -1794,6 +1996,9 @@ class LocalTripPhotosCompanion extends UpdateCompanion<LocalTripPhoto> {
     }
     if (tripId.present) {
       map['trip_id'] = Variable<String>(tripId.value);
+    }
+    if (photoSource.present) {
+      map['photo_source'] = Variable<String>(photoSource.value);
     }
     if (filePath.present) {
       map['file_path'] = Variable<String>(filePath.value);
@@ -1830,6 +2035,7 @@ class LocalTripPhotosCompanion extends UpdateCompanion<LocalTripPhoto> {
     return (StringBuffer('LocalTripPhotosCompanion(')
           ..write('id: $id, ')
           ..write('tripId: $tripId, ')
+          ..write('photoSource: $photoSource, ')
           ..write('filePath: $filePath, ')
           ..write('thumbnailPath: $thumbnailPath, ')
           ..write('latitude: $latitude, ')
@@ -1901,6 +2107,41 @@ class $LocalSpotCacheTable extends LocalSpotCache
     type: DriftSqlType.double,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _coordinateSystemMeta = const VerificationMeta(
+    'coordinateSystem',
+  );
+  @override
+  late final GeneratedColumn<String> coordinateSystem = GeneratedColumn<String>(
+    'coordinate_system',
+    aliasedName,
+    false,
+    check: () => coordinateSystem.isIn(const ['WGS84', 'GCJ02']),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('GCJ02'),
+  );
+  static const VerificationMeta _cityCodeMeta = const VerificationMeta(
+    'cityCode',
+  );
+  @override
+  late final GeneratedColumn<String> cityCode = GeneratedColumn<String>(
+    'city_code',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _addressMeta = const VerificationMeta(
+    'address',
+  );
+  @override
+  late final GeneratedColumn<String> address = GeneratedColumn<String>(
+    'address',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _coverUrlMeta = const VerificationMeta(
     'coverUrl',
   );
@@ -1953,6 +2194,9 @@ class $LocalSpotCacheTable extends LocalSpotCache
     description,
     latitude,
     longitude,
+    coordinateSystem,
+    cityCode,
+    address,
     coverUrl,
     bestTime,
     tagsJson,
@@ -2011,6 +2255,27 @@ class $LocalSpotCacheTable extends LocalSpotCache
     } else if (isInserting) {
       context.missing(_longitudeMeta);
     }
+    if (data.containsKey('coordinate_system')) {
+      context.handle(
+        _coordinateSystemMeta,
+        coordinateSystem.isAcceptableOrUnknown(
+          data['coordinate_system']!,
+          _coordinateSystemMeta,
+        ),
+      );
+    }
+    if (data.containsKey('city_code')) {
+      context.handle(
+        _cityCodeMeta,
+        cityCode.isAcceptableOrUnknown(data['city_code']!, _cityCodeMeta),
+      );
+    }
+    if (data.containsKey('address')) {
+      context.handle(
+        _addressMeta,
+        address.isAcceptableOrUnknown(data['address']!, _addressMeta),
+      );
+    }
     if (data.containsKey('cover_url')) {
       context.handle(
         _coverUrlMeta,
@@ -2066,6 +2331,18 @@ class $LocalSpotCacheTable extends LocalSpotCache
         DriftSqlType.double,
         data['${effectivePrefix}longitude'],
       )!,
+      coordinateSystem: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}coordinate_system'],
+      )!,
+      cityCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}city_code'],
+      ),
+      address: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}address'],
+      ),
       coverUrl: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}cover_url'],
@@ -2098,6 +2375,9 @@ class LocalSpotCacheData extends DataClass
   final String? description;
   final double latitude;
   final double longitude;
+  final String coordinateSystem;
+  final String? cityCode;
+  final String? address;
   final String? coverUrl;
   final String? bestTime;
   final String tagsJson;
@@ -2108,6 +2388,9 @@ class LocalSpotCacheData extends DataClass
     this.description,
     required this.latitude,
     required this.longitude,
+    required this.coordinateSystem,
+    this.cityCode,
+    this.address,
     this.coverUrl,
     this.bestTime,
     required this.tagsJson,
@@ -2123,6 +2406,13 @@ class LocalSpotCacheData extends DataClass
     }
     map['latitude'] = Variable<double>(latitude);
     map['longitude'] = Variable<double>(longitude);
+    map['coordinate_system'] = Variable<String>(coordinateSystem);
+    if (!nullToAbsent || cityCode != null) {
+      map['city_code'] = Variable<String>(cityCode);
+    }
+    if (!nullToAbsent || address != null) {
+      map['address'] = Variable<String>(address);
+    }
     if (!nullToAbsent || coverUrl != null) {
       map['cover_url'] = Variable<String>(coverUrl);
     }
@@ -2143,6 +2433,13 @@ class LocalSpotCacheData extends DataClass
           : Value(description),
       latitude: Value(latitude),
       longitude: Value(longitude),
+      coordinateSystem: Value(coordinateSystem),
+      cityCode: cityCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cityCode),
+      address: address == null && nullToAbsent
+          ? const Value.absent()
+          : Value(address),
       coverUrl: coverUrl == null && nullToAbsent
           ? const Value.absent()
           : Value(coverUrl),
@@ -2165,6 +2462,9 @@ class LocalSpotCacheData extends DataClass
       description: serializer.fromJson<String?>(json['description']),
       latitude: serializer.fromJson<double>(json['latitude']),
       longitude: serializer.fromJson<double>(json['longitude']),
+      coordinateSystem: serializer.fromJson<String>(json['coordinateSystem']),
+      cityCode: serializer.fromJson<String?>(json['cityCode']),
+      address: serializer.fromJson<String?>(json['address']),
       coverUrl: serializer.fromJson<String?>(json['coverUrl']),
       bestTime: serializer.fromJson<String?>(json['bestTime']),
       tagsJson: serializer.fromJson<String>(json['tagsJson']),
@@ -2180,6 +2480,9 @@ class LocalSpotCacheData extends DataClass
       'description': serializer.toJson<String?>(description),
       'latitude': serializer.toJson<double>(latitude),
       'longitude': serializer.toJson<double>(longitude),
+      'coordinateSystem': serializer.toJson<String>(coordinateSystem),
+      'cityCode': serializer.toJson<String?>(cityCode),
+      'address': serializer.toJson<String?>(address),
       'coverUrl': serializer.toJson<String?>(coverUrl),
       'bestTime': serializer.toJson<String?>(bestTime),
       'tagsJson': serializer.toJson<String>(tagsJson),
@@ -2193,6 +2496,9 @@ class LocalSpotCacheData extends DataClass
     Value<String?> description = const Value.absent(),
     double? latitude,
     double? longitude,
+    String? coordinateSystem,
+    Value<String?> cityCode = const Value.absent(),
+    Value<String?> address = const Value.absent(),
     Value<String?> coverUrl = const Value.absent(),
     Value<String?> bestTime = const Value.absent(),
     String? tagsJson,
@@ -2203,6 +2509,9 @@ class LocalSpotCacheData extends DataClass
     description: description.present ? description.value : this.description,
     latitude: latitude ?? this.latitude,
     longitude: longitude ?? this.longitude,
+    coordinateSystem: coordinateSystem ?? this.coordinateSystem,
+    cityCode: cityCode.present ? cityCode.value : this.cityCode,
+    address: address.present ? address.value : this.address,
     coverUrl: coverUrl.present ? coverUrl.value : this.coverUrl,
     bestTime: bestTime.present ? bestTime.value : this.bestTime,
     tagsJson: tagsJson ?? this.tagsJson,
@@ -2217,6 +2526,11 @@ class LocalSpotCacheData extends DataClass
           : this.description,
       latitude: data.latitude.present ? data.latitude.value : this.latitude,
       longitude: data.longitude.present ? data.longitude.value : this.longitude,
+      coordinateSystem: data.coordinateSystem.present
+          ? data.coordinateSystem.value
+          : this.coordinateSystem,
+      cityCode: data.cityCode.present ? data.cityCode.value : this.cityCode,
+      address: data.address.present ? data.address.value : this.address,
       coverUrl: data.coverUrl.present ? data.coverUrl.value : this.coverUrl,
       bestTime: data.bestTime.present ? data.bestTime.value : this.bestTime,
       tagsJson: data.tagsJson.present ? data.tagsJson.value : this.tagsJson,
@@ -2232,6 +2546,9 @@ class LocalSpotCacheData extends DataClass
           ..write('description: $description, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude, ')
+          ..write('coordinateSystem: $coordinateSystem, ')
+          ..write('cityCode: $cityCode, ')
+          ..write('address: $address, ')
           ..write('coverUrl: $coverUrl, ')
           ..write('bestTime: $bestTime, ')
           ..write('tagsJson: $tagsJson, ')
@@ -2247,6 +2564,9 @@ class LocalSpotCacheData extends DataClass
     description,
     latitude,
     longitude,
+    coordinateSystem,
+    cityCode,
+    address,
     coverUrl,
     bestTime,
     tagsJson,
@@ -2261,6 +2581,9 @@ class LocalSpotCacheData extends DataClass
           other.description == this.description &&
           other.latitude == this.latitude &&
           other.longitude == this.longitude &&
+          other.coordinateSystem == this.coordinateSystem &&
+          other.cityCode == this.cityCode &&
+          other.address == this.address &&
           other.coverUrl == this.coverUrl &&
           other.bestTime == this.bestTime &&
           other.tagsJson == this.tagsJson &&
@@ -2273,6 +2596,9 @@ class LocalSpotCacheCompanion extends UpdateCompanion<LocalSpotCacheData> {
   final Value<String?> description;
   final Value<double> latitude;
   final Value<double> longitude;
+  final Value<String> coordinateSystem;
+  final Value<String?> cityCode;
+  final Value<String?> address;
   final Value<String?> coverUrl;
   final Value<String?> bestTime;
   final Value<String> tagsJson;
@@ -2284,6 +2610,9 @@ class LocalSpotCacheCompanion extends UpdateCompanion<LocalSpotCacheData> {
     this.description = const Value.absent(),
     this.latitude = const Value.absent(),
     this.longitude = const Value.absent(),
+    this.coordinateSystem = const Value.absent(),
+    this.cityCode = const Value.absent(),
+    this.address = const Value.absent(),
     this.coverUrl = const Value.absent(),
     this.bestTime = const Value.absent(),
     this.tagsJson = const Value.absent(),
@@ -2296,6 +2625,9 @@ class LocalSpotCacheCompanion extends UpdateCompanion<LocalSpotCacheData> {
     this.description = const Value.absent(),
     required double latitude,
     required double longitude,
+    this.coordinateSystem = const Value.absent(),
+    this.cityCode = const Value.absent(),
+    this.address = const Value.absent(),
     this.coverUrl = const Value.absent(),
     this.bestTime = const Value.absent(),
     this.tagsJson = const Value.absent(),
@@ -2312,6 +2644,9 @@ class LocalSpotCacheCompanion extends UpdateCompanion<LocalSpotCacheData> {
     Expression<String>? description,
     Expression<double>? latitude,
     Expression<double>? longitude,
+    Expression<String>? coordinateSystem,
+    Expression<String>? cityCode,
+    Expression<String>? address,
     Expression<String>? coverUrl,
     Expression<String>? bestTime,
     Expression<String>? tagsJson,
@@ -2324,6 +2659,9 @@ class LocalSpotCacheCompanion extends UpdateCompanion<LocalSpotCacheData> {
       if (description != null) 'description': description,
       if (latitude != null) 'latitude': latitude,
       if (longitude != null) 'longitude': longitude,
+      if (coordinateSystem != null) 'coordinate_system': coordinateSystem,
+      if (cityCode != null) 'city_code': cityCode,
+      if (address != null) 'address': address,
       if (coverUrl != null) 'cover_url': coverUrl,
       if (bestTime != null) 'best_time': bestTime,
       if (tagsJson != null) 'tags_json': tagsJson,
@@ -2338,6 +2676,9 @@ class LocalSpotCacheCompanion extends UpdateCompanion<LocalSpotCacheData> {
     Value<String?>? description,
     Value<double>? latitude,
     Value<double>? longitude,
+    Value<String>? coordinateSystem,
+    Value<String?>? cityCode,
+    Value<String?>? address,
     Value<String?>? coverUrl,
     Value<String?>? bestTime,
     Value<String>? tagsJson,
@@ -2350,6 +2691,9 @@ class LocalSpotCacheCompanion extends UpdateCompanion<LocalSpotCacheData> {
       description: description ?? this.description,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
+      coordinateSystem: coordinateSystem ?? this.coordinateSystem,
+      cityCode: cityCode ?? this.cityCode,
+      address: address ?? this.address,
       coverUrl: coverUrl ?? this.coverUrl,
       bestTime: bestTime ?? this.bestTime,
       tagsJson: tagsJson ?? this.tagsJson,
@@ -2375,6 +2719,15 @@ class LocalSpotCacheCompanion extends UpdateCompanion<LocalSpotCacheData> {
     }
     if (longitude.present) {
       map['longitude'] = Variable<double>(longitude.value);
+    }
+    if (coordinateSystem.present) {
+      map['coordinate_system'] = Variable<String>(coordinateSystem.value);
+    }
+    if (cityCode.present) {
+      map['city_code'] = Variable<String>(cityCode.value);
+    }
+    if (address.present) {
+      map['address'] = Variable<String>(address.value);
     }
     if (coverUrl.present) {
       map['cover_url'] = Variable<String>(coverUrl.value);
@@ -2402,6 +2755,9 @@ class LocalSpotCacheCompanion extends UpdateCompanion<LocalSpotCacheData> {
           ..write('description: $description, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude, ')
+          ..write('coordinateSystem: $coordinateSystem, ')
+          ..write('cityCode: $cityCode, ')
+          ..write('address: $address, ')
           ..write('coverUrl: $coverUrl, ')
           ..write('bestTime: $bestTime, ')
           ..write('tagsJson: $tagsJson, ')
@@ -2423,6 +2779,18 @@ abstract class _$LocalTripDatabase extends GeneratedDatabase {
     this,
   );
   late final $LocalSpotCacheTable localSpotCache = $LocalSpotCacheTable(this);
+  late final Index localTripsStartedAt = Index(
+    'local_trips_started_at',
+    'CREATE INDEX local_trips_started_at ON local_trips (started_at)',
+  );
+  late final Index localTrackPointsTripRecordedAt = Index(
+    'local_track_points_trip_recorded_at',
+    'CREATE INDEX local_track_points_trip_recorded_at ON local_track_points (trip_id, recorded_at)',
+  );
+  late final Index localTripPhotosTripId = Index(
+    'local_trip_photos_trip_id',
+    'CREATE INDEX local_trip_photos_trip_id ON local_trip_photos (trip_id)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2432,12 +2800,33 @@ abstract class _$LocalTripDatabase extends GeneratedDatabase {
     localTrackPoints,
     localTripPhotos,
     localSpotCache,
+    localTripsStartedAt,
+    localTrackPointsTripRecordedAt,
+    localTripPhotosTripId,
   ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'local_trips',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('local_track_points', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'local_trips',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('local_trip_photos', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
 typedef $$LocalTripsTableCreateCompanionBuilder =
     LocalTripsCompanion Function({
       required String id,
+      Value<String?> spotId,
       required String title,
       required DateTime startedAt,
       Value<DateTime?> endedAt,
@@ -2452,6 +2841,7 @@ typedef $$LocalTripsTableCreateCompanionBuilder =
 typedef $$LocalTripsTableUpdateCompanionBuilder =
     LocalTripsCompanion Function({
       Value<String> id,
+      Value<String?> spotId,
       Value<String> title,
       Value<DateTime> startedAt,
       Value<DateTime?> endedAt,
@@ -2522,6 +2912,11 @@ class $$LocalTripsTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get spotId => $composableBuilder(
+    column: $table.spotId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2635,6 +3030,11 @@ class $$LocalTripsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get spotId => $composableBuilder(
+    column: $table.spotId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -2692,6 +3092,9 @@ class $$LocalTripsTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get spotId =>
+      $composableBuilder(column: $table.spotId, builder: (column) => column);
 
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
@@ -2809,6 +3212,7 @@ class $$LocalTripsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String?> spotId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<DateTime> startedAt = const Value.absent(),
                 Value<DateTime?> endedAt = const Value.absent(),
@@ -2821,6 +3225,7 @@ class $$LocalTripsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => LocalTripsCompanion(
                 id: id,
+                spotId: spotId,
                 title: title,
                 startedAt: startedAt,
                 endedAt: endedAt,
@@ -2835,6 +3240,7 @@ class $$LocalTripsTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String?> spotId = const Value.absent(),
                 required String title,
                 required DateTime startedAt,
                 Value<DateTime?> endedAt = const Value.absent(),
@@ -2847,6 +3253,7 @@ class $$LocalTripsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => LocalTripsCompanion.insert(
                 id: id,
+                spotId: spotId,
                 title: title,
                 startedAt: startedAt,
                 endedAt: endedAt,
@@ -2948,6 +3355,8 @@ typedef $$LocalTrackPointsTableCreateCompanionBuilder =
     LocalTrackPointsCompanion Function({
       Value<int> id,
       required String tripId,
+      Value<String?> nativeLogId,
+      Value<String> coordinateSystem,
       required double latitude,
       required double longitude,
       Value<double?> altitude,
@@ -2961,6 +3370,8 @@ typedef $$LocalTrackPointsTableUpdateCompanionBuilder =
     LocalTrackPointsCompanion Function({
       Value<int> id,
       Value<String> tripId,
+      Value<String?> nativeLogId,
+      Value<String> coordinateSystem,
       Value<double> latitude,
       Value<double> longitude,
       Value<double?> altitude,
@@ -3013,6 +3424,16 @@ class $$LocalTrackPointsTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get nativeLogId => $composableBuilder(
+    column: $table.nativeLogId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get coordinateSystem => $composableBuilder(
+    column: $table.coordinateSystem,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3094,6 +3515,16 @@ class $$LocalTrackPointsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get nativeLogId => $composableBuilder(
+    column: $table.nativeLogId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get coordinateSystem => $composableBuilder(
+    column: $table.coordinateSystem,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get latitude => $composableBuilder(
     column: $table.latitude,
     builder: (column) => ColumnOrderings(column),
@@ -3169,6 +3600,16 @@ class $$LocalTrackPointsTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get nativeLogId => $composableBuilder(
+    column: $table.nativeLogId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get coordinateSystem => $composableBuilder(
+    column: $table.coordinateSystem,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<double> get latitude =>
       $composableBuilder(column: $table.latitude, builder: (column) => column);
@@ -3252,6 +3693,8 @@ class $$LocalTrackPointsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> tripId = const Value.absent(),
+                Value<String?> nativeLogId = const Value.absent(),
+                Value<String> coordinateSystem = const Value.absent(),
                 Value<double> latitude = const Value.absent(),
                 Value<double> longitude = const Value.absent(),
                 Value<double?> altitude = const Value.absent(),
@@ -3263,6 +3706,8 @@ class $$LocalTrackPointsTableTableManager
               }) => LocalTrackPointsCompanion(
                 id: id,
                 tripId: tripId,
+                nativeLogId: nativeLogId,
+                coordinateSystem: coordinateSystem,
                 latitude: latitude,
                 longitude: longitude,
                 altitude: altitude,
@@ -3276,6 +3721,8 @@ class $$LocalTrackPointsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required String tripId,
+                Value<String?> nativeLogId = const Value.absent(),
+                Value<String> coordinateSystem = const Value.absent(),
                 required double latitude,
                 required double longitude,
                 Value<double?> altitude = const Value.absent(),
@@ -3287,6 +3734,8 @@ class $$LocalTrackPointsTableTableManager
               }) => LocalTrackPointsCompanion.insert(
                 id: id,
                 tripId: tripId,
+                nativeLogId: nativeLogId,
+                coordinateSystem: coordinateSystem,
                 latitude: latitude,
                 longitude: longitude,
                 altitude: altitude,
@@ -3369,6 +3818,7 @@ typedef $$LocalTripPhotosTableCreateCompanionBuilder =
     LocalTripPhotosCompanion Function({
       required String id,
       required String tripId,
+      Value<String> photoSource,
       required String filePath,
       Value<String?> thumbnailPath,
       Value<double?> latitude,
@@ -3383,6 +3833,7 @@ typedef $$LocalTripPhotosTableUpdateCompanionBuilder =
     LocalTripPhotosCompanion Function({
       Value<String> id,
       Value<String> tripId,
+      Value<String> photoSource,
       Value<String> filePath,
       Value<String?> thumbnailPath,
       Value<double?> latitude,
@@ -3436,6 +3887,11 @@ class $$LocalTripPhotosTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get photoSource => $composableBuilder(
+    column: $table.photoSource,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3517,6 +3973,11 @@ class $$LocalTripPhotosTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get photoSource => $composableBuilder(
+    column: $table.photoSource,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get filePath => $composableBuilder(
     column: $table.filePath,
     builder: (column) => ColumnOrderings(column),
@@ -3592,6 +4053,11 @@ class $$LocalTripPhotosTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get photoSource => $composableBuilder(
+    column: $table.photoSource,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get filePath =>
       $composableBuilder(column: $table.filePath, builder: (column) => column);
@@ -3675,6 +4141,7 @@ class $$LocalTripPhotosTableTableManager
               ({
                 Value<String> id = const Value.absent(),
                 Value<String> tripId = const Value.absent(),
+                Value<String> photoSource = const Value.absent(),
                 Value<String> filePath = const Value.absent(),
                 Value<String?> thumbnailPath = const Value.absent(),
                 Value<double?> latitude = const Value.absent(),
@@ -3687,6 +4154,7 @@ class $$LocalTripPhotosTableTableManager
               }) => LocalTripPhotosCompanion(
                 id: id,
                 tripId: tripId,
+                photoSource: photoSource,
                 filePath: filePath,
                 thumbnailPath: thumbnailPath,
                 latitude: latitude,
@@ -3701,6 +4169,7 @@ class $$LocalTripPhotosTableTableManager
               ({
                 required String id,
                 required String tripId,
+                Value<String> photoSource = const Value.absent(),
                 required String filePath,
                 Value<String?> thumbnailPath = const Value.absent(),
                 Value<double?> latitude = const Value.absent(),
@@ -3713,6 +4182,7 @@ class $$LocalTripPhotosTableTableManager
               }) => LocalTripPhotosCompanion.insert(
                 id: id,
                 tripId: tripId,
+                photoSource: photoSource,
                 filePath: filePath,
                 thumbnailPath: thumbnailPath,
                 latitude: latitude,
@@ -3799,6 +4269,9 @@ typedef $$LocalSpotCacheTableCreateCompanionBuilder =
       Value<String?> description,
       required double latitude,
       required double longitude,
+      Value<String> coordinateSystem,
+      Value<String?> cityCode,
+      Value<String?> address,
       Value<String?> coverUrl,
       Value<String?> bestTime,
       Value<String> tagsJson,
@@ -3812,6 +4285,9 @@ typedef $$LocalSpotCacheTableUpdateCompanionBuilder =
       Value<String?> description,
       Value<double> latitude,
       Value<double> longitude,
+      Value<String> coordinateSystem,
+      Value<String?> cityCode,
+      Value<String?> address,
       Value<String?> coverUrl,
       Value<String?> bestTime,
       Value<String> tagsJson,
@@ -3850,6 +4326,21 @@ class $$LocalSpotCacheTableFilterComposer
 
   ColumnFilters<double> get longitude => $composableBuilder(
     column: $table.longitude,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get coordinateSystem => $composableBuilder(
+    column: $table.coordinateSystem,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get cityCode => $composableBuilder(
+    column: $table.cityCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get address => $composableBuilder(
+    column: $table.address,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3908,6 +4399,21 @@ class $$LocalSpotCacheTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get coordinateSystem => $composableBuilder(
+    column: $table.coordinateSystem,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get cityCode => $composableBuilder(
+    column: $table.cityCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get address => $composableBuilder(
+    column: $table.address,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get coverUrl => $composableBuilder(
     column: $table.coverUrl,
     builder: (column) => ColumnOrderings(column),
@@ -3954,6 +4460,17 @@ class $$LocalSpotCacheTableAnnotationComposer
 
   GeneratedColumn<double> get longitude =>
       $composableBuilder(column: $table.longitude, builder: (column) => column);
+
+  GeneratedColumn<String> get coordinateSystem => $composableBuilder(
+    column: $table.coordinateSystem,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get cityCode =>
+      $composableBuilder(column: $table.cityCode, builder: (column) => column);
+
+  GeneratedColumn<String> get address =>
+      $composableBuilder(column: $table.address, builder: (column) => column);
 
   GeneratedColumn<String> get coverUrl =>
       $composableBuilder(column: $table.coverUrl, builder: (column) => column);
@@ -4010,6 +4527,9 @@ class $$LocalSpotCacheTableTableManager
                 Value<String?> description = const Value.absent(),
                 Value<double> latitude = const Value.absent(),
                 Value<double> longitude = const Value.absent(),
+                Value<String> coordinateSystem = const Value.absent(),
+                Value<String?> cityCode = const Value.absent(),
+                Value<String?> address = const Value.absent(),
                 Value<String?> coverUrl = const Value.absent(),
                 Value<String?> bestTime = const Value.absent(),
                 Value<String> tagsJson = const Value.absent(),
@@ -4021,6 +4541,9 @@ class $$LocalSpotCacheTableTableManager
                 description: description,
                 latitude: latitude,
                 longitude: longitude,
+                coordinateSystem: coordinateSystem,
+                cityCode: cityCode,
+                address: address,
                 coverUrl: coverUrl,
                 bestTime: bestTime,
                 tagsJson: tagsJson,
@@ -4034,6 +4557,9 @@ class $$LocalSpotCacheTableTableManager
                 Value<String?> description = const Value.absent(),
                 required double latitude,
                 required double longitude,
+                Value<String> coordinateSystem = const Value.absent(),
+                Value<String?> cityCode = const Value.absent(),
+                Value<String?> address = const Value.absent(),
                 Value<String?> coverUrl = const Value.absent(),
                 Value<String?> bestTime = const Value.absent(),
                 Value<String> tagsJson = const Value.absent(),
@@ -4045,6 +4571,9 @@ class $$LocalSpotCacheTableTableManager
                 description: description,
                 latitude: latitude,
                 longitude: longitude,
+                coordinateSystem: coordinateSystem,
+                cityCode: cityCode,
+                address: address,
                 coverUrl: coverUrl,
                 bestTime: bestTime,
                 tagsJson: tagsJson,
