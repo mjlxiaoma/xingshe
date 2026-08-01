@@ -71,15 +71,14 @@ curl.exe --fail http://127.0.0.1:8080/healthz
 {"code":"OK","message":"success","data":{"status":"ok"}}
 ```
 
-从 `services/api` 执行数据库迁移：
+在仓库根目录通过 API 容器执行数据库迁移：
 
 ```powershell
-$env:DATABASE_URL='postgres://xingshe:change-me-for-local-development@127.0.0.1:5432/xingshe?sslmode=disable'
-go run ./cmd/migrate up
-go run ./cmd/migrate down
+docker compose exec api xingshe-migrate up
+docker compose exec api xingshe-migrate down
 ```
 
-`down` 每次只回滚一个版本。正常开发使用 `up`；不要使用自动建表代替迁移。
+迁移命令直接读取容器内的 `DATABASE_URL` 和镜像中的 SQL 文件。`down` 每次只回滚一个版本；正常开发使用 `up`，不要使用自动建表代替迁移。
 
 ## 4. 单独运行 API
 
@@ -134,6 +133,8 @@ docker compose down
 
 `docker compose down` 保留数据库和 Redis 卷。仅在确认可以删除全部本地数据后执行 `docker compose down -v`。
 
+数据生命周期：PostgreSQL Volume 保存账号、机位和收藏等服务端业务数据；Redis 只保存带 TTL 的临时状态。手机 Drift 数据库保存本地行程、精确轨迹和照片关联，Android 自动云备份已禁用。后续拍摄照片写入系统相册 `Pictures/XingShe`，导入照片只保存持久化 `content://` URI；卸载应用不会删除系统相册原图，删除行程也默认只删除关联记录。
+
 ## 7. 常见问题
 
 - `JAVA_HOME is not set`：指向 Android Studio 的 `jbr`，重新打开终端后运行 `flutter doctor -v`。
@@ -143,4 +144,5 @@ docker compose down
 - 端口占用：在 `.env` 修改 `API_PORT`、`POSTGRES_PORT` 或 `REDIS_PORT`。
 - 模拟器显示 `offline`：等待 `adb shell getprop sys.boot_completed` 返回 `1`；必要时重启 ADB。
 - 真机无法访问 API：不要使用 `127.0.0.1` 或 `10.0.2.2`，改用开发机局域网 IP 并检查防火墙。
+- 修改数据库密码后 API 无法连接：环境变量不会修改已存在 Volume 内的 PostgreSQL 密码；恢复原密码，或备份后重建 Volume。
 - sqlite3 测试下载超时：项目已通过 `pubspec.yaml` 配置使用系统 SQLite，无需下载测试 DLL。

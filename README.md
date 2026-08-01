@@ -57,13 +57,24 @@ API 成功时会返回：
 首次启动以及仓库新增迁移后，都要执行：
 
 ```powershell
-Set-Location services/api
-$env:DATABASE_URL='postgres://xingshe:change-me-for-local-development@127.0.0.1:5432/xingshe?sslmode=disable'
-go run ./cmd/migrate up
-Set-Location ../..
+docker compose exec api xingshe-migrate up
 ```
 
-上面的账号和密码对应 `.env.example`。如果修改了 `POSTGRES_DB`、`POSTGRES_USER` 或 `POSTGRES_PASSWORD`，请同步修改 `DATABASE_URL`。`down` 会回滚最近一次迁移，普通启动不要执行。
+迁移程序直接使用容器配置，无需手工填写数据库连接字符串。`down` 会回滚最近一次迁移，普通启动不要执行。
+
+## 数据存在哪里
+
+| 数据 | 存储位置 |
+| --- | --- |
+| 用户、机位、收藏、Token 哈希 | PostgreSQL Docker Volume |
+| 限流、登录失败计数等临时数据 | Redis（带过期时间） |
+| 登录 Token、设备 ID | Android 安全存储 |
+| 行程、精确轨迹、照片关联 | 手机 Drift/SQLite |
+| 新拍原图 | 系统相册 `Pictures/XingShe`（H04 实现） |
+| 导入原图 | 保留原文件，应用只保存 `content://` URI（H05 实现） |
+| 缩略图、分享图 | 应用缓存，可自动清理 |
+
+`docker compose down` 会保留 PostgreSQL 和 Redis Volume；`docker compose down -v` 才会永久删除它们。卸载应用会删除手机内的行程、轨迹和应用缓存，但系统相册原图仍保留。删除行程默认只删除数据库关联；删除系统原图必须单独确认。Android 自动云备份已禁用，因此当前本地行程应按“仅此设备一份”看待，导出与恢复功能将在后续迭代补充。
 
 ## 4. 启动 Android 客户端
 
@@ -93,12 +104,14 @@ docker compose down
 
 - 高德地图目前是可编译的占位适配器，尚未接入真实 SDK 和 Android Key。
 - 开发环境 Mailer 不会真正发送验证码，因此真实邮箱登录仍需 SMTP 服务。
+- Drift v2 数据库结构已经就绪，但行程业务尚未开始写入；Room、拍照和相册导入仍在后续任务中。
 - 后台定位、拍照、相册和系统分享尚未完成真机验收。
 
 ## 常见问题
 
 - 服务不是 `healthy`：运行 `docker compose logs api postgres redis` 查看错误，优先检查 `.env` 中的 `JWT_SECRET`。
-- 数据库迁移连接失败：确认 PostgreSQL 已健康，并检查 `DATABASE_URL` 是否和 `.env` 一致。
+- 数据库迁移连接失败：确认 PostgreSQL 与 API 均健康，并用 `docker compose config` 检查 `.env` 是否已生效。
+- 修改 `.env` 数据库密码后连接失败：旧 PostgreSQL Volume 不会自动改密码；恢复创建 Volume 时的密码，或确认不需要旧数据后执行 `docker compose down -v` 重新初始化。
 - 模拟器无法访问 API：模拟器必须使用 `10.0.2.2`，不能使用 `127.0.0.1`。
 - 真机无法访问 API：使用电脑局域网 IP，并确认手机与电脑在同一网络、防火墙允许访问 8080 端口。
 
