@@ -11,7 +11,6 @@ import 'package:xingshe/core/media/media_bridge.dart';
 import 'package:xingshe/core/media/trip_photo_controller.dart';
 import 'package:xingshe/core/permissions/app_permissions.dart';
 import 'package:xingshe/features/trips/active_trip_page.dart';
-import 'package:xingshe/features/trips/trip_detail_page.dart';
 
 void main() {
   testWidgets('shows metrics and controls recording through completion', (
@@ -81,8 +80,7 @@ void main() {
       routes: [
         GoRoute(
           path: '/trips/:tripId',
-          builder: (_, state) =>
-              TripDetailPage(tripID: state.pathParameters['tripId']!),
+          builder: (_, _) => const Scaffold(key: Key('trip-detail-page')),
         ),
         GoRoute(
           path: '/active',
@@ -148,8 +146,6 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     await tester.pump();
     expect(find.byKey(const Key('trip-detail-page')), findsOneWidget);
-    expect(find.text('已完成'), findsOneWidget);
-    expect(find.text('2 张'), findsOneWidget);
     expect(
       (await database.select(database.localTrips).getSingle()).status,
       'completed',

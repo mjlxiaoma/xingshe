@@ -82,6 +82,23 @@ void main() {
               ),
             ),
           ],
+          polylines: const [
+            MapPolyline(
+              id: 'route-1',
+              points: [
+                MapCoordinate(
+                  latitude: 39.908823,
+                  longitude: 116.397470,
+                  system: MapCoordinateSystem.wgs84,
+                ),
+                MapCoordinate(
+                  latitude: 39.909823,
+                  longitude: 116.398470,
+                  system: MapCoordinateSystem.wgs84,
+                ),
+              ],
+            ),
+          ],
           onMarkerTap: (marker) => selected = marker,
         ),
       );
@@ -106,6 +123,13 @@ void main() {
         map.markers.single.position.longitude,
         closeTo(116.403714, 0.00002),
       );
+      expect(map.polylines.single.id, 'route-1');
+      expect(map.polylines.single.points, hasLength(2));
+      expect(
+        map.polylines.single.points.first.longitude,
+        closeTo(116.403714, 0.00002),
+      );
+      expect(map.polylines.single.color, const Color(0xFFE85D45));
       map.markers.single.onTap?.call('spot-1');
       expect(selected?.id, 'spot-1');
     },

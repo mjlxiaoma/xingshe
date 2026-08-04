@@ -258,6 +258,28 @@ class AndroidMapProvider implements MapProvider {
         nativeMarker.setIdForCopy(marker.id);
         return nativeMarker;
       }).toSet(),
+      polylines: scene.polylines
+          .where((polyline) => polyline.points.length >= 2)
+          .map((polyline) {
+            final nativePolyline = amap.Polyline(
+              points: polyline.points
+                  .map((point) {
+                    final position = MapCoordinateConverter.toGCJ02(point);
+                    return amap_base.LatLng(
+                      position.latitude,
+                      position.longitude,
+                    );
+                  })
+                  .toList(growable: false),
+              width: 7,
+              color: const Color(0xFFE85D45),
+              capType: amap.CapType.round,
+              joinType: amap.JoinType.round,
+            );
+            nativePolyline.setIdForCopy(polyline.id);
+            return nativePolyline;
+          })
+          .toSet(),
       myLocationStyleOptions: scene.showUserLocation
           ? amap.MyLocationStyleOptions(true)
           : null,
