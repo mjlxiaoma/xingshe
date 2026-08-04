@@ -233,10 +233,11 @@ class _AuthenticatedProfile extends ConsumerWidget {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 6),
-        const _MenuItem(
+        _MenuItem(
           icon: Icons.bookmark,
           title: '收藏机位',
           detail: '查看已收藏的摄影机位',
+          onTap: () => context.push('/favorites'),
         ),
         const _MenuItem(icon: Icons.route, title: '本地行程', detail: '轨迹与照片仅在设备中'),
         _MenuItem(

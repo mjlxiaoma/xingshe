@@ -313,7 +313,9 @@ class _SpotResults extends StatelessWidget {
     key: const Key('spot-results'),
     itemCount: state.items.length + (state.hasMore ? 1 : 0),
     itemBuilder: (context, index) {
-      if (index < state.items.length) return _SpotItem(state.items[index]);
+      if (index < state.items.length) {
+        return SpotListItem(spot: state.items[index]);
+      }
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: state.loadingMore
@@ -336,14 +338,21 @@ class _SpotResults extends StatelessWidget {
   );
 }
 
-class _SpotItem extends StatelessWidget {
-  const _SpotItem(this.spot);
+class SpotListItem extends StatelessWidget {
+  const SpotListItem({
+    super.key,
+    required this.spot,
+    this.trailing,
+    this.onTap,
+  });
 
   final ShootingSpot spot;
+  final Widget? trailing;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) => InkWell(
-    onTap: () => context.push('/spots/${spot.id}'),
+    onTap: onTap ?? () => context.push('/spots/${spot.id}'),
     child: Container(
       height: 116,
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -372,10 +381,17 @@ class _SpotItem extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Icon(
-                      spot.isFavorited ? Icons.bookmark : Icons.bookmark_border,
-                      color: const Color(0xFF2D6B3F),
-                      size: 20,
+                    SizedBox.square(
+                      dimension: 32,
+                      child:
+                          trailing ??
+                          Icon(
+                            spot.isFavorited
+                                ? Icons.bookmark
+                                : Icons.bookmark_border,
+                            color: const Color(0xFF2D6B3F),
+                            size: 20,
+                          ),
                     ),
                   ],
                 ),
