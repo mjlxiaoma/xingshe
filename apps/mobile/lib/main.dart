@@ -9,6 +9,7 @@ import 'features/auth/email_login_page.dart';
 import 'features/auth/verification_page.dart';
 import 'features/profile/profile_page.dart';
 import 'features/settings/settings_pages.dart';
+import 'features/spots/spot_list_page.dart';
 
 void main() => runApp(const ProviderScope(child: XingSheApp()));
 
@@ -28,6 +29,7 @@ final _router = GoRouter(
       routes: [
         GoRoute(path: '/', builder: (_, _) => const _HomePage()),
         GoRoute(path: '/map', builder: (_, _) => const _MapPage()),
+        GoRoute(path: '/spots', builder: (_, _) => const SpotListPage()),
         GoRoute(path: '/trip', builder: (_, _) => const _TripPage()),
         GoRoute(path: '/me', builder: (_, _) => const ProfilePage()),
       ],
@@ -223,7 +225,7 @@ class _HomePage extends StatelessWidget {
                 style: TextStyle(fontSize: 19, fontWeight: FontWeight.w700),
               ),
               TextButton(
-                onPressed: () => context.go('/map'),
+                onPressed: () => context.go('/spots'),
                 child: const Text('查看全部'),
               ),
             ],
@@ -262,11 +264,15 @@ class _MapSearchBar extends StatelessWidget {
   Widget build(BuildContext context) => Material(
     color: Colors.white,
     borderRadius: BorderRadius.circular(8),
-    child: const ListTile(
+    child: ListTile(
       dense: true,
-      leading: Icon(Icons.search, color: _muted),
-      title: Text('搜索地点或摄影机位', style: TextStyle(color: _muted, fontSize: 14)),
-      trailing: Icon(Icons.tune, color: _primary),
+      leading: const Icon(Icons.search, color: _muted),
+      title: const Text(
+        '搜索地点或摄影机位',
+        style: TextStyle(color: _muted, fontSize: 14),
+      ),
+      trailing: const Icon(Icons.chevron_right, color: _primary),
+      onTap: () => context.go('/spots'),
     ),
   );
 }
