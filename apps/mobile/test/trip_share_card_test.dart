@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xingshe/core/database/local_database.dart';
 import 'package:xingshe/core/location/track_synchronizer.dart';
+import 'package:xingshe/features/share/trip_share_image.dart';
 import 'package:xingshe/features/share/trip_share_preview_page.dart';
 
 void main() {
@@ -65,6 +69,89 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(const Duration(milliseconds: 1));
   });
+
+  testWidgets('generates the share image locally and reports failures', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(360, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final database = await _database();
+    addTearDown(database.close);
+    var generated = false;
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [localTripDatabaseProvider.overrideWithValue(database)],
+        child: MaterialApp(
+          home: TripSharePreviewPage(
+            tripID: 'trip-1',
+            generator: (_) async {
+              generated = true;
+              return File('temporary-trip.png');
+            },
+          ),
+        ),
+      ),
+    );
+    await _pumpFrames(tester);
+
+    await tester.tap(find.byKey(const Key('generate-trip-share-image')));
+    await tester.pumpAndSettle();
+    expect(generated, isTrue);
+    expect(find.text('分享图已在本机生成'), findsOneWidget);
+    expect(find.text('重新生成'), findsOneWidget);
+    tester
+        .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
+        .clearSnackBars();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [localTripDatabaseProvider.overrideWithValue(database)],
+        child: MaterialApp(
+          home: TripSharePreviewPage(
+            tripID: 'trip-1',
+            generator: (_) async => throw StateError('encoding failed'),
+          ),
+        ),
+      ),
+    );
+    await _pumpFrames(tester);
+    await tester.tap(find.byKey(const Key('generate-trip-share-image')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('分享图生成失败，请重试'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 1));
+  });
+
+  test('writes PNG bytes to a temporary directory', () async {
+    final bytes = Uint8List.fromList(const [137, 80, 78, 71, 13, 10, 26, 10]);
+    final image = await writeTripSharePng(bytes);
+    addTearDown(() => image.parent.delete(recursive: true));
+    expect(await image.readAsBytes(), bytes);
+    expect(image.path, endsWith('trip.png'));
+  });
+}
+
+Future<LocalTripDatabase> _database() async {
+  final database = LocalTripDatabase.forTesting(NativeDatabase.memory());
+  final startedAt = DateTime.utc(2026, 7, 28, 9);
+  await database
+      .into(database.localTrips)
+      .insert(
+        LocalTripsCompanion.insert(
+          id: 'trip-1',
+          title: '测试行程',
+          startedAt: startedAt,
+          status: 'completed',
+          createdAt: startedAt,
+          updatedAt: startedAt,
+        ),
+      );
+  return database;
 }
 
 LocalTrackPointsCompanion _point(
