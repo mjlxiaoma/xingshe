@@ -51,6 +51,8 @@ void main() {
     expect(paths, isNot(contains('<external-path')));
     expect(bridge, contains('FileProvider.getUriForFile'));
     expect(bridge, contains('Intent.FLAG_GRANT_READ_URI_PERMISSION'));
+    expect(bridge, contains('activity.startActivity('));
+    expect(bridge, isNot(contains('startActivityForResult')));
     expect(bridge, isNot(contains('Uri.fromFile')));
   });
 }

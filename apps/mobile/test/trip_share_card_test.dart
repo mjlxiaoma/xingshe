@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:xingshe/core/database/local_database.dart';
 import 'package:xingshe/core/location/track_synchronizer.dart';
 import 'package:xingshe/features/share/trip_share_image.dart';
+import 'package:xingshe/features/share/trip_share_card.dart';
 import 'package:xingshe/features/share/trip_share_preview_page.dart';
 
 void main() {
@@ -22,11 +23,28 @@ void main() {
     final database = LocalTripDatabase.forTesting(NativeDatabase.memory());
     addTearDown(database.close);
     final startedAt = DateTime.utc(2026, 7, 28, 9);
+    const privateAddress = '测试市示例路 123 号';
+    const privateEmail = 'privacy-test@example.invalid';
+    const fakeToken = 'test.header.signature';
+    await database
+        .into(database.localSpotCache)
+        .insert(
+          LocalSpotCacheCompanion.insert(
+            spotId: 'spot-private',
+            name: '不公开机位',
+            description: const Value('$privateEmail $fakeToken'),
+            latitude: 0,
+            longitude: 0,
+            address: const Value(privateAddress),
+            updatedAt: startedAt,
+          ),
+        );
     await database
         .into(database.localTrips)
         .insert(
           LocalTripsCompanion.insert(
             id: 'trip-1',
+            spotId: const Value('spot-private'),
             title: '滨江追光',
             startedAt: startedAt,
             endedAt: Value(startedAt.add(const Duration(hours: 1))),
@@ -47,6 +65,22 @@ void main() {
         ),
       ]);
     });
+    final model = TripShareCardModel.fromLocal(
+      trip: await (database.select(
+        database.localTrips,
+      )..where((row) => row.id.equals('trip-1'))).getSingle(),
+      tracks: await (database.select(
+        database.localTrackPoints,
+      )..where((row) => row.tripId.equals('trip-1'))).get(),
+      photoCount: 0,
+    );
+    expect(model.route, hasLength(2));
+    expect(
+      model.route.every(
+        (point) => point.x >= 0 && point.x <= 1 && point.y >= 0 && point.y <= 1,
+      ),
+      isTrue,
+    );
     await tester.pumpWidget(
       ProviderScope(
         overrides: [localTripDatabaseProvider.overrideWithValue(database)],
@@ -65,6 +99,9 @@ void main() {
     expect(find.text('图片仅在本机生成，不上传服务器'), findsOneWidget);
     expect(find.textContaining('30.123456'), findsNothing);
     expect(find.textContaining('120.123456'), findsNothing);
+    expect(find.text(privateAddress), findsNothing);
+    expect(find.textContaining(privateEmail), findsNothing);
+    expect(find.textContaining(fakeToken), findsNothing);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(const Duration(milliseconds: 1));
