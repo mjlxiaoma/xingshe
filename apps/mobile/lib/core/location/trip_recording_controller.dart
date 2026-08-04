@@ -24,6 +24,38 @@ class TripRecordingController {
   final LocationBridge locationBridge;
   final TrackSynchronizer synchronizer;
 
+  Future<void> createAndStart({
+    required String id,
+    required String title,
+    String? spotID,
+    DateTime? startedAt,
+  }) async {
+    final name = title.trim();
+    if (id.isEmpty || name.isEmpty) throw ArgumentError('行摄标题不能为空');
+    final now = (startedAt ?? DateTime.now()).toUtc();
+    await database
+        .into(database.localTrips)
+        .insert(
+          LocalTripsCompanion.insert(
+            id: id,
+            spotId: Value(spotID),
+            title: name,
+            startedAt: now,
+            status: 'draft',
+            createdAt: now,
+            updatedAt: now,
+          ),
+        );
+    try {
+      await start(id);
+    } on Object {
+      await (database.delete(
+        database.localTrips,
+      )..where((row) => row.id.equals(id))).go();
+      rethrow;
+    }
+  }
+
   Future<void> start(
     String tripID, {
     Duration interval = const Duration(seconds: 5),

@@ -34,12 +34,12 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('使用地图前，请先了解位置数据'), findsOneWidget);
 
-    await tester.tap(find.text('行摄'));
-    await tester.pumpAndSettle();
-    expect(find.text('开始一次新的行摄'), findsOneWidget);
-
     await tester.tap(find.text('我的'));
     await tester.pumpAndSettle();
     expect(find.text('登录后查看个人资料与收藏机位'), findsOneWidget);
+
+    await tester.tap(find.text('行摄'));
+    await tester.pumpAndSettle();
+    expect(find.text('开始一次新的行摄'), findsOneWidget);
   });
 }

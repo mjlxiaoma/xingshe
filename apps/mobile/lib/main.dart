@@ -14,6 +14,7 @@ import 'features/spots/favorite_spots_page.dart';
 import 'features/spots/spot_detail_page.dart';
 import 'features/spots/spot_list_page.dart';
 import 'features/spots/spot_map_page.dart';
+import 'features/trips/create_trip_page.dart';
 
 void main() => runApp(const ProviderScope(child: XingSheApp()));
 
@@ -34,7 +35,6 @@ final _router = GoRouter(
         GoRoute(path: '/', builder: (_, _) => const _HomePage()),
         GoRoute(path: '/map', builder: (_, _) => const SpotMapPage()),
         GoRoute(path: '/spots', builder: (_, _) => const SpotListPage()),
-        GoRoute(path: '/trip', builder: (_, _) => const _TripPage()),
         GoRoute(path: '/me', builder: (_, _) => const ProfilePage()),
       ],
     ),
@@ -50,6 +50,12 @@ final _router = GoRouter(
     GoRoute(path: '/settings', builder: (_, _) => const SettingsPage()),
     GoRoute(path: '/privacy', builder: (_, _) => const PrivacyPage()),
     GoRoute(path: '/favorites', builder: (_, _) => const FavoriteSpotsPage()),
+    GoRoute(path: '/trip', builder: (_, _) => const CreateTripPage()),
+    GoRoute(
+      path: '/trip/active/:tripId',
+      builder: (_, state) =>
+          TripStartedPage(tripID: state.pathParameters['tripId']!),
+    ),
     GoRoute(
       path: '/spots/:spotId',
       builder: (_, state) =>
@@ -275,71 +281,6 @@ class _HomePage extends StatelessWidget {
           ),
           const _PlaceholderBand(icon: Icons.photo_camera, label: '滨江日落机位'),
         ],
-      ),
-    );
-  }
-}
-
-class _TripPage extends StatelessWidget {
-  const _TripPage();
-
-  @override
-  Widget build(BuildContext context) {
-    return const _SimplePage(
-      eyebrow: '准备',
-      title: '开始一次新的行摄',
-      icon: Icons.route,
-      detail: '轨迹和照片默认只保存在本机',
-    );
-  }
-}
-
-class _SimplePage extends StatelessWidget {
-  const _SimplePage({
-    required this.eyebrow,
-    required this.title,
-    required this.icon,
-    required this.detail,
-  });
-
-  final String eyebrow;
-  final String title;
-  final IconData icon;
-  final String detail;
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(eyebrow, style: const TextStyle(color: _muted, fontSize: 12)),
-            const SizedBox(height: 6),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 24),
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(icon, size: 52, color: _primary),
-                    const SizedBox(height: 12),
-                    Text(
-                      detail,
-                      style: const TextStyle(color: _muted, fontSize: 13),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
