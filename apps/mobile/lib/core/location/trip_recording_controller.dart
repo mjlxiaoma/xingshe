@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../database/local_database.dart';
 import 'location_bridge.dart';
 import 'track_synchronizer.dart';
+import 'trip_statistics.dart';
 
 final tripRecordingControllerProvider = Provider<TripRecordingController>(
   (ref) => TripRecordingController(
@@ -102,6 +103,7 @@ class TripRecordingController {
     final finishedAt = (endedAt ?? DateTime.now()).toUtc();
     await locationBridge.stop();
     await synchronizer.synchronize(tripID: tripID);
+    await refreshTripDistance(database, tripID);
     final duration = trip.status == 'recording'
         ? trip.durationSeconds + _elapsed(trip.updatedAt, finishedAt)
         : trip.durationSeconds;

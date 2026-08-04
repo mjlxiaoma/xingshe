@@ -19,6 +19,7 @@ import 'features/spots/spot_list_page.dart';
 import 'features/spots/spot_map_page.dart';
 import 'features/trips/active_trip_page.dart';
 import 'features/trips/create_trip_page.dart';
+import 'features/trips/trip_detail_page.dart';
 
 void main() => runApp(const ProviderScope(child: XingSheApp()));
 
@@ -59,6 +60,11 @@ final _router = GoRouter(
       path: '/trip/active/:tripId',
       builder: (_, state) =>
           ActiveTripPage(tripID: state.pathParameters['tripId']!),
+    ),
+    GoRoute(
+      path: '/trips/:tripId',
+      builder: (_, state) =>
+          TripDetailPage(tripID: state.pathParameters['tripId']!),
     ),
     GoRoute(
       path: '/spots/:spotId',

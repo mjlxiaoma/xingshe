@@ -67,17 +67,42 @@ void main() {
     await controller.resume('trip-1');
     expect(await _status(database, 'trip-1'), 'recording');
 
+    final startedAt = DateTime.utc(2026, 8, 4, 8);
+    await database.batch((batch) {
+      batch.insertAll(database.localTrackPoints, [
+        LocalTrackPointsCompanion.insert(
+          tripId: 'trip-1',
+          latitude: 30.2,
+          longitude: 120.1,
+          accuracy: const Value(5),
+          recordedAt: startedAt,
+          source: 'gps',
+        ),
+        LocalTrackPointsCompanion.insert(
+          tripId: 'trip-1',
+          latitude: 30.201,
+          longitude: 120.1,
+          accuracy: const Value(5),
+          recordedAt: startedAt.add(const Duration(minutes: 1)),
+          source: 'gps',
+        ),
+      ]);
+    });
+
     final endedAt = DateTime.utc(2026, 8, 4, 9);
     await controller.complete('trip-1', endedAt: endedAt);
     final completed = await database.select(database.localTrips).getSingle();
     expect(completed.status, 'completed');
     expect(completed.endedAt?.toUtc(), endedAt);
+    expect(completed.distanceMeters, greaterThan(100));
     expect(nativeStatus, 'idle');
     await expectLater(controller.resume('trip-1'), throwsStateError);
 
     pending.add(_point('trip-1', 'late-native'));
     expect(await controller.synchronizer.synchronize(), 1);
-    expect(await database.select(database.localTrackPoints).get(), isEmpty);
+    final tracks = await database.select(database.localTrackPoints).get();
+    expect(tracks, hasLength(2));
+    expect(tracks.any((point) => point.nativeLogId == 'late-native'), isFalse);
     expect(pending, isEmpty);
   });
 

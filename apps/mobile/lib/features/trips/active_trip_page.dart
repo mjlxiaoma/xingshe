@@ -351,7 +351,7 @@ class _ActiveTripViewState extends ConsumerState<_ActiveTripView> {
     setState(() => _busy = true);
     try {
       await ref.read(tripRecordingControllerProvider).complete(widget.trip.id);
-      if (mounted) context.go('/');
+      if (mounted) context.go('/trips/${widget.trip.id}');
     } on Object {
       if (!mounted) return;
       setState(() => _busy = false);
