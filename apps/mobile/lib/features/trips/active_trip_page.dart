@@ -191,7 +191,7 @@ class _ActiveTripViewState extends ConsumerState<_ActiveTripView> {
                       dimension: 52,
                       child: IconButton.filledTonal(
                         key: const Key('trip-camera-button'),
-                        onPressed: _busy ? null : _capture,
+                        onPressed: _busy ? null : _addPhoto,
                         icon: const Icon(Icons.photo_camera),
                         tooltip: '拍照',
                       ),
@@ -276,6 +276,52 @@ class _ActiveTripViewState extends ConsumerState<_ActiveTripView> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text('拍照失败，请重试')));
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _addPhoto() async {
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera),
+              title: const Text('拍照'),
+              onTap: () => Navigator.pop(context, 'camera'),
+            ),
+            ListTile(
+              key: const Key('trip-import-photos-action'),
+              leading: const Icon(Icons.photo_library),
+              title: const Text('从相册导入'),
+              onTap: () => Navigator.pop(context, 'gallery'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (!mounted) return;
+    if (action == 'camera') {
+      await _capture();
+    } else if (action == 'gallery') {
+      await _importPhotos();
+    }
+  }
+
+  Future<void> _importPhotos() async {
+    setState(() => _busy = true);
+    try {
+      await ref.read(tripPhotoControllerProvider).importPhotos(widget.trip.id);
+    } on Object {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('照片导入失败，请重试')));
       }
     } finally {
       if (mounted) setState(() => _busy = false);

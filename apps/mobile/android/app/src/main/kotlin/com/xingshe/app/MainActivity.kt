@@ -14,7 +14,10 @@ class MainActivity : FlutterActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
-        if (::photoCaptureBridge.isInitialized && photoCaptureBridge.onActivityResult(requestCode, resultCode)) {
+        if (
+            ::photoCaptureBridge.isInitialized &&
+            photoCaptureBridge.onActivityResult(requestCode, resultCode, data)
+        ) {
             return
         }
         super.onActivityResult(requestCode, resultCode, data)

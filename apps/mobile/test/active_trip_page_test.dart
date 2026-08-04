@@ -124,6 +124,8 @@ void main() {
 
     await tester.tap(find.byKey(const Key('trip-camera-button')));
     await _pumpFrames(tester);
+    await tester.tap(find.text('拍照'));
+    await _pumpFrames(tester);
     expect(requestedPermissions, [AppPermission.camera]);
     expect(find.text('2 张'), findsOneWidget);
 

@@ -28,12 +28,7 @@ class TripPhotoController {
   final String Function() _newID;
 
   Future<LocalTripPhoto?> capture(String tripID) async {
-    final trip = await (database.select(
-      database.localTrips,
-    )..where((row) => row.id.equals(tripID))).getSingleOrNull();
-    if (trip == null || !const {'recording', 'paused'}.contains(trip.status)) {
-      throw StateError('当前行摄不能添加照片');
-    }
+    await _requireActive(tripID);
     final captured = await mediaBridge.capturePhoto();
     if (captured == null) return null;
     final id = _newID();
@@ -52,6 +47,39 @@ class TripPhotoController {
     return (database.select(
       database.localTripPhotos,
     )..where((row) => row.id.equals(id))).getSingle();
+  }
+
+  Future<int> importPhotos(String tripID) async {
+    await _requireActive(tripID);
+    final photos = await mediaBridge.importPhotos();
+    if (photos.isEmpty) return 0;
+    final createdAt = DateTime.now().toUtc();
+    await database.transaction(() async {
+      for (final photo in photos) {
+        await database
+            .into(database.localTripPhotos)
+            .insert(
+              LocalTripPhotosCompanion.insert(
+                id: _newID(),
+                tripId: tripID,
+                photoSource: const Value('gallery'),
+                filePath: photo.uri,
+                takenAt: photo.takenAt,
+                createdAt: createdAt,
+              ),
+            );
+      }
+    });
+    return photos.length;
+  }
+
+  Future<void> _requireActive(String tripID) async {
+    final trip = await (database.select(
+      database.localTrips,
+    )..where((row) => row.id.equals(tripID))).getSingleOrNull();
+    if (trip == null || !const {'recording', 'paused'}.contains(trip.status)) {
+      throw StateError('当前行摄不能添加照片');
+    }
   }
 }
 
