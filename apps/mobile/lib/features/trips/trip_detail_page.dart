@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/database/local_database.dart';
 import '../../core/location/track_synchronizer.dart';
+import '../../core/location/trip_recording_controller.dart';
 import '../../core/map/map_provider.dart';
 
 class TripDetailPage extends ConsumerWidget {
@@ -36,6 +37,7 @@ class TripDetailPage extends ConsumerWidget {
           tooltip: '返回',
         ),
         title: const Text('行程详情'),
+        actions: [_DeleteTripAction(tripID: tripID)],
       ),
       body: StreamBuilder<LocalTrip?>(
         stream: trip,
@@ -62,6 +64,68 @@ class TripDetailPage extends ConsumerWidget {
         },
       ),
     );
+  }
+}
+
+class _DeleteTripAction extends ConsumerStatefulWidget {
+  const _DeleteTripAction({required this.tripID});
+
+  final String tripID;
+
+  @override
+  ConsumerState<_DeleteTripAction> createState() => _DeleteTripActionState();
+}
+
+class _DeleteTripActionState extends ConsumerState<_DeleteTripAction> {
+  bool _deleting = false;
+
+  @override
+  Widget build(BuildContext context) => IconButton(
+    key: const Key('delete-trip-button'),
+    onPressed: _deleting ? null : _delete,
+    icon: _deleting
+        ? const SizedBox.square(
+            dimension: 18,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          )
+        : const Icon(Icons.delete_outline),
+    tooltip: '删除行程',
+  );
+
+  Future<void> _delete() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('删除本地行程？'),
+        content: const Text('将删除此设备上的行程、轨迹、统计和照片关联。系统相册原图不会删除，其他行程不受影响。'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            key: const Key('confirm-delete-trip'),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('确认删除行程'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    setState(() => _deleting = true);
+    try {
+      await ref
+          .read(tripRecordingControllerProvider)
+          .deleteCompleted(widget.tripID);
+      if (mounted) context.go('/trips');
+    } on Object {
+      if (mounted) {
+        setState(() => _deleting = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('行程删除失败，请重试')));
+      }
+    }
   }
 }
 

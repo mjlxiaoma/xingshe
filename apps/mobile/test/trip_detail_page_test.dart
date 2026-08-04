@@ -3,6 +3,7 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:xingshe/core/database/local_database.dart';
 import 'package:xingshe/core/location/track_synchronizer.dart';
 import 'package:xingshe/core/map/map_provider.dart';
@@ -56,6 +57,22 @@ void main() {
       );
     });
     final map = _TestMapProvider();
+    final router = GoRouter(
+      initialLocation: '/trips/trip-1',
+      routes: [
+        GoRoute(
+          path: '/trips',
+          builder: (_, _) => const Scaffold(key: Key('trip-history-page')),
+        ),
+        GoRoute(
+          path: '/trips/:tripId',
+          builder: (_, state) =>
+              TripDetailPage(tripID: state.pathParameters['tripId']!),
+        ),
+        GoRoute(path: '/privacy', builder: (_, _) => const SizedBox.shrink()),
+      ],
+    );
+    addTearDown(router.dispose);
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -65,7 +82,7 @@ void main() {
             MapConsentStore.testing(() async => true, () async {}),
           ),
         ],
-        child: const MaterialApp(home: TripDetailPage(tripID: 'trip-1')),
+        child: MaterialApp.router(routerConfig: router),
       ),
     );
     await _pumpFrames(tester);
@@ -83,6 +100,21 @@ void main() {
     await database.delete(database.localTrackPoints).go();
     await _pumpFrames(tester);
     expect(find.byKey(const Key('trip-route-empty')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('delete-trip-button')));
+    await _pumpFrames(tester);
+    expect(find.text('删除本地行程？'), findsOneWidget);
+    expect(find.textContaining('系统相册原图不会删除'), findsOneWidget);
+    await tester.tap(find.text('取消'));
+    await _pumpFrames(tester);
+    expect(await database.select(database.localTrips).get(), hasLength(1));
+
+    await tester.tap(find.byKey(const Key('delete-trip-button')));
+    await _pumpFrames(tester);
+    await tester.tap(find.byKey(const Key('confirm-delete-trip')));
+    await _pumpFrames(tester);
+    expect(find.byKey(const Key('trip-history-page')), findsOneWidget);
+    expect(await database.select(database.localTrips).get(), isEmpty);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(const Duration(milliseconds: 1));

@@ -151,6 +151,51 @@ void main() {
     expect(source, contains('"paused" -> pause()'));
     expect(source, contains('if (status() != "recording") return'));
   });
+
+  test('deletes one completed trip through database cascades only', () async {
+    await _insertTrip(database, 'trip-1', 'completed');
+    await _insertTrip(database, 'trip-2', 'completed');
+    final now = DateTime.utc(2026, 8, 4);
+    await database.batch((batch) {
+      for (final tripID in const ['trip-1', 'trip-2']) {
+        batch.insert(
+          database.localTrackPoints,
+          LocalTrackPointsCompanion.insert(
+            tripId: tripID,
+            latitude: 30,
+            longitude: 120,
+            recordedAt: now,
+            source: 'gps',
+          ),
+        );
+        batch.insert(
+          database.localTripPhotos,
+          LocalTripPhotosCompanion.insert(
+            id: 'photo-$tripID',
+            tripId: tripID,
+            filePath: 'content://$tripID/photo',
+            takenAt: now,
+            createdAt: now,
+          ),
+        );
+      }
+    });
+
+    await controller.deleteCompleted('trip-1');
+
+    expect(
+      (await database.select(database.localTrips).get()).map((trip) => trip.id),
+      ['trip-2'],
+    );
+    expect(
+      (await database.select(database.localTrackPoints).get()).single.tripId,
+      'trip-2',
+    );
+    expect(
+      (await database.select(database.localTripPhotos).get()).single.filePath,
+      'content://trip-2/photo',
+    );
+  });
 }
 
 Future<void> _insertTrip(LocalTripDatabase database, String id, String status) {

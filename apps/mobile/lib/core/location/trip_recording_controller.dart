@@ -119,6 +119,14 @@ class TripRecordingController {
     );
   }
 
+  Future<void> deleteCompleted(String tripID) async {
+    await _require(tripID, {'completed'});
+    final deleted = await (database.delete(
+      database.localTrips,
+    )..where((row) => row.id.equals(tripID))).go();
+    if (deleted != 1) throw StateError('行程不存在');
+  }
+
   Future<LocalTrip?> restore() async {
     final trip = await _activeTrip();
     if (trip == null) return null;
