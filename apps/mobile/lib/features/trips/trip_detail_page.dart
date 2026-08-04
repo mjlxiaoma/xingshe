@@ -120,6 +120,13 @@ class _DetailContent extends ConsumerWidget {
           _Metric(label: '照片', value: '$photoCount 张'),
         ],
       ),
+      const SizedBox(height: 12),
+      OutlinedButton.icon(
+        key: const Key('open-trip-photo-gallery'),
+        onPressed: () => context.push('/trips/${trip.id}/photos'),
+        icon: const Icon(Icons.photo_library_outlined),
+        label: Text('查看行程照片 · $photoCount'),
+      ),
     ],
   );
 }

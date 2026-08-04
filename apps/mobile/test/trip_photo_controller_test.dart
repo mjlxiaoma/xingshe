@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xingshe/core/database/local_database.dart';
@@ -52,6 +53,8 @@ void main() {
     expect(source, contains('Intent.ACTION_OPEN_DOCUMENT'));
     expect(source, contains('Intent.EXTRA_ALLOW_MULTIPLE'));
     expect(source, contains('takePersistableUriPermission'));
+    expect(source, contains('contentResolver.loadThumbnail'));
+    expect(source, contains('contentResolver.openInputStream'));
     expect(source, isNot(contains('copyTo(')));
     expect(source, isNot(contains('android.util.Log')));
   });
@@ -128,4 +131,66 @@ void main() {
     expect(await controller.importPhotos('trip-1'), 0);
     expect(await database.select(database.localTripPhotos).get(), isEmpty);
   });
+
+  test(
+    'deletes associations by default and originals only for camera photos',
+    () async {
+      final database = LocalTripDatabase.forTesting(NativeDatabase.memory());
+      addTearDown(database.close);
+      final now = DateTime.utc(2026, 8, 4);
+      await database
+          .into(database.localTrips)
+          .insert(
+            LocalTripsCompanion.insert(
+              id: 'trip-1',
+              title: 'trip-1',
+              startedAt: now,
+              endedAt: Value(now.add(const Duration(hours: 1))),
+              status: 'completed',
+              createdAt: now,
+              updatedAt: now,
+            ),
+          );
+      await database.batch((batch) {
+        batch.insertAll(database.localTripPhotos, [
+          LocalTripPhotosCompanion.insert(
+            id: 'camera',
+            tripId: 'trip-1',
+            filePath: 'content://camera/photo',
+            takenAt: now,
+            createdAt: now,
+          ),
+          LocalTripPhotosCompanion.insert(
+            id: 'gallery',
+            tripId: 'trip-1',
+            photoSource: const Value('gallery'),
+            filePath: 'content://gallery/photo',
+            takenAt: now,
+            createdAt: now,
+          ),
+        ]);
+      });
+      final deleted = <String>[];
+      final controller = TripPhotoController(
+        database: database,
+        mediaBridge: MediaBridge.testing(
+          () async => null,
+          null,
+          null,
+          (uri) async => deleted.add(uri),
+        ),
+      );
+
+      await expectLater(
+        controller.deleteCameraOriginal('gallery'),
+        throwsStateError,
+      );
+      await controller.removeAssociation('gallery');
+      expect(deleted, isEmpty);
+      await controller.deleteCameraOriginal('camera');
+
+      expect(deleted, ['content://camera/photo']);
+      expect(await database.select(database.localTripPhotos).get(), isEmpty);
+    },
+  );
 }

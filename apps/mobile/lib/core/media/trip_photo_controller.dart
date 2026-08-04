@@ -73,6 +73,25 @@ class TripPhotoController {
     return photos.length;
   }
 
+  Future<void> removeAssociation(String photoID) async {
+    final deleted = await (database.delete(
+      database.localTripPhotos,
+    )..where((row) => row.id.equals(photoID))).go();
+    if (deleted != 1) throw StateError('照片关联不存在');
+  }
+
+  Future<void> deleteCameraOriginal(String photoID) async {
+    final photo = await (database.select(
+      database.localTripPhotos,
+    )..where((row) => row.id.equals(photoID))).getSingleOrNull();
+    if (photo == null) throw StateError('照片关联不存在');
+    if (photo.photoSource != 'camera') {
+      throw StateError('导入照片的系统原图必须在系统相册中管理');
+    }
+    await mediaBridge.deletePhoto(photo.filePath);
+    await removeAssociation(photoID);
+  }
+
   Future<void> _requireActive(String tripID) async {
     final trip = await (database.select(
       database.localTrips,

@@ -4,11 +4,17 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.ContentValues
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Size
 import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 class PhotoCaptureBridge(
@@ -24,6 +30,8 @@ class PhotoCaptureBridge(
             when (call.method) {
                 "capturePhoto" -> capture(result)
                 "importPhotos" -> importPhotos(result)
+                "loadPhoto" -> loadPhoto(call, result)
+                "deletePhoto" -> deletePhoto(call, result)
                 else -> result.notImplemented()
             }
         }
@@ -143,6 +151,73 @@ class PhotoCaptureBridge(
         val now = System.currentTimeMillis()
         result.success(uris.map { mapOf("uri" to it.toString(), "taken_at" to now) })
         return true
+    }
+
+    private fun loadPhoto(call: MethodCall, result: MethodChannel.Result) {
+        val uri = contentUri(call.argument<String>("uri"), result) ?: return
+        val maxSize = (call.argument<Int>("max_size") ?: 512).coerceIn(64, 2048)
+        val bitmap = try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                activity.contentResolver.loadThumbnail(uri, Size(maxSize, maxSize), null)
+            } else {
+                decodeSampled(uri, maxSize)
+            }
+        } catch (_: SecurityException) {
+            result.error("MEDIA_PERMISSION_FAILED", "无法读取照片", null)
+            return
+        } catch (_: RuntimeException) {
+            result.error("MEDIA_READ_FAILED", "照片读取失败", null)
+            return
+        }
+        if (bitmap == null) {
+            result.error("MEDIA_READ_FAILED", "照片读取失败", null)
+            return
+        }
+        val bytes = ByteArrayOutputStream().use { output ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 88, output)
+            output.toByteArray()
+        }
+        bitmap.recycle()
+        result.success(bytes)
+    }
+
+    private fun deletePhoto(call: MethodCall, result: MethodChannel.Result) {
+        val uri = contentUri(call.argument<String>("uri"), result) ?: return
+        try {
+            if (activity.contentResolver.delete(uri, null, null) < 1) {
+                result.error("MEDIA_DELETE_FAILED", "系统相册原图删除失败", null)
+                return
+            }
+            result.success(null)
+        } catch (_: SecurityException) {
+            result.error("MEDIA_PERMISSION_FAILED", "没有删除系统相册原图的权限", null)
+        } catch (_: RuntimeException) {
+            result.error("MEDIA_DELETE_FAILED", "系统相册原图删除失败", null)
+        }
+    }
+
+    private fun contentUri(value: String?, result: MethodChannel.Result): Uri? {
+        val uri = value?.let(Uri::parse)
+        if (uri?.scheme != "content") {
+            result.error("MEDIA_INVALID_URI", "不支持的照片地址", null)
+            return null
+        }
+        return uri
+    }
+
+    private fun decodeSampled(uri: Uri, maxSize: Int): Bitmap? {
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        activity.contentResolver.openInputStream(uri)?.use {
+            BitmapFactory.decodeStream(it, null, bounds)
+        }
+        var sample = 1
+        while (bounds.outWidth / sample > maxSize || bounds.outHeight / sample > maxSize) {
+            sample *= 2
+        }
+        val options = BitmapFactory.Options().apply { inSampleSize = sample }
+        return activity.contentResolver.openInputStream(uri)?.use {
+            BitmapFactory.decodeStream(it, null, options)
+        }
     }
 
     fun dispose() {

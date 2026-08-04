@@ -75,6 +75,7 @@ void main() {
     expect(find.text('01:00:00'), findsOneWidget);
     expect(find.text('2'), findsOneWidget);
     expect(find.text('1 张'), findsOneWidget);
+    expect(find.byKey(const Key('open-trip-photo-gallery')), findsOneWidget);
     expect(map.scene?.markers.map((marker) => marker.title), ['起点', '终点']);
     expect(map.scene?.polylines.single.points, hasLength(2));
     expect(map.scene?.polylines.single.points.first.latitude, 30.20);

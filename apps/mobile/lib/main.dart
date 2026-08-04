@@ -21,6 +21,7 @@ import 'features/trips/active_trip_page.dart';
 import 'features/trips/create_trip_page.dart';
 import 'features/trips/trip_detail_page.dart';
 import 'features/trips/trip_history_page.dart';
+import 'features/trips/trip_photo_gallery_page.dart';
 
 void main() => runApp(const ProviderScope(child: XingSheApp()));
 
@@ -67,6 +68,11 @@ final _router = GoRouter(
       path: '/trips/:tripId',
       builder: (_, state) =>
           TripDetailPage(tripID: state.pathParameters['tripId']!),
+    ),
+    GoRoute(
+      path: '/trips/:tripId/photos',
+      builder: (_, state) =>
+          TripPhotoGalleryPage(tripID: state.pathParameters['tripId']!),
     ),
     GoRoute(
       path: '/spots/:spotId',
