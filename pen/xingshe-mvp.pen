@@ -1,5 +1,5 @@
 {
-  "version": "2.14",
+  "version": "2.15",
   "children": [
     {
       "type": "frame",
@@ -356,7 +356,8 @@
               "fill": "$text-muted",
               "content": "地图",
               "fontFamily": "$font-body",
-              "fontSize": 10
+              "fontSize": 10,
+              "fontWeight": "normal"
             }
           ]
         },
@@ -390,7 +391,8 @@
               "fill": "$text-muted",
               "content": "行摄",
               "fontFamily": "$font-body",
-              "fontSize": 10
+              "fontSize": 10,
+              "fontWeight": "normal"
             }
           ]
         },
@@ -424,7 +426,8 @@
               "fill": "$text-muted",
               "content": "我的",
               "fontFamily": "$font-body",
-              "fontSize": 10
+              "fontSize": 10,
+              "fontWeight": "normal"
             }
           ]
         }
@@ -443,6 +446,7 @@
       "strokeWidth": {
         "bottom": 1
       },
+      "strokeLinejoin": "round",
       "gap": 14,
       "padding": [
         10,
@@ -887,6 +891,7 @@
               "strokeWidth": {
                 "top": 1
               },
+              "strokeLinejoin": "round",
               "gap": 12,
               "padding": [
                 10,
@@ -2478,6 +2483,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "gap": 10,
           "padding": [
             10,
@@ -6820,6 +6826,7 @@
                 "top": 1,
                 "bottom": 1
               },
+              "strokeLinejoin": "round",
               "gap": 12,
               "padding": [
                 12,
@@ -7992,6 +7999,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "gap": 10,
           "padding": [
             10,
@@ -9155,6 +9163,7 @@
           "strokeWidth": {
             "top": 1
           },
+          "strokeLinejoin": "round",
           "padding": [
             10,
             16,
@@ -9860,6 +9869,7 @@
                 "top": 1,
                 "bottom": 1
               },
+              "strokeLinejoin": "round",
               "gap": 14,
               "padding": [
                 18,
@@ -10092,6 +10102,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -10173,6 +10184,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -10254,6 +10266,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -10335,6 +10348,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -10560,6 +10574,7 @@
               "strokeWidth": {
                 "bottom": 1
               },
+              "strokeLinejoin": "round",
               "gap": 12,
               "padding": [
                 12,
@@ -10658,6 +10673,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 10,
                   "padding": [
                     13,
@@ -10716,6 +10732,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 10,
                   "padding": [
                     13,
@@ -10774,6 +10791,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 10,
                   "padding": [
                     13,
@@ -10832,6 +10850,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 10,
                   "padding": [
                     13,
@@ -10937,7 +10956,7 @@
                       "id": "UDzzW",
                       "name": "Local Data Detail",
                       "fill": "$text-muted",
-                      "content": "删除账号不会自动删除本地行程",
+                      "content": "账号删除后，本地行程默认保留",
                       "fontFamily": "$font-body",
                       "fontSize": 10,
                       "fontWeight": "normal"
@@ -10993,7 +11012,90 @@
             },
             {
               "type": "text",
-              "id": "syaIB",
+              "id": "Y3Syco",
+              "name": "Danger Section Label",
+              "fill": "$error",
+              "content": "危险操作",
+              "fontFamily": "$font-body",
+              "fontSize": 10,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "e0vXy7",
+              "name": "Delete Account Entry",
+              "width": "fill_container",
+              "height": 78,
+              "fill": "#FFF6F4",
+              "cornerRadius": 6,
+              "stroke": "$error",
+              "strokeWidth": 1,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "czHUD",
+                  "x": 12,
+                  "y": 28,
+                  "name": "Delete Account Icon",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "delete_forever",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$error"
+                },
+                {
+                  "type": "frame",
+                  "id": "Ok1JH",
+                  "x": 44,
+                  "y": 12,
+                  "name": "Delete Account Copy",
+                  "width": 232,
+                  "layout": "vertical",
+                  "gap": 3,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "RTqb7",
+                      "name": "Delete Account Title",
+                      "fill": "$error",
+                      "content": "删除账号",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "D3wBQL",
+                      "name": "Delete Account Detail",
+                      "fill": "$text-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "服务端账号、Token 与收藏会删除；本地行程默认保留。系统相册原图不会自动删除。",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "FQCtp",
+                  "x": 296,
+                  "y": 29,
+                  "name": "Delete Account Arrow",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "chevron_right",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$error"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "C92EW",
               "name": "Settings Version",
               "fill": "$text-muted",
               "content": "行摄 Android MVP · 0.1.0",
@@ -11189,6 +11291,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 11,
                   "padding": [
                     12,
@@ -11262,6 +11365,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 11,
                   "padding": [
                     12,
@@ -11335,6 +11439,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 11,
                   "padding": [
                     12,
@@ -11389,7 +11494,7 @@
                           "fill": "$text-muted",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
-                          "content": "仅在你主动开始行摄后定位；结束后立即停止前台服务。",
+                          "content": "首次进入地图前说明高德地图 SDK 与位置数据用途；仅同意后初始化。行摄定位仍只在主动开始后使用。",
                           "lineHeight": 1.4,
                           "fontFamily": "$font-body",
                           "fontSize": 10,
@@ -11408,6 +11513,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 11,
                   "padding": [
                     12,
@@ -11481,6 +11587,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 11,
                   "padding": [
                     12,
@@ -11573,10 +11680,81 @@
                   "id": "Ks3Om",
                   "name": "Privacy Contact Text",
                   "fill": "$primary",
-                  "content": "隐私问题：privacy@xingshe.example",
+                  "content": "联系：隐私联系邮箱",
                   "fontFamily": "$font-body",
                   "fontSize": 10,
                   "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Rnx18",
+              "name": "External Account Deletion Request",
+              "width": "fill_container",
+              "height": 58,
+              "fill": "$surface-soft",
+              "cornerRadius": 6,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "zjEh9",
+                  "x": 12,
+                  "y": 19.5,
+                  "name": "External Deletion Icon",
+                  "width": 19,
+                  "height": 19,
+                  "icon": "person_remove",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$primary"
+                },
+                {
+                  "type": "frame",
+                  "id": "pKOwe",
+                  "x": 39,
+                  "y": 12,
+                  "name": "External Deletion Copy",
+                  "width": 247,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Kki2j",
+                      "name": "External Deletion Title",
+                      "fill": "$text",
+                      "content": "账号删除外部申请",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "wTnx6",
+                      "name": "External Deletion Detail",
+                      "fill": "$text-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "无法登录时，可通过隐私联系邮箱提交删除申请。",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$font-body",
+                      "fontSize": 9,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "G1GzV",
+                  "x": 296,
+                  "y": 19,
+                  "name": "External Deletion Arrow",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "open_in_new",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$text-muted"
                 }
               ]
             }
@@ -11938,6 +12116,7 @@
                 "top": 1,
                 "bottom": 1
               },
+              "strokeLinejoin": "round",
               "gap": 14,
               "padding": [
                 18,
@@ -12170,6 +12349,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -12251,6 +12431,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -12332,6 +12513,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -12413,6 +12595,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 12,
                   "padding": [
                     14,
@@ -14763,6 +14946,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 9,
                   "padding": [
                     0,
@@ -15203,6 +15387,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 9,
                   "padding": [
                     0,
@@ -15643,6 +15828,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 9,
                   "padding": [
                     0,
@@ -16083,6 +16269,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 9,
                   "padding": [
                     0,
@@ -16523,6 +16710,7 @@
                   "strokeWidth": {
                     "bottom": 1
                   },
+                  "strokeLinejoin": "round",
                   "gap": 9,
                   "padding": [
                     0,
@@ -16942,6 +17130,4611 @@
                       ]
                     }
                   ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "PehXK",
+      "x": 10120,
+      "y": 152,
+      "name": "Screen 23 / 高德地图隐私同意 / 未同意",
+      "clip": true,
+      "width": 360,
+      "height": 844,
+      "fill": "$surface",
+      "layout": "vertical",
+      "alignItems": "center",
+      "children": [
+        {
+          "id": "eX7nw",
+          "type": "ref",
+          "ref": "LI2WE",
+          "name": "Map Consent Status Bar",
+          "width": 360
+        },
+        {
+          "type": "frame",
+          "id": "YLPuk",
+          "name": "Consent Header",
+          "width": "fill_container",
+          "height": 60,
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "rVBzY",
+              "name": "Consent Back",
+              "width": 44,
+              "height": 44,
+              "cornerRadius": 6,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "eXPEG",
+                  "name": "Consent Back Icon",
+                  "width": 21,
+                  "height": 21,
+                  "icon": "arrow_back",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$text"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "X4BJIp",
+              "name": "Consent Header Title",
+              "fill": "$text",
+              "content": "地图与位置",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "hLoYc",
+              "name": "Consent Header Balance",
+              "width": 44,
+              "height": 44
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Rht05",
+          "name": "Map Consent Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 14,
+          "padding": [
+            18,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "g2TPIh",
+              "name": "Map Consent Illustration",
+              "width": "fill_container",
+              "height": 150,
+              "fill": "$primary-soft",
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "PJko6",
+                  "name": "Map Privacy Mark",
+                  "width": 72,
+                  "height": 72,
+                  "fill": "$surface-dark",
+                  "cornerRadius": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "BTP7u",
+                      "name": "Map Privacy Icon",
+                      "width": 38,
+                      "height": 38,
+                      "icon": "map_lock",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$gold"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "Mtbhy",
+              "name": "Map Consent Title",
+              "fill": "$text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "使用地图前，请先了解位置数据",
+              "lineHeight": 1.15,
+              "fontFamily": "$font-heading",
+              "fontSize": 26,
+              "fontWeight": "650"
+            },
+            {
+              "type": "text",
+              "id": "puZNd",
+              "name": "Map Consent Description",
+              "fill": "$text-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "行摄使用高德地图 Android SDK 展示地图、摄影机位与当前位置。你可以先阅读隐私说明，再决定是否继续。",
+              "lineHeight": 1.45,
+              "fontFamily": "$font-body",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "BgjaI",
+              "name": "Map Consent Facts",
+              "width": "fill_container",
+              "fill": "$surface-soft",
+              "cornerRadius": 6,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "lph7u",
+                  "name": "Consent Fact / 高德地图 SDK",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "GSrHW",
+                      "name": "高德地图 SDK Icon Surface",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "$primary-soft",
+                      "cornerRadius": 4,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "DyBBi",
+                          "name": "高德地图 SDK Icon",
+                          "width": 19,
+                          "height": 19,
+                          "icon": "map",
+                          "library": "Material Symbols Rounded",
+                          "fill": "$primary"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "NZ1uU",
+                      "name": "高德地图 SDK Copy",
+                      "width": 258,
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "h7yScX",
+                          "name": "高德地图 SDK Title",
+                          "fill": "$text",
+                          "content": "高德地图 SDK",
+                          "fontFamily": "$font-body",
+                          "fontSize": 11,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hsPB2",
+                          "name": "高德地图 SDK Detail",
+                          "fill": "$text-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "用于地图渲染、机位展示与地图交互。",
+                          "lineHeight": 1.35,
+                          "fontFamily": "$font-body",
+                          "fontSize": 9,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "k2oIh",
+                  "name": "Consent Fact / 位置数据",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "P5hjKR",
+                      "name": "位置数据 Icon Surface",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "$primary-soft",
+                      "cornerRadius": 4,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "ZIWol",
+                          "name": "位置数据 Icon",
+                          "width": 19,
+                          "height": 19,
+                          "icon": "location_on",
+                          "library": "Material Symbols Rounded",
+                          "fill": "$primary"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "RWDlm",
+                      "name": "位置数据 Copy",
+                      "width": 258,
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "BD2XF",
+                          "name": "位置数据 Title",
+                          "fill": "$text",
+                          "content": "位置数据",
+                          "fontFamily": "$font-body",
+                          "fontSize": 11,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "ueDhE",
+                          "name": "位置数据 Detail",
+                          "fill": "$text-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "仅在对应功能需要时使用，不上传完整行程轨迹。",
+                          "lineHeight": 1.35,
+                          "fontFamily": "$font-body",
+                          "fontSize": 9,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "KNJG9",
+                  "name": "Consent Fact / 同意前保持关闭",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "e9Navz",
+                      "name": "同意前保持关闭 Icon Surface",
+                      "width": 36,
+                      "height": 36,
+                      "fill": "$primary-soft",
+                      "cornerRadius": 4,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "rtfwe",
+                          "name": "同意前保持关闭 Icon",
+                          "width": 19,
+                          "height": 19,
+                          "icon": "shield_lock",
+                          "library": "Material Symbols Rounded",
+                          "fill": "$primary"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "EoSqj",
+                      "name": "同意前保持关闭 Copy",
+                      "width": 258,
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "O3FZIi",
+                          "name": "同意前保持关闭 Title",
+                          "fill": "$text",
+                          "content": "同意前保持关闭",
+                          "fontFamily": "$font-body",
+                          "fontSize": 11,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "qP5wL",
+                          "name": "同意前保持关闭 Detail",
+                          "fill": "$text-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "未同意时不初始化高德 SDK，也不读取位置。",
+                          "lineHeight": 1.35,
+                          "fontFamily": "$font-body",
+                          "fontSize": 9,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "C5cWQ",
+              "name": "Open Privacy Explanation",
+              "width": "fill_container",
+              "height": 42,
+              "cornerRadius": 6,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "padding": [
+                0,
+                12
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Z9UrXJ",
+                  "name": "Privacy Link Copy",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "UNNdF",
+                      "name": "Privacy Link Icon",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "policy",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$primary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Oclkf",
+                      "name": "Privacy Link Label",
+                      "fill": "$primary",
+                      "content": "查看隐私说明",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "B7vpE2",
+                  "name": "Privacy Link Arrow",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "chevron_right",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$text-muted"
+                }
+              ]
+            },
+            {
+              "id": "MRwxd",
+              "type": "ref",
+              "ref": "MnaaS",
+              "name": "Decline Map Consent",
+              "width": "fill_container",
+              "height": 48,
+              "descendants": {
+                "ZwMKO": {
+                  "icon": "close",
+                  "fill": "$text-muted"
+                },
+                "mp7Bf": {
+                  "content": "不同意",
+                  "fill": "$text"
+                }
+              }
+            },
+            {
+              "id": "R5kTt",
+              "type": "ref",
+              "ref": "e6D6KN",
+              "name": "Accept Map Consent",
+              "width": "fill_container",
+              "descendants": {
+                "HEWQI": {
+                  "icon": "check"
+                },
+                "LOeE5": {
+                  "content": "同意并继续"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "aHyIK",
+      "x": 10560,
+      "y": 152,
+      "name": "Screen 24 / 高德地图隐私同意 / 同意中",
+      "clip": true,
+      "width": 360,
+      "height": 844,
+      "fill": "$surface",
+      "layout": "vertical",
+      "alignItems": "center",
+      "children": [
+        {
+          "id": "HTYCR",
+          "type": "ref",
+          "ref": "LI2WE",
+          "name": "Map Consent Processing Status Bar",
+          "width": 360
+        },
+        {
+          "type": "frame",
+          "id": "EBEKr",
+          "name": "Consent Header",
+          "width": "fill_container",
+          "height": 60,
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "mvgfy",
+              "name": "Consent Back",
+              "width": 44,
+              "height": 44,
+              "cornerRadius": 6,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "tWHUV",
+                  "name": "Consent Back Icon",
+                  "width": 21,
+                  "height": 21,
+                  "icon": "arrow_back",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$text"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "Lv4Zu",
+              "name": "Consent Header Title",
+              "fill": "$text",
+              "content": "地图与位置",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "P1IsN8",
+              "name": "Consent Header Balance",
+              "width": 44,
+              "height": 44
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "i2clbt",
+          "name": "Map Consent Processing Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 18,
+          "padding": [
+            36,
+            16,
+            18,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "z2UYR",
+              "name": "Consent Processing Mark",
+              "width": 112,
+              "height": 112,
+              "fill": "$primary-soft",
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "xay5H",
+                  "name": "Consent Processing Icon",
+                  "width": 48,
+                  "height": 48,
+                  "icon": "progress_activity",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$primary"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "Ev3ba",
+              "name": "Consent Processing Title",
+              "fill": "$text",
+              "content": "正在保存你的选择",
+              "fontFamily": "$font-heading",
+              "fontSize": 26,
+              "fontWeight": "650"
+            },
+            {
+              "type": "text",
+              "id": "m9KXAc",
+              "name": "Consent Processing Detail",
+              "fill": "$text-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "同意状态保存完成后，才会初始化高德地图 SDK。请稍候。",
+              "lineHeight": 1.45,
+              "textAlign": "center",
+              "fontFamily": "$font-body",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "lI9JK",
+              "name": "SDK Still Closed Banner",
+              "width": "fill_container",
+              "fill": "$surface-soft",
+              "cornerRadius": 6,
+              "gap": 10,
+              "padding": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "rMgDf",
+                  "name": "SDK Closed Icon",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "lock",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$gold"
+                },
+                {
+                  "type": "text",
+                  "id": "tjUmZ",
+                  "name": "SDK Closed Text",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 270,
+                  "content": "当前仍未读取位置；初始化会在同意状态落盘后开始。",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "ixXpy",
+              "type": "ref",
+              "ref": "e6D6KN",
+              "name": "Consent Processing Button",
+              "width": "fill_container",
+              "opacity": 0.55,
+              "descendants": {
+                "HEWQI": {
+                  "icon": "progress_activity"
+                },
+                "LOeE5": {
+                  "content": "正在同意…"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "U5LDJm",
+              "name": "Consent Processing Cancel Note",
+              "fill": "$text-muted",
+              "content": "处理中请勿重复操作",
+              "fontFamily": "$font-body",
+              "fontSize": 10,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "BFd5s",
+      "x": 11000,
+      "y": 152,
+      "name": "Screen 25 / 高德地图隐私同意 / 已同意进入",
+      "clip": true,
+      "width": 360,
+      "height": 844,
+      "fill": "$surface",
+      "layout": "vertical",
+      "alignItems": "center",
+      "children": [
+        {
+          "id": "GoN6M",
+          "type": "ref",
+          "ref": "LI2WE",
+          "name": "Map Status Bar",
+          "width": 360
+        },
+        {
+          "type": "frame",
+          "id": "qouwt",
+          "name": "Interactive Map",
+          "clip": true,
+          "width": 360,
+          "height": "fill_container",
+          "fill": "#EAF0E8",
+          "layout": "none",
+          "children": [
+            {
+              "type": "path",
+              "id": "X78ms6",
+              "x": 0,
+              "y": 90,
+              "name": "Map River",
+              "geometry": "M-20 40c100-20 110 120 210 110 95-8 85 110 200 95l0 95c-110 15-135-105-220-90-95 16-110-120-190-100z",
+              "viewBox": [
+                -20,
+                0,
+                410,
+                380
+              ],
+              "fill": "#B8D7DA",
+              "width": 360,
+              "height": 370
+            },
+            {
+              "type": "path",
+              "id": "gLCSK",
+              "x": 0,
+              "y": 0,
+              "name": "Road A",
+              "geometry": "M-10 80c100 40 220-40 390 25",
+              "viewBox": [
+                0,
+                0,
+                360,
+                520
+              ],
+              "fill": "#00000000",
+              "width": 360,
+              "height": 520,
+              "stroke": "#FFFFFF",
+              "strokeWidth": 5,
+              "strokeLinecap": "round"
+            },
+            {
+              "type": "path",
+              "id": "k3h7Sy",
+              "x": 0,
+              "y": 0,
+              "name": "Road B",
+              "geometry": "M40-10c30 190 180 310 270 510",
+              "viewBox": [
+                0,
+                0,
+                360,
+                520
+              ],
+              "fill": "#00000000",
+              "width": 360,
+              "height": 520,
+              "stroke": "#FFFFFF",
+              "strokeWidth": 5,
+              "strokeLinecap": "round"
+            },
+            {
+              "type": "path",
+              "id": "VYLTE",
+              "x": 0,
+              "y": 0,
+              "name": "Road C",
+              "geometry": "M-10 310c120-50 240 30 400-25",
+              "viewBox": [
+                0,
+                0,
+                360,
+                520
+              ],
+              "fill": "#00000000",
+              "width": 360,
+              "height": 520,
+              "stroke": "#FFFFFF",
+              "strokeWidth": 5,
+              "strokeLinecap": "round"
+            },
+            {
+              "type": "path",
+              "id": "ernA4",
+              "x": 0,
+              "y": 0,
+              "name": "Road D",
+              "geometry": "M130-10c10 140-35 270-80 520",
+              "viewBox": [
+                0,
+                0,
+                360,
+                520
+              ],
+              "fill": "#00000000",
+              "width": 360,
+              "height": 520,
+              "stroke": "#FFFFFF",
+              "strokeWidth": 5,
+              "strokeLinecap": "round"
+            },
+            {
+              "type": "frame",
+              "id": "xWcPT",
+              "x": 80,
+              "y": 200,
+              "name": "West Lake Marker",
+              "width": 36,
+              "height": 36,
+              "fill": "$primary",
+              "cornerRadius": 18,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000026",
+                "offset": {
+                  "x": 0,
+                  "y": 3
+                },
+                "blur": 9
+              },
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "V8Vohx",
+                  "name": "West Lake Marker Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "photo_camera",
+                  "library": "Material Symbols Rounded",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "l1ItRS",
+              "x": 240,
+              "y": 278,
+              "name": "River Marker",
+              "width": 44,
+              "height": 44,
+              "fill": "$coral",
+              "cornerRadius": 22,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000026",
+                "offset": {
+                  "x": 0,
+                  "y": 3
+                },
+                "blur": 9
+              },
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "f6QSp",
+                  "name": "River Marker Icon",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "photo_camera",
+                  "library": "Material Symbols Rounded",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ipX3f",
+              "x": 154,
+              "y": 104,
+              "name": "Hill Marker",
+              "width": 36,
+              "height": 36,
+              "fill": "$primary",
+              "cornerRadius": 18,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000026",
+                "offset": {
+                  "x": 0,
+                  "y": 3
+                },
+                "blur": 9
+              },
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "drGCu",
+                  "name": "Hill Marker Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "photo_camera",
+                  "library": "Material Symbols Rounded",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ikaen",
+              "x": 294,
+              "y": 158,
+              "name": "Bridge Marker",
+              "width": 36,
+              "height": 36,
+              "fill": "$primary",
+              "cornerRadius": 18,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000026",
+                "offset": {
+                  "x": 0,
+                  "y": 3
+                },
+                "blur": 9
+              },
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "d3ecVU",
+                  "name": "Bridge Marker Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "photo_camera",
+                  "library": "Material Symbols Rounded",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ZMMCs",
+              "x": 16,
+              "y": 12,
+              "name": "Map Search",
+              "width": 328,
+              "height": 52,
+              "fill": "#FFFFFFF2",
+              "cornerRadius": 6,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000012",
+                "offset": {
+                  "x": 0,
+                  "y": 3
+                },
+                "blur": 12
+              },
+              "gap": 10,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "dNcWQ",
+                  "name": "Map Search Icon",
+                  "width": 21,
+                  "height": 21,
+                  "icon": "search",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$text-muted"
+                },
+                {
+                  "type": "text",
+                  "id": "VMOYG",
+                  "name": "Map Search Hint",
+                  "fill": "$text-muted",
+                  "content": "搜索地点或摄影机位",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon",
+                  "id": "xbS6U",
+                  "name": "Map Filter Icon",
+                  "width": 21,
+                  "height": 21,
+                  "icon": "tune",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$primary"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "JE1AU",
+              "x": 296,
+              "y": 82,
+              "name": "Locate Me",
+              "width": 48,
+              "height": 48,
+              "fill": "#FFFFFFF2",
+              "cornerRadius": 6,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000016",
+                "offset": {
+                  "x": 0,
+                  "y": 2
+                },
+                "blur": 8
+              },
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "WQyMA",
+                  "name": "Locate Icon",
+                  "width": 23,
+                  "height": 23,
+                  "icon": "my_location",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$primary"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "O7Uv8",
+              "x": 16,
+              "y": 452,
+              "name": "Selected Spot Sheet",
+              "width": 328,
+              "height": 210,
+              "fill": "$surface",
+              "cornerRadius": 8,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000022",
+                "offset": {
+                  "x": 0,
+                  "y": 5
+                },
+                "blur": 18
+              },
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 14,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "baRGI",
+                  "name": "Sheet Handle Row",
+                  "width": "fill_container",
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "o3qo0h",
+                      "name": "Sheet Handle",
+                      "fill": "$border",
+                      "width": 40,
+                      "height": 4
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dDhJc",
+                  "name": "Selected Spot Row",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "GdD0t",
+                      "name": "Selected Spot Image",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "juanrojas",
+                        "link": "https://unsplash.com/@juanrojas",
+                        "author": "Juan Rojas"
+                      },
+                      "clip": true,
+                      "width": 96,
+                      "height": 86,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1556767302-9cc8328e12f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODUzODEzMDh8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 6
+                    },
+                    {
+                      "type": "frame",
+                      "id": "T2jwZV",
+                      "name": "Selected Spot Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 5,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "pBxlc",
+                          "name": "Selected Spot Name",
+                          "fill": "$text",
+                          "content": "滨江日落机位",
+                          "fontFamily": "$font-heading",
+                          "fontSize": 19,
+                          "fontWeight": "650"
+                        },
+                        {
+                          "type": "text",
+                          "id": "u02PwR",
+                          "name": "Selected Spot Meta",
+                          "fill": "$text-muted",
+                          "content": "2.4 km · 日落前 30 分钟",
+                          "fontFamily": "$font-body",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "UKayN",
+                          "name": "Selected Spot Tag",
+                          "fill": "$surface-soft",
+                          "cornerRadius": 4,
+                          "padding": [
+                            4,
+                            7
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "mT2gw",
+                              "name": "Selected Tag Text",
+                              "fill": "$text-muted",
+                              "content": "江景  ·  城市",
+                              "fontFamily": "$font-body",
+                              "fontSize": 10,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "V84ZAd",
+                  "name": "Spot Sheet Actions",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "X3rLG2",
+                      "name": "Sheet Favorite",
+                      "width": 52,
+                      "height": 48,
+                      "cornerRadius": 6,
+                      "stroke": "$primary",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "S6AvYF",
+                          "name": "Sheet Favorite Icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "bookmark",
+                          "library": "lucide",
+                          "fill": "$primary"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "MgN6j",
+                      "name": "View Spot Detail",
+                      "width": "fill_container",
+                      "height": 48,
+                      "fill": "$coral",
+                      "cornerRadius": 6,
+                      "gap": 7,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "L48mq",
+                          "name": "View Detail Label",
+                          "fill": "#FFFFFF",
+                          "content": "查看机位",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "NomEc",
+                          "name": "View Detail Arrow",
+                          "width": 19,
+                          "height": 19,
+                          "icon": "arrow_forward",
+                          "library": "Material Symbols Rounded",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "w8vUip",
+              "x": 16,
+              "y": 76,
+              "name": "AMap Consent Ready Badge",
+              "width": 204,
+              "height": 34,
+              "fill": "#FFFFFFF2",
+              "cornerRadius": 6,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "GNq7l",
+                  "x": 10,
+                  "y": 8.5,
+                  "name": "AMap Ready Icon",
+                  "width": 17,
+                  "height": 17,
+                  "icon": "verified_user",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$primary"
+                },
+                {
+                  "type": "text",
+                  "id": "hXYNm",
+                  "x": 34,
+                  "y": 10,
+                  "name": "AMap Ready Text",
+                  "fill": "$primary",
+                  "content": "已同意 · 高德地图已初始化",
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "700"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "xDhkG",
+          "type": "ref",
+          "ref": "v1VOa",
+          "name": "Map Bottom Navigation",
+          "width": 328,
+          "height": 64,
+          "descendants": {
+            "XR1vS": {
+              "fill": "#FFFFFF00"
+            },
+            "Z7ZHB": {
+              "fill": "$text-muted"
+            },
+            "Dx2C6": {
+              "fill": "$text-muted",
+              "fontWeight": "400"
+            },
+            "FTiri": {
+              "fill": "$primary-soft"
+            },
+            "odEE4": {
+              "fill": "$primary"
+            },
+            "VceQj": {
+              "fill": "$primary",
+              "fontWeight": "600"
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "A28viB",
+          "name": "Map Bottom Safe Area",
+          "width": 1,
+          "height": 12
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "CpApP",
+      "x": 11440,
+      "y": 152,
+      "name": "Screen 26 / 删除账号 / 风险说明",
+      "clip": true,
+      "width": 360,
+      "height": 844,
+      "fill": "$surface",
+      "layout": "vertical",
+      "alignItems": "center",
+      "children": [
+        {
+          "id": "Y9AJ8F",
+          "type": "ref",
+          "ref": "LI2WE",
+          "name": "Delete Risk Status Bar",
+          "width": 360
+        },
+        {
+          "type": "frame",
+          "id": "eCsJI",
+          "name": "Delete Header",
+          "width": "fill_container",
+          "height": 60,
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "mNcp2",
+              "name": "Delete Back",
+              "width": 44,
+              "height": 44,
+              "cornerRadius": 6,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "gGSNv",
+                  "name": "Delete Back Icon",
+                  "width": 21,
+                  "height": 21,
+                  "icon": "arrow_back",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$text"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "E1DCZu",
+              "name": "Delete Header Title",
+              "fill": "$text",
+              "content": "删除账号",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "RJWCA",
+              "name": "Delete Header Balance",
+              "width": 44,
+              "height": 44
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "VdzPn",
+          "name": "Delete Risk Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            24,
+            16,
+            18,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "G3R5Fw",
+              "name": "Delete Risk Mark",
+              "width": 56,
+              "height": 56,
+              "fill": "#FFF1EF",
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "yER9b",
+                  "name": "Delete Risk Icon",
+                  "width": 30,
+                  "height": 30,
+                  "icon": "warning",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$error"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "Zov3J",
+              "name": "Delete Risk Title",
+              "fill": "$text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "删除账号前，请确认这些影响",
+              "lineHeight": 1.15,
+              "fontFamily": "$font-heading",
+              "fontSize": 26,
+              "fontWeight": "650"
+            },
+            {
+              "type": "text",
+              "id": "z3TGC",
+              "name": "Delete Risk Intro",
+              "fill": "$text-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "账号删除不可撤销，但本机数据与系统相册原图有独立的处理规则。",
+              "lineHeight": 1.45,
+              "fontFamily": "$font-body",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "l1PBH",
+              "name": "Deletion Impact List",
+              "width": "fill_container",
+              "fill": "$surface-soft",
+              "cornerRadius": 6,
+              "layout": "vertical",
+              "gap": 15,
+              "padding": 14,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "loHPN",
+                  "name": "Deletion Impact / 服务端账号会删除",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "cdcjO",
+                      "name": "服务端账号会删除 Icon Surface",
+                      "width": 38,
+                      "height": 38,
+                      "fill": "#FFF1EF",
+                      "cornerRadius": 4,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "vE1M6",
+                          "name": "服务端账号会删除 Icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "cloud_off",
+                          "library": "Material Symbols Rounded",
+                          "fill": "$error"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mVjV7",
+                      "name": "服务端账号会删除 Copy",
+                      "width": 252,
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "hXvHp",
+                          "name": "服务端账号会删除 Title",
+                          "fill": "$text",
+                          "content": "服务端账号会删除",
+                          "fontFamily": "$font-body",
+                          "fontSize": 12,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "ySZrP",
+                          "name": "服务端账号会删除 Detail",
+                          "fill": "$text-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "邮箱账号、所有登录 Token 与收藏机位会永久删除。",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "xv3Z9",
+                  "name": "Deletion Impact / 本地行程默认保留",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "xMnQl",
+                      "name": "本地行程默认保留 Icon Surface",
+                      "width": 38,
+                      "height": 38,
+                      "fill": "$primary-soft",
+                      "cornerRadius": 4,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "h2bO8",
+                          "name": "本地行程默认保留 Icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "route",
+                          "library": "Material Symbols Rounded",
+                          "fill": "$primary"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Fovta",
+                      "name": "本地行程默认保留 Copy",
+                      "width": 252,
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "VHUfo",
+                          "name": "本地行程默认保留 Title",
+                          "fill": "$text",
+                          "content": "本地行程默认保留",
+                          "fontFamily": "$font-body",
+                          "fontSize": 12,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "b7vDu",
+                          "name": "本地行程默认保留 Detail",
+                          "fill": "$text-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "本机行程、轨迹和照片关联默认不会随账号删除。",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "tJOIs",
+                  "name": "Deletion Impact / 系统相册原图保留",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "sgxed",
+                      "name": "系统相册原图保留 Icon Surface",
+                      "width": 38,
+                      "height": 38,
+                      "fill": "$primary-soft",
+                      "cornerRadius": 4,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "p1CHnR",
+                          "name": "系统相册原图保留 Icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "photo_library",
+                          "library": "Material Symbols Rounded",
+                          "fill": "$primary"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "MYyU2",
+                      "name": "系统相册原图保留 Copy",
+                      "width": 252,
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "FRnSw",
+                          "name": "系统相册原图保留 Title",
+                          "fill": "$text",
+                          "content": "系统相册原图保留",
+                          "fontFamily": "$font-body",
+                          "fontSize": 12,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "H5ZJ6K",
+                          "name": "系统相册原图保留 Detail",
+                          "fill": "$text-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "系统相册中的原始照片不会自动删除，需在系统相册单独处理。",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "G2tyOo",
+              "name": "Risk Privacy Link",
+              "width": "fill_container",
+              "height": 42,
+              "cornerRadius": 6,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "padding": [
+                0,
+                12
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "b5gupq",
+                  "name": "Risk Privacy Link Label",
+                  "fill": "$primary",
+                  "content": "查看隐私说明与外部申请方式",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "icon",
+                  "id": "v2Qk1f",
+                  "name": "Risk Privacy Link Arrow",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "chevron_right",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$text-muted"
+                }
+              ]
+            },
+            {
+              "id": "PDmYh",
+              "type": "ref",
+              "ref": "MnaaS",
+              "name": "Cancel Account Deletion",
+              "width": "fill_container",
+              "height": 48,
+              "descendants": {
+                "ZwMKO": {
+                  "icon": "close",
+                  "fill": "$text-muted"
+                },
+                "mp7Bf": {
+                  "content": "取消",
+                  "fill": "$text"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "E0vg1s",
+              "name": "Continue Account Deletion",
+              "width": "fill_container",
+              "height": 52,
+              "fill": "#FFF1EF",
+              "cornerRadius": 6,
+              "stroke": "$error",
+              "strokeWidth": 1,
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "BTRzW",
+                  "name": "Continue Account Deletion Label",
+                  "fill": "$error",
+                  "content": "继续删除账号",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "icon",
+                  "id": "U9jeCe",
+                  "name": "Continue Account Deletion Arrow",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "arrow_forward",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$error"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "B7KDg",
+      "x": 11880,
+      "y": 152,
+      "name": "Screen 27 / 删除账号 / 二次确认",
+      "clip": true,
+      "width": 360,
+      "height": 844,
+      "fill": "$surface",
+      "layout": "vertical",
+      "alignItems": "center",
+      "children": [
+        {
+          "id": "e45qWl",
+          "type": "ref",
+          "ref": "LI2WE",
+          "name": "Delete Confirm Status Bar",
+          "width": 360
+        },
+        {
+          "type": "frame",
+          "id": "Goxca",
+          "name": "Delete Header",
+          "width": "fill_container",
+          "height": 60,
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "I8R8ph",
+              "name": "Delete Back",
+              "width": 44,
+              "height": 44,
+              "cornerRadius": 6,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "eV3fR",
+                  "name": "Delete Back Icon",
+                  "width": 21,
+                  "height": 21,
+                  "icon": "arrow_back",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$text"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "F4hdB",
+              "name": "Delete Header Title",
+              "fill": "$text",
+              "content": "二次确认",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "k00xbD",
+              "name": "Delete Header Balance",
+              "width": 44,
+              "height": 44
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "yk2va",
+          "name": "Delete Confirm Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 14,
+          "padding": [
+            22,
+            16,
+            18,
+            16
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "P3L7z",
+              "name": "Delete Confirm Title",
+              "fill": "$text",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "选择本机行程的处理方式",
+              "lineHeight": 1.15,
+              "fontFamily": "$font-heading",
+              "fontSize": 26,
+              "fontWeight": "650"
+            },
+            {
+              "type": "text",
+              "id": "rnl0W",
+              "name": "Delete Confirm Intro",
+              "fill": "$text-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "无论选择哪项，服务端账号、Token 和收藏都会删除。",
+              "lineHeight": 1.45,
+              "fontFamily": "$font-body",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "KA3bw",
+              "name": "Keep Local Trips Option / Selected",
+              "width": "fill_container",
+              "fill": "$primary-soft",
+              "cornerRadius": 6,
+              "stroke": "$primary",
+              "strokeWidth": 1,
+              "gap": 10,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "xYpBH",
+                  "name": "Keep Local Selected",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "radio_button_checked",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$primary"
+                },
+                {
+                  "type": "frame",
+                  "id": "qv8uU",
+                  "name": "Keep Local Copy",
+                  "width": 262,
+                  "layout": "vertical",
+                  "gap": 3,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "VqXX1",
+                      "name": "Keep Local Title",
+                      "fill": "$text",
+                      "content": "保留本地行程（默认）",
+                      "fontFamily": "$font-body",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Y6ko5",
+                      "name": "Keep Local Detail",
+                      "fill": "$text-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "保留本机行程、轨迹和照片关联，可在未登录状态继续查看。",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "edNxS",
+              "name": "Clear Local Trips Option",
+              "width": "fill_container",
+              "cornerRadius": 6,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "gap": 10,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "fvqQ8",
+                  "name": "Clear Local Unselected",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "radio_button_unchecked",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$text-muted"
+                },
+                {
+                  "type": "frame",
+                  "id": "PQwyi",
+                  "name": "Clear Local Copy",
+                  "width": 262,
+                  "layout": "vertical",
+                  "gap": 3,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "f6LdZH",
+                      "name": "Clear Local Title",
+                      "fill": "$text",
+                      "content": "同时清理本地行程",
+                      "fontFamily": "$font-body",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "f4DCyJ",
+                      "name": "Clear Local Detail",
+                      "fill": "$text-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "删除本机行程、轨迹和照片关联；系统相册原图仍不会自动删除。",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "CvDLz",
+              "name": "System Photos Remain Notice",
+              "width": "fill_container",
+              "fill": "$surface-soft",
+              "cornerRadius": 6,
+              "gap": 9,
+              "padding": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "HcawZ",
+                  "name": "System Photos Notice Icon",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "photo_library",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$gold"
+                },
+                {
+                  "type": "text",
+                  "id": "BwvOS",
+                  "name": "System Photos Notice Text",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 270,
+                  "content": "系统相册原图始终需要你在系统相册中单独处理。",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "tC6N2",
+              "name": "Irreversible Confirmation",
+              "width": "fill_container",
+              "gap": 9,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "jmD9i",
+                  "name": "Irreversible Confirmation Check",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "check_box",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$error"
+                },
+                {
+                  "type": "text",
+                  "id": "L7R1Z",
+                  "name": "Irreversible Confirmation Text",
+                  "fill": "$text",
+                  "textGrowth": "fixed-width",
+                  "width": 288,
+                  "content": "我已理解账号删除不可撤销，并确认以上数据处理方式。",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "n9wqQ",
+              "type": "ref",
+              "ref": "MnaaS",
+              "name": "Cancel Final Deletion",
+              "width": "fill_container",
+              "height": 48,
+              "descendants": {
+                "ZwMKO": {
+                  "icon": "close",
+                  "fill": "$text-muted"
+                },
+                "mp7Bf": {
+                  "content": "取消并返回设置",
+                  "fill": "$text"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "D2mgb4",
+              "name": "确认删除账号",
+              "width": "fill_container",
+              "height": 52,
+              "fill": "$error",
+              "cornerRadius": 6,
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "zSh8U",
+                  "name": "确认删除账号 Icon",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "delete_forever",
+                  "library": "Material Symbols Rounded",
+                  "fill": "#FFFFFF"
+                },
+                {
+                  "type": "text",
+                  "id": "WZ3Fx",
+                  "name": "确认删除账号 Label",
+                  "fill": "#FFFFFF",
+                  "content": "确认删除账号",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "700"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "aHt0P",
+      "x": 12320,
+      "y": 152,
+      "name": "Screen 28 / 删除账号 / 处理中",
+      "clip": true,
+      "width": 360,
+      "height": 844,
+      "fill": "$surface",
+      "layout": "vertical",
+      "alignItems": "center",
+      "children": [
+        {
+          "id": "TTGre",
+          "type": "ref",
+          "ref": "LI2WE",
+          "name": "Delete Processing Status Bar",
+          "width": 360
+        },
+        {
+          "type": "frame",
+          "id": "Qn9ds",
+          "name": "Delete Header",
+          "width": "fill_container",
+          "height": 60,
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "o44Pw",
+              "name": "Delete Header Start Balance",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "type": "text",
+              "id": "tc87H",
+              "name": "Delete Header Title",
+              "fill": "$text",
+              "content": "删除账号",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "WpQHO",
+              "name": "Delete Header Balance",
+              "width": 44,
+              "height": 44
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Fuvfo",
+          "name": "Delete Processing Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 18,
+          "padding": [
+            72,
+            16,
+            18,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "v4k17",
+              "name": "Delete Processing Mark",
+              "width": 112,
+              "height": 112,
+              "fill": "#FFF1EF",
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "EBJQz",
+                  "name": "Delete Processing Icon",
+                  "width": 48,
+                  "height": 48,
+                  "icon": "progress_activity",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$error"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "kIKTS",
+              "name": "Delete Processing Title",
+              "fill": "$text",
+              "content": "正在删除账号",
+              "fontFamily": "$font-heading",
+              "fontSize": 26,
+              "fontWeight": "650"
+            },
+            {
+              "type": "text",
+              "id": "SOicK",
+              "name": "Delete Processing Detail",
+              "fill": "$text-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "正在删除服务端账号、Token 与收藏。你选择保留的本地行程不会被清理。",
+              "lineHeight": 1.45,
+              "textAlign": "center",
+              "fontFamily": "$font-body",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "T5K9s",
+              "name": "Delete Processing Lock",
+              "width": "fill_container",
+              "fill": "$surface-soft",
+              "cornerRadius": 6,
+              "gap": 10,
+              "padding": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "SRtzL",
+                  "name": "Processing Lock Icon",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "lock",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$gold"
+                },
+                {
+                  "type": "text",
+                  "id": "g1RxJw",
+                  "name": "Processing Lock Text",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 270,
+                  "content": "请求已提交，处理中无法取消。请保持网络连接。",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "CS6bz",
+              "name": "Delete Processing Disabled Button",
+              "opacity": 0.45,
+              "width": "fill_container",
+              "height": 52,
+              "fill": "$error",
+              "cornerRadius": 6,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "t3Y1WA",
+                  "name": "Delete Processing Disabled Label",
+                  "fill": "#FFFFFF",
+                  "content": "删除处理中…",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "700"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Yq5AA",
+      "x": 12760,
+      "y": 152,
+      "name": "Screen 29 / 删除账号 / 成功",
+      "clip": true,
+      "width": 360,
+      "height": 844,
+      "fill": "$surface",
+      "layout": "vertical",
+      "alignItems": "center",
+      "children": [
+        {
+          "id": "F9TFy",
+          "type": "ref",
+          "ref": "LI2WE",
+          "name": "Delete Success Status Bar",
+          "width": 360
+        },
+        {
+          "type": "frame",
+          "id": "JH5jg",
+          "name": "Delete Header",
+          "width": "fill_container",
+          "height": 60,
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "v2RI4",
+              "name": "Delete Header Start Balance",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "type": "text",
+              "id": "clHeN",
+              "name": "Delete Header Title",
+              "fill": "$text",
+              "content": "删除完成",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "VOqEm",
+              "name": "Delete Header Balance",
+              "width": 44,
+              "height": 44
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "UPvFE",
+          "name": "Delete Success Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 18,
+          "padding": [
+            56,
+            16,
+            18,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "fZpwL",
+              "name": "Delete Success Mark",
+              "width": 96,
+              "height": 96,
+              "fill": "$primary-soft",
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "jS6xr",
+                  "name": "Delete Success Icon",
+                  "width": 46,
+                  "height": 46,
+                  "icon": "check_circle",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$primary"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "i50BkZ",
+              "name": "Delete Success Title",
+              "fill": "$text",
+              "content": "账号已删除",
+              "fontFamily": "$font-heading",
+              "fontSize": 28,
+              "fontWeight": "650"
+            },
+            {
+              "type": "text",
+              "id": "h54R2",
+              "name": "Delete Success Detail",
+              "fill": "$text-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "服务端账号已删除，当前设备上的登录 Token 已清除。",
+              "lineHeight": 1.45,
+              "textAlign": "center",
+              "fontFamily": "$font-body",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "PLL3F",
+              "name": "Delete Success Summary",
+              "width": "fill_container",
+              "fill": "$surface-soft",
+              "cornerRadius": 6,
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 14,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "beAr2",
+                  "name": "Delete Result / 服务端数据已删除",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "oFhbZ",
+                      "name": "服务端数据已删除 Result Icon",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "cloud_done",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$primary"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Kv2jP",
+                      "name": "服务端数据已删除 Result Copy",
+                      "width": 270,
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "DGX1b",
+                          "name": "服务端数据已删除 Result Title",
+                          "fill": "$text",
+                          "content": "服务端数据已删除",
+                          "fontFamily": "$font-body",
+                          "fontSize": 11,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "sTrJm",
+                          "name": "服务端数据已删除 Result Detail",
+                          "fill": "$text-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "账号、Token 与收藏机位已移除。",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font-body",
+                          "fontSize": 9,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "d2eYy",
+                  "name": "Delete Result / 本地行程已保留",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "pSIUZ",
+                      "name": "本地行程已保留 Result Icon",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "route",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$primary"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ZQ4p3",
+                      "name": "本地行程已保留 Result Copy",
+                      "width": 270,
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "UXGjy",
+                          "name": "本地行程已保留 Result Title",
+                          "fill": "$text",
+                          "content": "本地行程已保留",
+                          "fontFamily": "$font-body",
+                          "fontSize": 11,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "WpInX",
+                          "name": "本地行程已保留 Result Detail",
+                          "fill": "$text-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "可在未登录状态继续查看本机行程。",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font-body",
+                          "fontSize": 9,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "mZe6v",
+                  "name": "Delete Result / 系统相册原图未变",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "FPvhE",
+                      "name": "系统相册原图未变 Result Icon",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "photo_library",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$primary"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "y6R3B7",
+                      "name": "系统相册原图未变 Result Copy",
+                      "width": 270,
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "O2GrH",
+                          "name": "系统相册原图未变 Result Title",
+                          "fill": "$text",
+                          "content": "系统相册原图未变",
+                          "fontFamily": "$font-body",
+                          "fontSize": 11,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bS9Hg",
+                          "name": "系统相册原图未变 Result Detail",
+                          "fill": "$text-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "原图仍在系统相册中，可由你单独管理。",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font-body",
+                          "fontSize": 9,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "ixgDg",
+              "type": "ref",
+              "ref": "e6D6KN",
+              "name": "Return Signed Out",
+              "width": "fill_container",
+              "descendants": {
+                "HEWQI": {
+                  "icon": "login"
+                },
+                "LOeE5": {
+                  "content": "进入未登录状态"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "Qiuu6",
+              "name": "Delete Success Redirect Note",
+              "fill": "$text-muted",
+              "content": "即将自动返回未登录状态",
+              "fontFamily": "$font-body",
+              "fontSize": 10,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "W9WZA",
+      "x": 13200,
+      "y": 152,
+      "name": "Screen 30 / 删除账号 / 网络或服务端失败",
+      "clip": true,
+      "width": 360,
+      "height": 844,
+      "fill": "$surface",
+      "layout": "vertical",
+      "alignItems": "center",
+      "children": [
+        {
+          "id": "Bkys6",
+          "type": "ref",
+          "ref": "LI2WE",
+          "name": "Delete Failure Status Bar",
+          "width": 360
+        },
+        {
+          "type": "frame",
+          "id": "D5N3Dr",
+          "name": "Delete Header",
+          "width": "fill_container",
+          "height": 60,
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Eh2vI",
+              "name": "Delete Back",
+              "width": 44,
+              "height": 44,
+              "cornerRadius": 6,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "kAbqP",
+                  "name": "Delete Back Icon",
+                  "width": 21,
+                  "height": 21,
+                  "icon": "arrow_back",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$text"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "sliVe",
+              "name": "Delete Header Title",
+              "fill": "$text",
+              "content": "删除失败",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "KfZxe",
+              "name": "Delete Header Balance",
+              "width": 44,
+              "height": 44
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "b33zg",
+          "name": "Delete Failure Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 18,
+          "padding": [
+            52,
+            16,
+            18,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "x4rACp",
+              "name": "Delete Failure Mark",
+              "width": 96,
+              "height": 96,
+              "fill": "#FFF1EF",
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "BiqVv",
+                  "name": "Delete Failure Icon",
+                  "width": 46,
+                  "height": 46,
+                  "icon": "error",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$error"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "g0n5t4",
+              "name": "Delete Failure Title",
+              "fill": "$text",
+              "content": "账号暂未删除",
+              "fontFamily": "$font-heading",
+              "fontSize": 28,
+              "fontWeight": "650"
+            },
+            {
+              "type": "text",
+              "id": "KDHTc",
+              "name": "Delete Failure Detail",
+              "fill": "$text-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "网络连接中断或服务端暂时不可用。账号、Token、收藏和本地行程均未发生变化。",
+              "lineHeight": 1.45,
+              "textAlign": "center",
+              "fontFamily": "$font-body",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "xPGm8",
+              "name": "Delete Failure Notice",
+              "width": "fill_container",
+              "fill": "$surface-soft",
+              "cornerRadius": 6,
+              "gap": 10,
+              "padding": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "B54CP4",
+                  "name": "Delete Failure Notice Icon",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "shield",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$primary"
+                },
+                {
+                  "type": "text",
+                  "id": "KiMNV",
+                  "name": "Delete Failure Notice Text",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 270,
+                  "content": "未收到服务端成功结果前，不清除本地认证态或任何本机数据。",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "zxsfo",
+              "type": "ref",
+              "ref": "MnaaS",
+              "name": "Cancel Failed Deletion",
+              "width": "fill_container",
+              "height": 48,
+              "descendants": {
+                "ZwMKO": {
+                  "icon": "arrow_back",
+                  "fill": "$text-muted"
+                },
+                "mp7Bf": {
+                  "content": "取消并返回设置",
+                  "fill": "$text"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "D3bTz",
+              "name": "Retry Account Deletion",
+              "width": "fill_container",
+              "height": 52,
+              "fill": "$error",
+              "cornerRadius": 6,
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "VCWFW",
+                  "name": "Retry Account Deletion Icon",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "refresh",
+                  "library": "Material Symbols Rounded",
+                  "fill": "#FFFFFF"
+                },
+                {
+                  "type": "text",
+                  "id": "mb8tz",
+                  "name": "Retry Account Deletion Label",
+                  "fill": "#FFFFFF",
+                  "content": "重试删除",
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "700"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "RZn6z",
+      "x": 13640,
+      "y": 152,
+      "name": "Screen 31 / 删除账号 / 已取消返回设置",
+      "clip": true,
+      "width": 360,
+      "height": 844,
+      "fill": "$surface",
+      "layout": "vertical",
+      "alignItems": "center",
+      "children": [
+        {
+          "id": "Y8Vyfm",
+          "type": "ref",
+          "ref": "LI2WE",
+          "name": "Settings Status Bar",
+          "width": 360
+        },
+        {
+          "type": "frame",
+          "id": "QJBos",
+          "name": "Settings Header",
+          "width": "fill_container",
+          "height": 60,
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "gWD6T",
+              "name": "Settings Back",
+              "width": 44,
+              "height": 44,
+              "cornerRadius": 6,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "achdI",
+                  "name": "Settings Back Icon",
+                  "width": 21,
+                  "height": 21,
+                  "icon": "arrow_back",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$text"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "bRed5",
+              "name": "Settings Header Title",
+              "fill": "$text",
+              "content": "设置",
+              "fontFamily": "$font-body",
+              "fontSize": 14,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "W3bnc",
+              "name": "Settings Header Balance",
+              "width": 44,
+              "height": 44
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "PdzTH",
+          "name": "Settings Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            10,
+            16,
+            18,
+            16
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "aCgd8",
+              "name": "Account Deletion Cancelled State",
+              "fill": "$primary",
+              "content": "已取消删除 · 账号与本地数据未发生变化",
+              "fontFamily": "$font-body",
+              "fontSize": 11,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "h4AAa",
+              "name": "Settings Account Row",
+              "width": "fill_container",
+              "stroke": "$border",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "strokeLinejoin": "round",
+              "gap": 12,
+              "padding": [
+                12,
+                0
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "gOSfG",
+                  "name": "Settings Avatar",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "$surface-dark",
+                  "cornerRadius": 22,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rXvKt",
+                      "name": "Settings Avatar Initial",
+                      "fill": "#FFFFFF",
+                      "content": "行",
+                      "fontFamily": "$font-heading",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dK2Zs",
+                  "name": "Settings Account Copy",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "D2Ekb",
+                      "name": "Settings Nickname",
+                      "fill": "$text",
+                      "content": "行摄者",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "j9Kqe5",
+                      "name": "Settings Email",
+                      "fill": "$text-muted",
+                      "content": "lin***@example.com",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "CF7XA",
+                  "name": "Settings Account Edit",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "edit",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$primary"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "ANzJd",
+              "name": "Permission Section Label",
+              "fill": "$text-muted",
+              "content": "权限与隐私",
+              "fontFamily": "$font-body",
+              "fontSize": 10,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "BdJuj",
+              "name": "Settings Permissions",
+              "width": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Z17PW",
+                  "name": "Settings 定位权限",
+                  "width": "fill_container",
+                  "stroke": "$border",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeLinejoin": "round",
+                  "gap": 10,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "NdSk8",
+                      "name": "定位权限 Settings Icon",
+                      "width": 21,
+                      "height": 21,
+                      "icon": "location_on",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$primary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "sXLMM",
+                      "name": "定位权限 Settings Title",
+                      "fill": "$text",
+                      "content": "定位权限",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jMAdM",
+                      "name": "定位权限 Settings State",
+                      "fill": "$primary",
+                      "content": "使用期间允许",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "boCXq",
+                      "name": "定位权限 Settings Arrow",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "chevron_right",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$text-muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dgT5N",
+                  "name": "Settings 相机权限",
+                  "width": "fill_container",
+                  "stroke": "$border",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeLinejoin": "round",
+                  "gap": 10,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "jkvrf",
+                      "name": "相机权限 Settings Icon",
+                      "width": 21,
+                      "height": 21,
+                      "icon": "photo_camera",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$primary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "WdpjS",
+                      "name": "相机权限 Settings Title",
+                      "fill": "$text",
+                      "content": "相机权限",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "IlCfu",
+                      "name": "相机权限 Settings State",
+                      "fill": "$gold",
+                      "content": "使用时询问",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "g1brVA",
+                      "name": "相机权限 Settings Arrow",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "chevron_right",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$text-muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "k9TaY",
+                  "name": "Settings 照片权限",
+                  "width": "fill_container",
+                  "stroke": "$border",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeLinejoin": "round",
+                  "gap": 10,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "TVVml",
+                      "name": "照片权限 Settings Icon",
+                      "width": 21,
+                      "height": 21,
+                      "icon": "photo_library",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$primary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ch3En",
+                      "name": "照片权限 Settings Title",
+                      "fill": "$text",
+                      "content": "照片权限",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "pjUZ4",
+                      "name": "照片权限 Settings State",
+                      "fill": "$primary",
+                      "content": "已选择的照片",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "MJNYv",
+                      "name": "照片权限 Settings Arrow",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "chevron_right",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$text-muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "uGPyv",
+                  "name": "Settings 隐私说明",
+                  "width": "fill_container",
+                  "stroke": "$border",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "strokeLinejoin": "round",
+                  "gap": 10,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "XDTrv",
+                      "name": "隐私说明 Settings Icon",
+                      "width": 21,
+                      "height": 21,
+                      "icon": "policy",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$primary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "QbqLB",
+                      "name": "隐私说明 Settings Title",
+                      "fill": "$text",
+                      "content": "隐私说明",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "raT36",
+                      "name": "隐私说明 Settings State",
+                      "fill": "$text-muted",
+                      "content": "查看数据处理规则",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "DLfdc",
+                      "name": "隐私说明 Settings Arrow",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "chevron_right",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$text-muted"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "O8Fye",
+              "name": "Data Section Label",
+              "fill": "$text-muted",
+              "content": "本地数据",
+              "fontFamily": "$font-body",
+              "fontSize": 10,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "YZKi1",
+              "name": "Local Data Summary",
+              "width": "fill_container",
+              "fill": "$surface-soft",
+              "cornerRadius": 6,
+              "gap": 11,
+              "padding": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "WGVlV",
+                  "name": "Local Data Icon",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "database",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$primary"
+                },
+                {
+                  "type": "frame",
+                  "id": "TbcUa",
+                  "name": "Local Data Copy",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "avUZl",
+                      "name": "Local Data Title",
+                      "fill": "$text",
+                      "content": "12 次行程 · 38 张照片关联",
+                      "fontFamily": "$font-body",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "rWmHp",
+                      "name": "Local Data Detail",
+                      "fill": "$text-muted",
+                      "content": "账号删除后，本地行程默认保留",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "JMIMs",
+                  "name": "Local Data Arrow",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "chevron_right",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$text-muted"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "h7ns1v",
+              "name": "Logout Button",
+              "width": "fill_container",
+              "height": 50,
+              "cornerRadius": 6,
+              "stroke": "$error",
+              "strokeWidth": 1,
+              "gap": 7,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "xCoqs",
+                  "name": "Logout Icon",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "logout",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$error"
+                },
+                {
+                  "type": "text",
+                  "id": "rfEeh",
+                  "name": "Logout Label",
+                  "fill": "$error",
+                  "content": "退出登录",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "q1DPb",
+              "name": "Danger Section Label",
+              "fill": "$error",
+              "content": "危险操作",
+              "fontFamily": "$font-body",
+              "fontSize": 10,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "ayXGO",
+              "name": "Delete Account Entry",
+              "width": "fill_container",
+              "height": 78,
+              "fill": "#FFF6F4",
+              "cornerRadius": 6,
+              "stroke": "$error",
+              "strokeWidth": 1,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "f2IGP",
+                  "x": 12,
+                  "y": 28,
+                  "name": "Delete Account Icon",
+                  "width": 22,
+                  "height": 22,
+                  "icon": "delete_forever",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$error"
+                },
+                {
+                  "type": "frame",
+                  "id": "J1wJQv",
+                  "x": 44,
+                  "y": 12,
+                  "name": "Delete Account Copy",
+                  "width": 232,
+                  "layout": "vertical",
+                  "gap": 3,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "kvj4J",
+                      "name": "Delete Account Title",
+                      "fill": "$error",
+                      "content": "删除账号",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "o3V5ca",
+                      "name": "Delete Account Detail",
+                      "fill": "$text-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "服务端账号、Token 与收藏会删除；本地行程默认保留。系统相册原图不会自动删除。",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "UrxPh",
+                  "x": 296,
+                  "y": 29,
+                  "name": "Delete Account Arrow",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "chevron_right",
+                  "library": "Material Symbols Rounded",
+                  "fill": "$error"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "GbNam",
+      "x": 0,
+      "y": 3296,
+      "name": "Interaction Board / 地图隐私与账号删除",
+      "clip": true,
+      "width": 2100,
+      "height": 560,
+      "fill": "$surface-soft",
+      "layout": "vertical",
+      "gap": 18,
+      "padding": 32,
+      "children": [
+        {
+          "type": "frame",
+          "id": "OUWCO",
+          "name": "Privacy Delete Board Header",
+          "width": "fill_container",
+          "justifyContent": "space_between",
+          "alignItems": "end",
+          "children": [
+            {
+              "type": "frame",
+              "id": "qX4BT",
+              "name": "Privacy Delete Board Title Group",
+              "layout": "vertical",
+              "gap": 5,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "s2LWK",
+                  "name": "Privacy Delete Board Eyebrow",
+                  "fill": "$primary",
+                  "content": "PRIVACY GATE & ACCOUNT LIFECYCLE",
+                  "fontFamily": "$font-data",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "B81aIO",
+                  "name": "Privacy Delete Board Title",
+                  "fill": "$text",
+                  "content": "地图隐私与账号删除状态转移",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 34,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "n3CFcw",
+              "name": "Privacy Delete Board Note",
+              "fill": "$text-muted",
+              "content": "橙色节点为明确确认或不可逆动作",
+              "fontFamily": "$font-body",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "taqBB",
+          "name": "Flow / 地图隐私门禁",
+          "width": "fill_container",
+          "height": 110,
+          "fill": "$surface",
+          "cornerRadius": 6,
+          "stroke": "$border",
+          "strokeWidth": 1,
+          "gap": 10,
+          "padding": [
+            12,
+            14
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "K8LjO7",
+              "name": "地图隐私门禁 Label",
+              "width": 180,
+              "layout": "vertical",
+              "gap": 7,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "iLgRx",
+                  "name": "地图隐私门禁 Icon Surface",
+                  "width": 38,
+                  "height": 38,
+                  "fill": "$primary-soft",
+                  "cornerRadius": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "RFuFa",
+                      "name": "地图隐私门禁 Icon",
+                      "width": 21,
+                      "height": 21,
+                      "icon": "map_lock",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$primary"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "erzbh",
+                  "name": "地图隐私门禁 Title",
+                  "fill": "$text",
+                  "content": "地图隐私门禁",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 17,
+                  "fontWeight": "650"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "joiFO",
+              "name": "Flow Step / 首次进入地图",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "K8EYgl",
+                  "name": "首次进入地图 Flow Title",
+                  "fill": "$text",
+                  "content": "首次进入地图",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "qh74C",
+                  "name": "首次进入地图 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "检查本机同意状态",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "EtB3m",
+              "name": "地图隐私门禁 Arrow 1",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "eTuYe",
+              "name": "Flow Step / 未同意说明",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "LPo7p",
+                  "name": "未同意说明 Flow Title",
+                  "fill": "$text",
+                  "content": "未同意说明",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "vfT2i",
+                  "name": "未同意说明 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "SDK 保持未初始化",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "xXuRO",
+              "name": "地图隐私门禁 Arrow 2",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "NdiJ5",
+              "name": "Flow Step / 同意并继续",
+              "width": 260,
+              "height": 74,
+              "fill": "#FFF1E9",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "wMUSX",
+                  "name": "同意并继续 Flow Title",
+                  "fill": "$text",
+                  "content": "同意并继续",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "e6fupy",
+                  "name": "同意并继续 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "保存用户选择",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "GucBz",
+              "name": "地图隐私门禁 Arrow 3",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "rBiR7",
+              "name": "Flow Step / 同意中",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Mqz84",
+                  "name": "同意中 Flow Title",
+                  "fill": "$text",
+                  "content": "同意中",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "Jsvse",
+                  "name": "同意中 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "落盘后再初始化",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "L0KJHS",
+              "name": "地图隐私门禁 Arrow 4",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "dDlaX",
+              "name": "Flow Step / 地图已进入",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "AyVuJ",
+                  "name": "地图已进入 Flow Title",
+                  "fill": "$text",
+                  "content": "地图已进入",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "uPM9T",
+                  "name": "地图已进入 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "高德 SDK 已初始化",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "d8i0L",
+              "name": "地图隐私门禁 Arrow 5",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "Csnoy",
+              "name": "Flow Step / 后续进入",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "rU6QK",
+                  "name": "后续进入 Flow Title",
+                  "fill": "$text",
+                  "content": "后续进入",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "CS35R",
+                  "name": "后续进入 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "直接读取已同意状态",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "f7VTxR",
+          "name": "Flow / 账号删除成功路径",
+          "width": "fill_container",
+          "height": 110,
+          "fill": "$surface",
+          "cornerRadius": 6,
+          "stroke": "$border",
+          "strokeWidth": 1,
+          "gap": 10,
+          "padding": [
+            12,
+            14
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "ycS6u",
+              "name": "账号删除成功路径 Label",
+              "width": 180,
+              "layout": "vertical",
+              "gap": 7,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "U4g3fq",
+                  "name": "账号删除成功路径 Icon Surface",
+                  "width": 38,
+                  "height": 38,
+                  "fill": "$primary-soft",
+                  "cornerRadius": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "F9IDkn",
+                      "name": "账号删除成功路径 Icon",
+                      "width": 21,
+                      "height": 21,
+                      "icon": "person_remove",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$primary"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "VBJPR",
+                  "name": "账号删除成功路径 Title",
+                  "fill": "$text",
+                  "content": "账号删除成功路径",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 17,
+                  "fontWeight": "650"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "pUrqh",
+              "name": "Flow Step / 设置入口",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "tzksc",
+                  "name": "设置入口 Flow Title",
+                  "fill": "$text",
+                  "content": "设置入口",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "PLcuL",
+                  "name": "设置入口 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "与退出登录明确区分",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "LChjH",
+              "name": "账号删除成功路径 Arrow 1",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "UXgek",
+              "name": "Flow Step / 风险说明",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "RGN5F",
+                  "name": "风险说明 Flow Title",
+                  "fill": "$text",
+                  "content": "风险说明",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "dK4Ip",
+                  "name": "风险说明 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "列明服务端与本机影响",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "CY7fJ",
+              "name": "账号删除成功路径 Arrow 2",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "cVKE8",
+              "name": "Flow Step / 二次确认",
+              "width": 260,
+              "height": 74,
+              "fill": "#FFF1E9",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "LSGQb",
+                  "name": "二次确认 Flow Title",
+                  "fill": "$text",
+                  "content": "二次确认",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "CnxNO",
+                  "name": "二次确认 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "默认保留本地行程",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "kV4az",
+              "name": "账号删除成功路径 Arrow 3",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "yvLt7",
+              "name": "Flow Step / 删除处理中",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "P5rZrn",
+                  "name": "删除处理中 Flow Title",
+                  "fill": "$text",
+                  "content": "删除处理中",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "dWgoa",
+                  "name": "删除处理中 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "不可取消，等待服务端",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "eXn8F",
+              "name": "账号删除成功路径 Arrow 4",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "xZfCz",
+              "name": "Flow Step / 删除成功",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "rieTS",
+                  "name": "删除成功 Flow Title",
+                  "fill": "$text",
+                  "content": "删除成功",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "FMaoF",
+                  "name": "删除成功 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "清 Token，保留所选本机数据",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "WntHp",
+              "name": "账号删除成功路径 Arrow 5",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "QSCc3",
+              "name": "Flow Step / 未登录状态",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ZD17N",
+                  "name": "未登录状态 Flow Title",
+                  "fill": "$text",
+                  "content": "未登录状态",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "Bf2zj",
+                  "name": "未登录状态 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "自动返回登录入口",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "LuBMQ",
+          "name": "Flow / 拒绝、失败与外部申请",
+          "width": "fill_container",
+          "height": 110,
+          "fill": "$surface",
+          "cornerRadius": 6,
+          "stroke": "$border",
+          "strokeWidth": 1,
+          "gap": 10,
+          "padding": [
+            12,
+            14
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "JcHgp",
+              "name": "拒绝、失败与外部申请 Label",
+              "width": 180,
+              "layout": "vertical",
+              "gap": 7,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "dy2GF",
+                  "name": "拒绝、失败与外部申请 Icon Surface",
+                  "width": 38,
+                  "height": 38,
+                  "fill": "$primary-soft",
+                  "cornerRadius": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "EhTf5",
+                      "name": "拒绝、失败与外部申请 Icon",
+                      "width": 21,
+                      "height": 21,
+                      "icon": "shield",
+                      "library": "Material Symbols Rounded",
+                      "fill": "$primary"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "W6SPL",
+                  "name": "拒绝、失败与外部申请 Title",
+                  "fill": "$text",
+                  "content": "拒绝、失败与外部申请",
+                  "fontFamily": "$font-heading",
+                  "fontSize": 17,
+                  "fontWeight": "650"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "RwVRi",
+              "name": "Flow Step / 不同意地图",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "hMWxB",
+                  "name": "不同意地图 Flow Title",
+                  "fill": "$text",
+                  "content": "不同意地图",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "EF4MU",
+                  "name": "不同意地图 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "返回列表且不初始化 SDK",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "b1l6pw",
+              "name": "拒绝、失败与外部申请 Arrow 1",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "OK9aO",
+              "name": "Flow Step / 取消删除",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "OhTJL",
+                  "name": "取消删除 Flow Title",
+                  "fill": "$text",
+                  "content": "取消删除",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "EZIrd",
+                  "name": "取消删除 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "账号与本机数据不变",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "b3AzsR",
+              "name": "拒绝、失败与外部申请 Arrow 2",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "N0uWp",
+              "name": "Flow Step / 网络或服务端失败",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "o3GBZ",
+                  "name": "网络或服务端失败 Flow Title",
+                  "fill": "$text",
+                  "content": "网络或服务端失败",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "ycIcn",
+                  "name": "网络或服务端失败 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "不清 Token，不清本机数据",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "JOI6i",
+              "name": "拒绝、失败与外部申请 Arrow 3",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "Vdstl",
+              "name": "Flow Step / 重试删除",
+              "width": 260,
+              "height": 74,
+              "fill": "#FFF1E9",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "lZCGG",
+                  "name": "重试删除 Flow Title",
+                  "fill": "$text",
+                  "content": "重试删除",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "jR0yS",
+                  "name": "重试删除 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "返回处理中状态",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "ocd3L",
+              "name": "拒绝、失败与外部申请 Arrow 4",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "h95XK",
+              "name": "Flow Step / 无法登录",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "OemKl",
+                  "name": "无法登录 Flow Title",
+                  "fill": "$text",
+                  "content": "无法登录",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "eVl5z",
+                  "name": "无法登录 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "查看外部删除申请说明",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "ngi0z",
+              "name": "拒绝、失败与外部申请 Arrow 5",
+              "width": 18,
+              "height": 18,
+              "icon": "arrow_forward",
+              "library": "Material Symbols Rounded",
+              "fill": "$primary"
+            },
+            {
+              "type": "frame",
+              "id": "JFvQP",
+              "name": "Flow Step / 隐私联系邮箱",
+              "width": 260,
+              "height": 74,
+              "fill": "$surface-soft",
+              "cornerRadius": 4,
+              "layout": "vertical",
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Vx3DG",
+                  "name": "隐私联系邮箱 Flow Title",
+                  "fill": "$text",
+                  "content": "隐私联系邮箱",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "lSwVn",
+                  "name": "隐私联系邮箱 Flow Action",
+                  "fill": "$text-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "使用公开配置入口",
+                  "lineHeight": 1.35,
+                  "fontFamily": "$font-body",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
                 }
               ]
             }
