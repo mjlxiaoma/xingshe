@@ -131,6 +131,8 @@ class MapScene {
     this.markers = const [],
     this.polylines = const [],
     this.onMarkerTap,
+    this.showUserLocation = false,
+    this.onLocationChanged,
   });
 
   final MapCoordinate center;
@@ -138,6 +140,8 @@ class MapScene {
   final List<MapMarker> markers;
   final List<MapPolyline> polylines;
   final ValueChanged<MapMarker>? onMarkerTap;
+  final bool showUserLocation;
+  final ValueChanged<MapCoordinate>? onLocationChanged;
 }
 
 abstract interface class MapProvider {
@@ -254,6 +258,17 @@ class AndroidMapProvider implements MapProvider {
         nativeMarker.setIdForCopy(marker.id);
         return nativeMarker;
       }).toSet(),
+      myLocationStyleOptions: scene.showUserLocation
+          ? amap.MyLocationStyleOptions(true)
+          : null,
+      onLocationChanged: scene.showUserLocation
+          ? (location) => scene.onLocationChanged?.call(
+              MapCoordinate(
+                latitude: location.latLng.latitude,
+                longitude: location.latLng.longitude,
+              ),
+            )
+          : null,
       compassEnabled: true,
       scaleEnabled: true,
     );
@@ -306,7 +321,7 @@ class MapConsentGate extends ConsumerWidget {
                   Positioned(left: 16, right: 16, top: 16, child: overlay),
                 const Positioned(
                   left: 16,
-                  top: 76,
+                  bottom: 16,
                   child: _ConsentGrantedBadge(),
                 ),
               ],

@@ -1,14 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 
+import '../../core/api/api_providers.dart';
 import '../../core/map/map_provider.dart';
+import '../../core/permissions/app_permissions.dart';
 import 'spot_list_page.dart';
 
 final mapSpotsProvider = FutureProvider<List<ShootingSpot>>(
   (ref) async =>
       (await ref.read(loadSpotsProvider)(page: 1, pageSize: 100)).items,
   retry: (_, _) => null,
+);
+
+typedef LoadNearbySpots =
+    Future<List<ShootingSpot>> Function(double latitude, double longitude);
+
+final loadNearbySpotsProvider = Provider<LoadNearbySpots>(
+  (ref) =>
+      (latitude, longitude) => ref
+          .read(apiClientProvider)
+          .request<SpotPage>(
+            '/spots',
+            queryParameters: {
+              'latitude': latitude,
+              'longitude': longitude,
+              'radius': 50000,
+              'page': 1,
+              'page_size': 100,
+            },
+            decode: SpotPage.fromJson,
+          )
+          .then((page) => page.items),
 );
 
 class SpotMapPage extends ConsumerStatefulWidget {
@@ -20,11 +44,16 @@ class SpotMapPage extends ConsumerStatefulWidget {
 
 class _SpotMapPageState extends ConsumerState<SpotMapPage> {
   ShootingSpot? _selected;
+  List<ShootingSpot>? _nearby;
+  MapCoordinate? _lastLocation;
+  bool _locationEnabled = false;
+  bool _loadingNearby = false;
+  bool _nearbyFailed = false;
 
   @override
   Widget build(BuildContext context) {
     final spots = ref.watch(mapSpotsProvider);
-    final items = spots.value ?? const <ShootingSpot>[];
+    final items = _nearby ?? spots.value ?? const <ShootingSpot>[];
     final markers = items
         .map(
           (spot) => MapMarker(
@@ -45,6 +74,8 @@ class _SpotMapPageState extends ConsumerState<SpotMapPage> {
           center: const MapCoordinate(latitude: 34.2, longitude: 108.9),
           zoom: 4,
           markers: markers,
+          showUserLocation: _locationEnabled,
+          onLocationChanged: _loadNearby,
           onMarkerTap: (marker) => setState(
             () => _selected = items.cast<ShootingSpot?>().firstWhere(
               (spot) => spot?.id == marker.id,
@@ -58,6 +89,15 @@ class _SpotMapPageState extends ConsumerState<SpotMapPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const _MapSearchBar(),
+            const SizedBox(height: 8),
+            _NearbyAction(
+              enabled: _locationEnabled,
+              loading: _loadingNearby,
+              failed: _nearbyFailed,
+              onPressed: _nearbyFailed && _lastLocation != null
+                  ? () => _fetchNearby(_lastLocation!, retry: true)
+                  : _enableLocation,
+            ),
             if (spots.isLoading) const _MapStatus('正在加载摄影机位'),
             if (spots.hasError)
               _MapError(onRetry: () => ref.invalidate(mapSpotsProvider)),
@@ -67,6 +107,89 @@ class _SpotMapPageState extends ConsumerState<SpotMapPage> {
       ),
     );
   }
+
+  Future<void> _enableLocation() async {
+    final status = await ref
+        .read(appPermissionsProvider.notifier)
+        .request(AppPermission.location);
+    if (!mounted) return;
+    if (status.isGranted) {
+      setState(() {
+        _locationEnabled = true;
+        _nearbyFailed = false;
+      });
+      return;
+    }
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('未获得前台定位权限，继续显示默认列表')));
+  }
+
+  Future<void> _loadNearby(MapCoordinate location) => _fetchNearby(location);
+
+  Future<void> _fetchNearby(
+    MapCoordinate location, {
+    bool retry = false,
+  }) async {
+    if (_loadingNearby || (_lastLocation != null && !retry)) return;
+    setState(() {
+      _lastLocation = location;
+      _loadingNearby = true;
+      _nearbyFailed = false;
+    });
+    try {
+      final nearby = await ref.read(loadNearbySpotsProvider)(
+        location.latitude,
+        location.longitude,
+      );
+      if (mounted) {
+        setState(() {
+          _nearby = nearby;
+          _selected = null;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _nearbyFailed = true);
+    } finally {
+      if (mounted) setState(() => _loadingNearby = false);
+    }
+  }
+}
+
+class _NearbyAction extends StatelessWidget {
+  const _NearbyAction({
+    required this.enabled,
+    required this.loading,
+    required this.failed,
+    required this.onPressed,
+  });
+
+  final bool enabled;
+  final bool loading;
+  final bool failed;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment.centerRight,
+    child: FilledButton.tonalIcon(
+      key: const Key('nearby-spots-action'),
+      onPressed: loading ? null : onPressed,
+      icon: loading
+          ? const SizedBox.square(
+              dimension: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : Icon(failed ? Icons.refresh : Icons.my_location),
+      label: Text(
+        failed
+            ? '附近加载失败，重试'
+            : enabled
+            ? '正在使用当前位置 · 距离仅供参考'
+            : '使用当前位置查找附近机位',
+      ),
+    ),
+  );
 }
 
 class _MapSearchBar extends StatelessWidget {
@@ -180,6 +303,14 @@ class _SpotSummary extends StatelessWidget {
                     fontSize: 10,
                   ),
                 ),
+                if (spot.distanceMeters case final distance?)
+                  Text(
+                    '约 ${(distance / 1000).toStringAsFixed(1)} km · 距离仅供参考',
+                    style: const TextStyle(
+                      color: Color(0xFF667268),
+                      fontSize: 9,
+                    ),
+                  ),
               ],
             ),
           ),

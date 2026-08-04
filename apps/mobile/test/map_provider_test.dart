@@ -69,6 +69,8 @@ void main() {
         TestBuildContext(),
         MapScene(
           center: const MapCoordinate(latitude: 30.2741, longitude: 120.1551),
+          showUserLocation: true,
+          onLocationChanged: (_) {},
           markers: const [
             MapMarker(
               id: 'spot-1',
@@ -96,6 +98,8 @@ void main() {
         ),
       );
       expect(map.markers.single.id, 'spot-1');
+      expect(map.myLocationStyleOptions?.enabled, isTrue);
+      expect(map.onLocationChanged, isNotNull);
       expect(map.markers.single.infoWindow.title, '西湖日落');
       expect(map.markers.single.position.latitude, closeTo(39.910226, 0.00002));
       expect(
