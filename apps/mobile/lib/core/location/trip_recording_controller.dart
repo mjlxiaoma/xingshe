@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -73,29 +75,43 @@ class TripRecordingController {
     await _update(trip, 'recording');
   }
 
-  Future<void> pause(String tripID) async {
+  Future<void> pause(String tripID, {DateTime? transitionedAt}) async {
     final trip = await _require(tripID, {'recording'});
     await locationBridge.pause();
-    await _update(trip, 'paused');
+    final at = (transitionedAt ?? DateTime.now()).toUtc();
+    await _update(
+      trip,
+      'paused',
+      at: at,
+      durationSeconds: trip.durationSeconds + _elapsed(trip.updatedAt, at),
+    );
   }
 
-  Future<void> resume(String tripID) async {
+  Future<void> resume(String tripID, {DateTime? transitionedAt}) async {
     final trip = await _require(tripID, {'paused'});
     await locationBridge.resume();
-    await _update(trip, 'recording');
+    await _update(
+      trip,
+      'recording',
+      at: (transitionedAt ?? DateTime.now()).toUtc(),
+    );
   }
 
   Future<void> complete(String tripID, {DateTime? endedAt}) async {
     final trip = await _require(tripID, {'recording', 'paused'});
+    final finishedAt = (endedAt ?? DateTime.now()).toUtc();
     await locationBridge.stop();
     await synchronizer.synchronize(tripID: tripID);
-    final finishedAt = (endedAt ?? DateTime.now()).toUtc();
+    final duration = trip.status == 'recording'
+        ? trip.durationSeconds + _elapsed(trip.updatedAt, finishedAt)
+        : trip.durationSeconds;
     await (database.update(
       database.localTrips,
     )..where((row) => row.id.equals(trip.id))).write(
       LocalTripsCompanion(
         status: const Value('completed'),
         endedAt: Value(finishedAt),
+        durationSeconds: Value(duration),
         updatedAt: Value(finishedAt),
       ),
     );
@@ -144,12 +160,26 @@ class TripRecordingController {
             ..limit(1))
           .getSingleOrNull();
 
-  Future<void> _update(LocalTrip trip, String status) async {
-    final now = DateTime.now().toUtc();
+  Future<void> _update(
+    LocalTrip trip,
+    String status, {
+    DateTime? at,
+    int? durationSeconds,
+  }) async {
+    final now = at ?? DateTime.now().toUtc();
     await (database.update(
       database.localTrips,
     )..where((row) => row.id.equals(trip.id))).write(
-      LocalTripsCompanion(status: Value(status), updatedAt: Value(now)),
+      LocalTripsCompanion(
+        status: Value(status),
+        durationSeconds: durationSeconds == null
+            ? const Value.absent()
+            : Value(durationSeconds),
+        updatedAt: Value(now),
+      ),
     );
   }
 }
+
+int _elapsed(DateTime start, DateTime end) =>
+    max(0, end.difference(start).inSeconds);

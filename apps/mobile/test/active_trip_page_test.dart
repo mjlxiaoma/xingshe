@@ -18,7 +18,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     final database = LocalTripDatabase.forTesting(NativeDatabase.memory());
     addTearDown(database.close);
-    final now = DateTime.utc(2026, 8, 4);
+    final now = DateTime.now().toUtc();
     await database
         .into(database.localTrips)
         .insert(
@@ -96,7 +96,10 @@ void main() {
     await _pumpFrames(tester);
 
     expect(find.text('城市追光'), findsOneWidget);
-    expect(find.text('00:00:00'), findsOneWidget);
+    final duration = tester.widget<Text>(
+      find.byKey(const Key('trip-duration')),
+    );
+    expect(duration.data, matches(RegExp(r'^\d{2}:\d{2}:\d{2}$')));
     expect(find.text('0 m'), findsOneWidget);
     expect(find.text('1 个'), findsOneWidget);
     expect(find.text('1 张'), findsOneWidget);

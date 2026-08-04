@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xingshe/core/database/local_database.dart';
@@ -87,6 +88,32 @@ void main() {
 
     expect(restored?.id, 'trip-1');
     expect(nativeStatus, 'paused');
+  });
+
+  test('excludes paused time from the persisted duration', () async {
+    final startedAt = DateTime.utc(2026, 8, 4, 8);
+    await _insertTrip(database, 'trip-1', 'recording');
+    await (database.update(database.localTrips)
+          ..where((row) => row.id.equals('trip-1')))
+        .write(LocalTripsCompanion(updatedAt: Value(startedAt)));
+
+    await controller.pause(
+      'trip-1',
+      transitionedAt: startedAt.add(const Duration(seconds: 20)),
+    );
+    await controller.resume(
+      'trip-1',
+      transitionedAt: startedAt.add(const Duration(seconds: 50)),
+    );
+    await controller.complete(
+      'trip-1',
+      endedAt: startedAt.add(const Duration(seconds: 70)),
+    );
+
+    expect(
+      (await database.select(database.localTrips).getSingle()).durationSeconds,
+      40,
+    );
   });
 
   test('native sticky service restores its persisted state', () {

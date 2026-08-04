@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -82,8 +85,29 @@ class _ActiveTripView extends ConsumerStatefulWidget {
 
 class _ActiveTripViewState extends ConsumerState<_ActiveTripView> {
   bool _busy = false;
+  late final Timer _ticker;
 
   bool get _paused => widget.trip.status == 'paused';
+
+  int get _durationSeconds =>
+      widget.trip.durationSeconds +
+      (_paused
+          ? 0
+          : max(0, DateTime.now().difference(widget.trip.updatedAt).inSeconds));
+
+  @override
+  void initState() {
+    super.initState();
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted && !_paused) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _ticker.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -139,7 +163,7 @@ class _ActiveTripViewState extends ConsumerState<_ActiveTripView> {
             child: Column(
               children: [
                 Text(
-                  _duration(widget.trip.durationSeconds),
+                  _duration(_durationSeconds),
                   key: const Key('trip-duration'),
                   style: const TextStyle(
                     fontSize: 32,

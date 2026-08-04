@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/permissions/app_permissions.dart';
 import 'core/auth/auth_session.dart';
+import 'core/location/location_bridge.dart';
 import 'core/location/track_synchronizer.dart';
 import 'core/location/trip_recording_controller.dart';
 import 'features/auth/email_login_page.dart';
@@ -74,11 +77,19 @@ class XingSheApp extends ConsumerStatefulWidget {
 
 class _XingSheAppState extends ConsumerState<XingSheApp> {
   late final AppLifecycleListener _lifecycleListener;
+  StreamSubscription<NativeLocationPoint>? _locationSubscription;
 
   @override
   void initState() {
     super.initState();
     _lifecycleListener = AppLifecycleListener(onResume: _synchronizeTracks);
+    _locationSubscription = ref
+        .read(locationBridgeProvider)
+        .locations
+        .listen(
+          (point) => unawaited(_synchronizePoint(point)),
+          onError: (_, _) {},
+        );
     Future.microtask(_synchronizeTracks);
   }
 
@@ -99,9 +110,20 @@ class _XingSheAppState extends ConsumerState<XingSheApp> {
     }
   }
 
+  Future<void> _synchronizePoint(NativeLocationPoint point) async {
+    try {
+      await ref
+          .read(trackSynchronizerProvider)
+          .synchronize(tripID: point.tripID);
+    } on Object {
+      // Room keeps the point until the next event or lifecycle retry.
+    }
+  }
+
   @override
   void dispose() {
     _lifecycleListener.dispose();
+    unawaited(_locationSubscription?.cancel());
     super.dispose();
   }
 

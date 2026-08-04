@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../database/local_database.dart';
 import 'location_bridge.dart';
+import 'trip_statistics.dart';
 
 final localTripDatabaseProvider = Provider<LocalTripDatabase>((ref) {
   final database = LocalTripDatabase();
@@ -78,6 +79,11 @@ class TrackSynchronizer {
         ...completedIDs,
         ...persisted.map((point) => point.nativeLogId).whereType<String>(),
       }.toList(growable: false);
+      for (final tripID in tripIDs) {
+        if (statuses[tripID] != null && statuses[tripID] != 'completed') {
+          await refreshTripDistance(database, tripID);
+        }
+      }
     });
 
     return clearableIDs.isEmpty
