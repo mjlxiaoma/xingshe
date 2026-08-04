@@ -77,6 +77,8 @@ void main() {
 
     await tester.tap(find.text('行摄'));
     await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('create-trip-button')));
+    await tester.pumpAndSettle();
     await tester.enterText(
       find.byKey(const Key('trip-title-field')),
       '  城市追光  ',

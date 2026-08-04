@@ -20,6 +20,7 @@ import 'features/spots/spot_map_page.dart';
 import 'features/trips/active_trip_page.dart';
 import 'features/trips/create_trip_page.dart';
 import 'features/trips/trip_detail_page.dart';
+import 'features/trips/trip_history_page.dart';
 
 void main() => runApp(const ProviderScope(child: XingSheApp()));
 
@@ -40,6 +41,7 @@ final _router = GoRouter(
         GoRoute(path: '/', builder: (_, _) => const _HomePage()),
         GoRoute(path: '/map', builder: (_, _) => const SpotMapPage()),
         GoRoute(path: '/spots', builder: (_, _) => const SpotListPage()),
+        GoRoute(path: '/trips', builder: (_, _) => const TripHistoryPage()),
         GoRoute(path: '/me', builder: (_, _) => const ProfilePage()),
       ],
     ),
@@ -190,7 +192,7 @@ class _AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const paths = ['/', '/map', '/trip', '/me'];
+    const paths = ['/', '/map', '/trips', '/me'];
     final index = paths.indexOf(location);
     return Scaffold(
       body: child,

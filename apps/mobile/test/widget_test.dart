@@ -40,6 +40,7 @@ void main() {
 
     await tester.tap(find.text('行摄'));
     await tester.pumpAndSettle();
-    expect(find.text('开始一次新的行摄'), findsOneWidget);
+    expect(find.text('我的行摄'), findsOneWidget);
+    expect(find.text('暂无本地行程'), findsOneWidget);
   });
 }
