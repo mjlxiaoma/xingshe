@@ -21,7 +21,9 @@ Future<File> generateTripShareImage(GlobalKey boundaryKey) async {
 }
 
 Future<File> writeTripSharePng(Uint8List bytes) async {
-  final directory = await Directory.systemTemp.createTemp('xingshe_share_');
+  final directory = await Directory(
+    '${Directory.systemTemp.path}${Platform.pathSeparator}xingshe_share',
+  ).create();
   return File(
     '${directory.path}${Platform.pathSeparator}trip.png',
   ).writeAsBytes(bytes, flush: true);

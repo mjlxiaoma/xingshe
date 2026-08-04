@@ -80,6 +80,7 @@ void main() {
     final database = await _database();
     addTearDown(database.close);
     var generated = false;
+    String? sharedPath;
     await tester.pumpWidget(
       ProviderScope(
         overrides: [localTripDatabaseProvider.overrideWithValue(database)],
@@ -90,6 +91,7 @@ void main() {
               generated = true;
               return File('temporary-trip.png');
             },
+            shareImage: (path) async => sharedPath = path,
           ),
         ),
       ),
@@ -101,6 +103,10 @@ void main() {
     expect(generated, isTrue);
     expect(find.text('分享图已在本机生成'), findsOneWidget);
     expect(find.text('重新生成'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('share-trip-image')));
+    await tester.pumpAndSettle();
+    expect(sharedPath, 'temporary-trip.png');
+    expect(tester.takeException(), isNull);
     tester
         .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
         .clearSnackBars();

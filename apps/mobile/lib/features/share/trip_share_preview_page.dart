@@ -6,16 +6,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/database/local_database.dart';
 import '../../core/location/track_synchronizer.dart';
+import 'share_bridge.dart';
 import 'trip_share_card.dart';
 import 'trip_share_image.dart';
 
 typedef ShareImageGenerator = Future<File> Function(GlobalKey boundaryKey);
+typedef ShareImageSender = Future<void> Function(String path);
 
 class TripSharePreviewPage extends ConsumerStatefulWidget {
-  const TripSharePreviewPage({super.key, required this.tripID, this.generator});
+  const TripSharePreviewPage({
+    super.key,
+    required this.tripID,
+    this.generator,
+    this.shareImage,
+  });
 
   final String tripID;
   final ShareImageGenerator? generator;
+  final ShareImageSender? shareImage;
 
   @override
   ConsumerState<TripSharePreviewPage> createState() =>
@@ -25,6 +33,7 @@ class TripSharePreviewPage extends ConsumerStatefulWidget {
 class _TripSharePreviewPageState extends ConsumerState<TripSharePreviewPage> {
   final _cardKey = GlobalKey();
   bool _generating = false;
+  bool _sharing = false;
   File? _generatedImage;
 
   Future<void> _generate() async {
@@ -46,6 +55,22 @@ class _TripSharePreviewPageState extends ConsumerState<TripSharePreviewPage> {
       ).showSnackBar(const SnackBar(content: Text('分享图生成失败，请重试')));
     } finally {
       if (mounted) setState(() => _generating = false);
+    }
+  }
+
+  Future<void> _share() async {
+    final image = _generatedImage;
+    if (_sharing || image == null) return;
+    setState(() => _sharing = true);
+    try {
+      await (widget.shareImage ?? ShareBridge().shareImage)(image.path);
+    } on Object {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('无法打开系统分享，请重试')));
+    } finally {
+      if (mounted) setState(() => _sharing = false);
     }
   }
 
@@ -138,6 +163,22 @@ class _TripSharePreviewPageState extends ConsumerState<TripSharePreviewPage> {
                               : '重新生成',
                         ),
                       ),
+                      if (_generatedImage != null) ...[
+                        const SizedBox(height: 8),
+                        OutlinedButton.icon(
+                          key: const Key('share-trip-image'),
+                          onPressed: _sharing ? null : _share,
+                          icon: _sharing
+                              ? const SizedBox.square(
+                                  dimension: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.ios_share),
+                          label: Text(_sharing ? '正在打开' : '系统分享'),
+                        ),
+                      ],
                     ],
                   ),
                 ),
