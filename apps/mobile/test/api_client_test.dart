@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xingshe/core/api/api_client.dart';
 import 'package:xingshe/core/auth/token_store.dart';
+import 'package:xingshe/core/observability/error_reporter.dart';
 
 void main() {
   test('refreshes once on 401 and retries with the new access token', () async {
@@ -103,10 +104,13 @@ void main() {
         const SessionTokens(accessToken: 'access', refreshToken: 'refresh'),
       );
       var expired = false;
+      final reports = <({AppErrorEvent event, String? code, int? status})>[];
       final client = ApiClient(
         tokenStore: store,
         baseURL: 'http://${server.address.host}:${server.port}/api/v1',
         onSessionExpired: () => expired = true,
+        errorReporter: (event, {code, status}) =>
+            reports.add((event: event, code: code, status: status)),
       );
 
       await expectLater(
@@ -121,6 +125,12 @@ void main() {
       );
       expect(expired, isTrue);
       expect(await store.readTokens(), isNull);
+      expect(reports.map((report) => report.event), [
+        AppErrorEvent.sessionRefreshFailed,
+        AppErrorEvent.apiRequestFailed,
+      ]);
+      expect(reports.last.code, 'AUTH_INVALID_TOKEN');
+      expect(reports.every((report) => report.status == 401), isTrue);
     },
   );
 }

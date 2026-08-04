@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../auth/token_store.dart';
+import '../observability/error_reporter.dart';
 
 class ApiConfig {
   static const baseURL = String.fromEnvironment(
@@ -45,8 +46,10 @@ class ApiClient {
     Dio? dio,
     Dio? refreshDio,
     this.onSessionExpired,
+    ErrorReporter? errorReporter,
   }) : _dio = dio ?? Dio(BaseOptions(baseUrl: baseURL)),
-       _refreshDio = refreshDio ?? Dio(BaseOptions(baseUrl: baseURL)) {
+       _refreshDio = refreshDio ?? Dio(BaseOptions(baseUrl: baseURL)),
+       _errorReporter = errorReporter ?? reportErrorSafely {
     _dio.options
       ..baseUrl = baseURL
       ..connectTimeout = const Duration(seconds: 10)
@@ -72,6 +75,7 @@ class ApiClient {
   final TokenStore tokenStore;
   final Dio _dio;
   final Dio _refreshDio;
+  final ErrorReporter _errorReporter;
   final void Function()? onSessionExpired;
 
   Future<T> request<T>(
@@ -97,8 +101,24 @@ class ApiClient {
         );
       }
       return decode(envelope['data']);
+    } on ApiException catch (error) {
+      _report(
+        AppErrorEvent.apiRequestFailed,
+        code: error.code,
+        status: error.status,
+      );
+      rethrow;
     } on DioException catch (error) {
-      throw ApiException.fromDio(error);
+      final exception = ApiException.fromDio(error);
+      _report(
+        AppErrorEvent.apiRequestFailed,
+        code: exception.code,
+        status: exception.status,
+      );
+      throw exception;
+    } on Object {
+      _report(AppErrorEvent.apiRequestFailed, code: 'INVALID_RESPONSE');
+      rethrow;
     }
   }
 
@@ -140,12 +160,24 @@ class ApiClient {
           return;
         }
       } catch (_) {
+        _report(
+          AppErrorEvent.sessionRefreshFailed,
+          status: error.response?.statusCode,
+        );
         // The original 401 is returned after clearing the unusable session.
       }
     }
     await tokenStore.clearTokens();
     onSessionExpired?.call();
     handler.next(error);
+  }
+
+  void _report(AppErrorEvent event, {String? code, int? status}) {
+    try {
+      _errorReporter(event, code: code, status: status);
+    } on Object {
+      // Error reporting must never interrupt the user flow.
+    }
   }
 
   String? _bearerToken(Object? header) {
