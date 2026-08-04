@@ -115,10 +115,27 @@ func TestMVPAPIFlow(t *testing.T) {
 	if len(favorites.Items) != 0 {
 		t.Fatalf("favorite was not removed: %+v", favorites.Items)
 	}
+	requestAPI[map[string]any](t, server.URL, http.MethodPost, "/api/v1/spots/"+spotID+"/favorite", nil, refreshed.AccessToken)
 	requestAPI[map[string]any](t, server.URL, http.MethodPost, "/api/v1/auth/logout", map[string]any{"refresh_token": refreshed.RefreshToken}, "")
 	requestError(t, server.URL, http.MethodPost, "/api/v1/auth/refresh", map[string]any{
 		"refresh_token": refreshed.RefreshToken, "device_id": "integration-device",
 	}, "", http.StatusUnauthorized, handler.CodeInvalidToken)
+	requestAPI[map[string]any](t, server.URL, http.MethodDelete, "/api/v1/me", nil, refreshed.AccessToken)
+	requestError(t, server.URL, http.MethodGet, "/api/v1/me", nil, refreshed.AccessToken, http.StatusUnauthorized, handler.CodeInvalidToken)
+
+	var users, codes, tokens, favoriteRows int
+	if err := database.QueryRow(ctx, `
+		SELECT
+			(SELECT count(*) FROM users WHERE email = $1),
+			(SELECT count(*) FROM email_verification_codes WHERE email = $1),
+			(SELECT count(*) FROM refresh_tokens WHERE user_id = $2),
+			(SELECT count(*) FROM user_favorite_spots WHERE user_id = $2)
+	`, email, user.ID).Scan(&users, &codes, &tokens, &favoriteRows); err != nil {
+		t.Fatal(err)
+	}
+	if users != 0 || codes != 0 || tokens != 0 || favoriteRows != 0 {
+		t.Fatalf("account data remains: users=%d codes=%d tokens=%d favorites=%d", users, codes, tokens, favoriteRows)
+	}
 }
 
 func requestAPI[T any](t *testing.T, baseURL, method, path string, body any, token string) T {

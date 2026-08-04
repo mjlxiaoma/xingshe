@@ -119,6 +119,16 @@ func (h *AuthHandler) UpdateMe(c *gin.Context) {
 	h.userResponse(c, user, err)
 }
 
+func (h *AuthHandler) DeleteMe(c *gin.Context) {
+	if err := h.auth.DeleteAccount(c.Request.Context(), c.GetString("user_id")); errors.Is(err, service.ErrUserNotFound) {
+		Error(c, http.StatusNotFound, CodeResourceNotFound, "用户不存在")
+	} else if err != nil {
+		Error(c, http.StatusInternalServerError, CodeInternalError, "服务器内部错误")
+	} else {
+		JSON(c, http.StatusOK, CodeOK, "success", gin.H{})
+	}
+}
+
 func (h *AuthHandler) userResponse(c *gin.Context, user service.User, err error) {
 	if errors.Is(err, service.ErrUserNotFound) {
 		Error(c, http.StatusNotFound, CodeResourceNotFound, "用户不存在")

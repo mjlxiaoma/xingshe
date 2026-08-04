@@ -1,22 +1,29 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mjlxiaoma/xingshe/services/api/internal/service"
 )
 
+type authenticatorFunc func(context.Context, string) (string, error)
+
+func (authenticate authenticatorFunc) AuthenticateAccessToken(ctx context.Context, token string) (string, error) {
+	return authenticate(ctx, token)
+}
+
 func TestAuthenticateProtectsRoute(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	auth := service.NewAuthService(nil, nil, nil, "0123456789abcdef0123456789abcdef", 2*time.Hour, 30*24*time.Hour)
-	token, err := auth.NewAccessToken("user-id")
-	if err != nil {
-		t.Fatal(err)
-	}
+	auth := authenticatorFunc(func(_ context.Context, token string) (string, error) {
+		if token != "valid" {
+			return "", service.ErrInvalidToken
+		}
+		return "user-id", nil
+	})
 	router := gin.New()
 	router.Use(Authenticate(auth))
 	router.GET("/protected", func(c *gin.Context) { c.Status(http.StatusNoContent) })
@@ -29,7 +36,7 @@ func TestAuthenticateProtectsRoute(t *testing.T) {
 
 	authorized := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodGet, "/protected", nil)
-	request.Header.Set("Authorization", "Bearer "+token)
+	request.Header.Set("Authorization", "Bearer valid")
 	router.ServeHTTP(authorized, request)
 	if authorized.Code != http.StatusNoContent {
 		t.Fatalf("valid token status = %d", authorized.Code)
@@ -38,7 +45,9 @@ func TestAuthenticateProtectsRoute(t *testing.T) {
 
 func TestOptionalAuthenticateAllowsAnonymousAndRejectsInvalidToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	auth := service.NewAuthService(nil, nil, nil, "0123456789abcdef0123456789abcdef", 2*time.Hour, 30*24*time.Hour)
+	auth := authenticatorFunc(func(context.Context, string) (string, error) {
+		return "", service.ErrInvalidToken
+	})
 	router := gin.New()
 	router.Use(OptionalAuthenticate(auth))
 	router.GET("/public", func(c *gin.Context) { c.Status(http.StatusNoContent) })

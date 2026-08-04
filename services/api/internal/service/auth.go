@@ -273,6 +273,37 @@ func (s *AuthService) UpdateNickname(ctx context.Context, userID, nickname strin
 	return user, err
 }
 
+func (s *AuthService) DeleteAccount(ctx context.Context, userID string) error {
+	tx, err := s.database.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+
+	var email string
+	err = tx.QueryRow(ctx, `
+		DELETE FROM users
+		WHERE id = $1 AND status = 1
+		RETURNING email
+	`, userID).Scan(&email)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return ErrUserNotFound
+	}
+	if err != nil {
+		return err
+	}
+	if _, err := tx.Exec(ctx, "DELETE FROM email_verification_codes WHERE email = $1", email); err != nil {
+		return err
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return err
+	}
+	if err := s.redis.Del(ctx, "auth:email-code:"+hashText(email), loginAttemptKey(email)).Err(); err != nil {
+		slog.Error("failed to clear deleted account rate limits")
+	}
+	return nil
+}
+
 func (s *AuthService) NewAccessToken(userID string) (string, error) {
 	now := time.Now()
 	claims := jwt.RegisteredClaims{
@@ -294,6 +325,18 @@ func (s *AuthService) VerifyAccessToken(value string) (string, error) {
 		return "", ErrInvalidToken
 	}
 	return claims.Subject, nil
+}
+
+func (s *AuthService) AuthenticateAccessToken(ctx context.Context, value string) (string, error) {
+	userID, err := s.VerifyAccessToken(value)
+	if err != nil {
+		return "", err
+	}
+	var active bool
+	if err := s.database.QueryRow(ctx, "SELECT EXISTS (SELECT 1 FROM users WHERE id = $1 AND status = 1)", userID).Scan(&active); err != nil || !active {
+		return "", ErrInvalidToken
+	}
+	return userID, nil
 }
 
 func (s *AuthService) newTokens(userID string) (string, string, error) {

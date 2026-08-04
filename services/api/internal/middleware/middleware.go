@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"crypto/rand"
 	"log/slog"
 	"net/http"
@@ -9,8 +10,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mjlxiaoma/xingshe/services/api/internal/handler"
-	"github.com/mjlxiaoma/xingshe/services/api/internal/service"
 )
+
+type AccessTokenAuthenticator interface {
+	AuthenticateAccessToken(context.Context, string) (string, error)
+}
 
 const (
 	RequestIDKey    = "request_id"
@@ -27,7 +31,7 @@ func RequestID() gin.HandlerFunc {
 	}
 }
 
-func Authenticate(auth *service.AuthService) gin.HandlerFunc {
+func Authenticate(auth AccessTokenAuthenticator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		parts := strings.Fields(c.GetHeader("Authorization"))
 		if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
@@ -35,7 +39,7 @@ func Authenticate(auth *service.AuthService) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		userID, err := auth.VerifyAccessToken(parts[1])
+		userID, err := auth.AuthenticateAccessToken(c.Request.Context(), parts[1])
 		if err != nil {
 			handler.Error(c, http.StatusUnauthorized, handler.CodeInvalidToken, "登录已失效，请重新登录")
 			c.Abort()
@@ -46,7 +50,7 @@ func Authenticate(auth *service.AuthService) gin.HandlerFunc {
 	}
 }
 
-func OptionalAuthenticate(auth *service.AuthService) gin.HandlerFunc {
+func OptionalAuthenticate(auth AccessTokenAuthenticator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if strings.TrimSpace(c.GetHeader("Authorization")) == "" {
 			c.Next()
@@ -58,7 +62,7 @@ func OptionalAuthenticate(auth *service.AuthService) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		userID, err := auth.VerifyAccessToken(parts[1])
+		userID, err := auth.AuthenticateAccessToken(c.Request.Context(), parts[1])
 		if err != nil {
 			handler.Error(c, http.StatusUnauthorized, handler.CodeInvalidToken, "登录已失效，请重新登录")
 			c.Abort()

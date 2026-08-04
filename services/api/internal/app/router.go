@@ -23,6 +23,7 @@ func NewRouter(authHandler *handler.AuthHandler, authService *service.AuthServic
 	meRoutes := router.Group("/api/v1/me", middleware.Authenticate(authService))
 	meRoutes.GET("", authHandler.Me)
 	meRoutes.PATCH("", authHandler.UpdateMe)
+	meRoutes.DELETE("", authHandler.DeleteMe)
 	meRoutes.GET("/favorite-spots", spotHandler.Favorites)
 	spots := router.Group("/api/v1/spots", middleware.OptionalAuthenticate(authService))
 	spots.GET("", spotHandler.List)
