@@ -34,8 +34,14 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("invalid configuration: %w", err)
 	}
-	if cfg.Environment == "production" {
-		return errors.New("production SMTP mailer is not configured")
+	var mailer service.Mailer = service.DevelopmentMailer{}
+	if cfg.SMTPHost != "" {
+		mailer, err = service.NewSMTPMailer(cfg.SMTPHost, cfg.SMTPPort, cfg.SMTPUser, cfg.SMTPPassword, cfg.SMTPFrom)
+		if err != nil {
+			return fmt.Errorf("invalid SMTP configuration: %w", err)
+		}
+	} else if cfg.Environment == "production" {
+		return errors.New("SMTP configuration is required in production")
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -52,7 +58,7 @@ func run() error {
 	if err := redisClient.Ping(ctx).Err(); err != nil {
 		return errors.New("Redis is unavailable")
 	}
-	auth := service.NewAuthService(database, redisClient, service.DevelopmentMailer{}, cfg.JWTSecret, cfg.AccessTTL, cfg.RefreshTTL)
+	auth := service.NewAuthService(database, redisClient, mailer, cfg.JWTSecret, cfg.AccessTTL, cfg.RefreshTTL)
 	authHandler := handler.NewAuthHandler(auth)
 	spots := service.NewSpotService(database)
 	server := &http.Server{

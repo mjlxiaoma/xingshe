@@ -29,7 +29,7 @@ func Load() (Config, error) {
 	if err != nil {
 		return Config{}, err
 	}
-	smtpPort, err := port("SMTP_PORT", 587)
+	smtpPort, err := port("SMTP_PORT", 465)
 	if err != nil {
 		return Config{}, err
 	}
@@ -57,7 +57,7 @@ func Load() (Config, error) {
 	if databaseURL == "" {
 		return Config{}, errors.New("DATABASE_URL is required")
 	}
-	return Config{
+	config := Config{
 		Address:      fmt.Sprintf(":%d", apiPort),
 		Environment:  environment,
 		DatabaseURL:  databaseURL,
@@ -70,7 +70,13 @@ func Load() (Config, error) {
 		SMTPUser:     strings.TrimSpace(os.Getenv("SMTP_USER")),
 		SMTPPassword: os.Getenv("SMTP_PASSWORD"),
 		SMTPFrom:     strings.TrimSpace(os.Getenv("SMTP_FROM")),
-	}, nil
+	}
+	if config.SMTPHost != "" || config.SMTPUser != "" || config.SMTPPassword != "" || config.SMTPFrom != "" {
+		if config.SMTPHost == "" || config.SMTPUser == "" || config.SMTPPassword == "" || config.SMTPFrom == "" {
+			return Config{}, errors.New("SMTP_HOST, SMTP_USER, SMTP_PASSWORD, and SMTP_FROM must be configured together")
+		}
+	}
+	return config, nil
 }
 
 func duration(name string, fallback time.Duration) (time.Duration, error) {
