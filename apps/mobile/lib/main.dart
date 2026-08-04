@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'core/permissions/app_permissions.dart';
 import 'core/auth/auth_session.dart';
+import 'core/location/track_synchronizer.dart';
 import 'features/auth/email_login_page.dart';
 import 'features/auth/verification_page.dart';
 import 'features/profile/profile_page.dart';
@@ -56,11 +57,39 @@ final _router = GoRouter(
   ],
 );
 
-class XingSheApp extends ConsumerWidget {
+class XingSheApp extends ConsumerStatefulWidget {
   const XingSheApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<XingSheApp> createState() => _XingSheAppState();
+}
+
+class _XingSheAppState extends ConsumerState<XingSheApp> {
+  late final AppLifecycleListener _lifecycleListener;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycleListener = AppLifecycleListener(onResume: _synchronizeTracks);
+    Future.microtask(_synchronizeTracks);
+  }
+
+  Future<void> _synchronizeTracks() async {
+    try {
+      await ref.read(trackSynchronizerProvider).synchronize();
+    } on Object {
+      // Room remains the retry buffer when the channel or Drift is unavailable.
+    }
+  }
+
+  @override
+  void dispose() {
+    _lifecycleListener.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     ref.listen(authSessionProvider, (previous, next) {
       if (previous?.value == true && next.value == false) {
         _router.go('/login');
