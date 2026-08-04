@@ -8,6 +8,7 @@ import 'features/auth/email_login_page.dart';
 import 'features/auth/verification_page.dart';
 import 'features/profile/profile_page.dart';
 import 'features/settings/settings_pages.dart';
+import 'features/spots/spot_detail_page.dart';
 import 'features/spots/spot_list_page.dart';
 import 'features/spots/spot_map_page.dart';
 
@@ -45,6 +46,11 @@ final _router = GoRouter(
     ),
     GoRoute(path: '/settings', builder: (_, _) => const SettingsPage()),
     GoRoute(path: '/privacy', builder: (_, _) => const PrivacyPage()),
+    GoRoute(
+      path: '/spots/:spotId',
+      builder: (_, state) =>
+          SpotDetailPage(spotID: state.pathParameters['spotId']!),
+    ),
   ],
 );
 

@@ -145,39 +145,47 @@ class _SpotSummary extends StatelessWidget {
   final ShootingSpot spot;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => InkWell(
     key: const Key('map-spot-summary'),
-    margin: const EdgeInsets.only(top: 8),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(6),
-      boxShadow: const [BoxShadow(color: Color(0x18000000), blurRadius: 5)],
-    ),
-    child: Row(
-      children: [
-        const Icon(Icons.photo_camera, color: Color(0xFF2D6B3F)),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                spot.name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontWeight: FontWeight.w700),
-              ),
-              Text(
-                spot.address ?? spot.description,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: Color(0xFF667268), fontSize: 10),
-              ),
-            ],
+    onTap: () => context.push('/spots/${spot.id}'),
+    borderRadius: BorderRadius.circular(6),
+    child: Container(
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(6),
+        boxShadow: const [BoxShadow(color: Color(0x18000000), blurRadius: 5)],
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.photo_camera, color: Color(0xFF2D6B3F)),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  spot.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  spot.address ?? spot.description,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xFF667268),
+                    fontSize: 10,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+          const Icon(Icons.chevron_right, color: Color(0xFF2D6B3F)),
+        ],
+      ),
     ),
   );
 }

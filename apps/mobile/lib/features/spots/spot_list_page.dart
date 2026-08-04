@@ -342,60 +342,66 @@ class _SpotItem extends StatelessWidget {
   final ShootingSpot spot;
 
   @override
-  Widget build(BuildContext context) => Container(
-    height: 116,
-    padding: const EdgeInsets.symmetric(vertical: 10),
-    decoration: const BoxDecoration(
-      border: Border(bottom: BorderSide(color: Color(0xFFDDE3DD))),
-    ),
-    child: Row(
-      children: [
-        _SpotCover(url: spot.coverURL),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      spot.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
+  Widget build(BuildContext context) => InkWell(
+    onTap: () => context.push('/spots/${spot.id}'),
+    child: Container(
+      height: 116,
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: Color(0xFFDDE3DD))),
+      ),
+      child: Row(
+        children: [
+          _SpotCover(url: spot.coverURL),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        spot.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
+                    Icon(
+                      spot.isFavorited ? Icons.bookmark : Icons.bookmark_border,
+                      color: const Color(0xFF2D6B3F),
+                      size: 20,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  spot.address ?? '地址待补充',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xFF667268),
+                    fontSize: 11,
                   ),
-                  Icon(
-                    spot.isFavorited ? Icons.bookmark : Icons.bookmark_border,
-                    color: const Color(0xFF2D6B3F),
-                    size: 20,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(
-                spot.address ?? '地址待补充',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: Color(0xFF667268), fontSize: 11),
-              ),
-              const SizedBox(height: 7),
-              Wrap(
-                spacing: 6,
-                children: spot.tags
-                    .take(3)
-                    .map((tag) => _Tag(tag))
-                    .toList(growable: false),
-              ),
-            ],
+                ),
+                const SizedBox(height: 7),
+                Wrap(
+                  spacing: 6,
+                  children: spot.tags
+                      .take(3)
+                      .map((tag) => _Tag(tag))
+                      .toList(growable: false),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
