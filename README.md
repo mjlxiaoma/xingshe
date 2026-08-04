@@ -115,4 +115,10 @@ docker compose down
 - 模拟器无法访问 API：模拟器必须使用 `10.0.2.2`，不能使用 `127.0.0.1`。
 - 真机无法访问 API：使用电脑局域网 IP，并确认手机与电脑在同一网络、防火墙允许访问 8080 端口。
 
-更完整的开发与排错说明见 [docs/operations/local-development.md](docs/operations/local-development.md)。
+## 相关文档
+
+- [本地开发与排错](docs/operations/local-development.md)
+- [系统架构](docs/architecture.md)
+- [OpenAPI 接口](docs/api/openapi.yaml)
+- [隐私、权限与删除](docs/privacy.md)
+- [部署、备份与恢复建议](docs/operations/deployment.md)
