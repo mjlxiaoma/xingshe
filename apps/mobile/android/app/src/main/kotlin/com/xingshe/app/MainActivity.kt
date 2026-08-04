@@ -4,8 +4,24 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 
 class MainActivity : FlutterActivity() {
+    private lateinit var photoCaptureBridge: PhotoCaptureBridge
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         LocationBridge(applicationContext, flutterEngine.dartExecutor.binaryMessenger)
+        photoCaptureBridge = PhotoCaptureBridge(this, flutterEngine.dartExecutor.binaryMessenger)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
+        if (::photoCaptureBridge.isInitialized && photoCaptureBridge.onActivityResult(requestCode, resultCode)) {
+            return
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onDestroy() {
+        if (::photoCaptureBridge.isInitialized) photoCaptureBridge.dispose()
+        super.onDestroy()
     }
 }

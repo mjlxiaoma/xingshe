@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:xingshe/core/database/local_database.dart';
 import 'package:xingshe/core/location/location_bridge.dart';
 import 'package:xingshe/core/location/track_synchronizer.dart';
+import 'package:xingshe/core/media/media_bridge.dart';
+import 'package:xingshe/core/media/trip_photo_controller.dart';
+import 'package:xingshe/core/permissions/app_permissions.dart';
 import 'package:xingshe/features/trips/active_trip_page.dart';
 
 void main() {
@@ -54,6 +58,7 @@ void main() {
           ),
         );
     var nativeStatus = 'recording';
+    final requestedPermissions = <AppPermission>[];
     final bridge = LocationBridge.testing((method, _) async {
       switch (method) {
         case 'pauseLocationTracking':
@@ -89,6 +94,18 @@ void main() {
         overrides: [
           localTripDatabaseProvider.overrideWithValue(database),
           locationBridgeProvider.overrideWithValue(bridge),
+          mediaBridgeProvider.overrideWithValue(
+            MediaBridge.testing(
+              () async => {
+                'uri': 'content://media/external/images/media/captured',
+                'taken_at': now.millisecondsSinceEpoch,
+              },
+            ),
+          ),
+          permissionRequesterProvider.overrideWithValue((permission) async {
+            requestedPermissions.add(permission);
+            return PermissionStatus.granted;
+          }),
         ],
         child: MaterialApp.router(routerConfig: router),
       ),
@@ -103,6 +120,12 @@ void main() {
     expect(find.text('0 m'), findsOneWidget);
     expect(find.text('1 个'), findsOneWidget);
     expect(find.text('1 张'), findsOneWidget);
+    expect(requestedPermissions, isEmpty);
+
+    await tester.tap(find.byKey(const Key('trip-camera-button')));
+    await _pumpFrames(tester);
+    expect(requestedPermissions, [AppPermission.camera]);
+    expect(find.text('2 张'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('trip-pause-resume-button')));
     await _pumpFrames(tester);

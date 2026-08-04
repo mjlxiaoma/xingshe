@@ -4,10 +4,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../core/database/local_database.dart';
 import '../../core/location/track_synchronizer.dart';
 import '../../core/location/trip_recording_controller.dart';
+import '../../core/media/trip_photo_controller.dart';
+import '../../core/permissions/app_permissions.dart';
 
 class ActiveTripPage extends ConsumerStatefulWidget {
   const ActiveTripPage({super.key, required this.tripID});
@@ -188,7 +191,7 @@ class _ActiveTripViewState extends ConsumerState<_ActiveTripView> {
                       dimension: 52,
                       child: IconButton.filledTonal(
                         key: const Key('trip-camera-button'),
-                        onPressed: _busy ? null : () {},
+                        onPressed: _busy ? null : _capture,
                         icon: const Icon(Icons.photo_camera),
                         tooltip: '拍照',
                       ),
@@ -243,6 +246,36 @@ class _ActiveTripViewState extends ConsumerState<_ActiveTripView> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text('定位状态更新失败，请重试')));
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _capture() async {
+    final permissions = ref.read(appPermissionsProvider.notifier);
+    final status = await permissions.request(AppPermission.camera);
+    if (!mounted) return;
+    if (!status.isGranted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('需要相机权限才能拍照'),
+          action: SnackBarAction(
+            label: '前往设置',
+            onPressed: permissions.openSettings,
+          ),
+        ),
+      );
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      await ref.read(tripPhotoControllerProvider).capture(widget.trip.id);
+    } on Object {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('拍照失败，请重试')));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
