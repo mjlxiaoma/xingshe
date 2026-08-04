@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"context"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -48,20 +50,25 @@ func TestMVPAPIFlow(t *testing.T) {
 	defer database.Close()
 	redisClient := redis.NewClient(&redis.Options{Addr: redisAddress, DB: 15})
 	defer redisClient.Close()
-	if err := redisClient.FlushDB(ctx).Err(); err != nil {
-		t.Fatal(err)
-	}
-	defer redisClient.FlushDB(ctx)
 
 	email := strings.ToLower(rand.Text()) + "@example.invalid"
-	defer database.Exec(ctx, "DELETE FROM email_verification_codes WHERE email = $1", email)
-	defer database.Exec(ctx, "DELETE FROM users WHERE email = $1", email)
+	defer func() {
+		redisClient.Del(ctx, redisAuthKey("auth:email-code:", email), redisAuthKey("auth:login-attempt:", email))
+		database.Exec(ctx, "DELETE FROM users WHERE email = $1", email)
+		database.Exec(ctx, "DELETE FROM email_verification_codes WHERE email = $1", email)
+	}()
 	mailer := &captureMailer{}
 	auth := service.NewAuthService(database, redisClient, mailer, "integration-test-secret-32-characters", 2*time.Hour, 30*24*time.Hour)
 	spots := service.NewSpotService(database)
 	gin.SetMode(gin.TestMode)
 	server := httptest.NewServer(NewRouter(handler.NewAuthHandler(auth), auth, handler.NewSpotHandler(spots)))
 	defer server.Close()
+
+	requestError(t, server.URL, http.MethodPost, "/api/v1/auth/email-code", map[string]any{"email": "invalid"}, "", http.StatusBadRequest, handler.CodeValidationError)
+	requestError(t, server.URL, http.MethodPost, "/api/v1/auth/login", map[string]any{"email": email, "code": "1", "device_id": ""}, "", http.StatusBadRequest, handler.CodeValidationError)
+	requestError(t, server.URL, http.MethodGet, "/api/v1/spots?latitude=1", nil, "", http.StatusBadRequest, handler.CodeValidationError)
+	requestError(t, server.URL, http.MethodGet, "/api/v1/spots/not-a-uuid", nil, "", http.StatusBadRequest, handler.CodeValidationError)
+	requestError(t, server.URL, http.MethodGet, "/api/v1/me", nil, "", http.StatusUnauthorized, handler.CodeUnauthorized)
 
 	requestAPI[map[string]any](t, server.URL, http.MethodPost, "/api/v1/auth/email-code", map[string]any{"email": email}, "")
 	if len(mailer.code) != 6 {
@@ -73,6 +80,13 @@ func TestMVPAPIFlow(t *testing.T) {
 	refreshed := requestAPI[service.RefreshedSession](t, server.URL, http.MethodPost, "/api/v1/auth/refresh", map[string]any{
 		"refresh_token": session.RefreshToken, "device_id": "integration-device",
 	}, "")
+	requestError(t, server.URL, http.MethodPost, "/api/v1/auth/refresh", map[string]any{
+		"refresh_token": session.RefreshToken, "device_id": "integration-device",
+	}, "", http.StatusUnauthorized, handler.CodeInvalidToken)
+	currentUser := requestAPI[service.User](t, server.URL, http.MethodGet, "/api/v1/me", nil, refreshed.AccessToken)
+	if currentUser.Email != email {
+		t.Fatalf("unexpected current user: %+v", currentUser)
+	}
 	user := requestAPI[service.User](t, server.URL, http.MethodPatch, "/api/v1/me", map[string]any{"nickname": "Integration User"}, refreshed.AccessToken)
 	if user.Email != email || user.Nickname != "Integration User" {
 		t.Fatalf("unexpected user: %+v", user)
@@ -95,7 +109,16 @@ func TestMVPAPIFlow(t *testing.T) {
 		t.Fatalf("unexpected favorites: %+v", favorites.Items)
 	}
 	requestAPI[map[string]any](t, server.URL, http.MethodDelete, "/api/v1/spots/"+spotID+"/favorite", nil, refreshed.AccessToken)
+	favorites = requestAPI[struct {
+		Items []service.Spot `json:"items"`
+	}](t, server.URL, http.MethodGet, "/api/v1/me/favorite-spots", nil, refreshed.AccessToken)
+	if len(favorites.Items) != 0 {
+		t.Fatalf("favorite was not removed: %+v", favorites.Items)
+	}
 	requestAPI[map[string]any](t, server.URL, http.MethodPost, "/api/v1/auth/logout", map[string]any{"refresh_token": refreshed.RefreshToken}, "")
+	requestError(t, server.URL, http.MethodPost, "/api/v1/auth/refresh", map[string]any{
+		"refresh_token": refreshed.RefreshToken, "device_id": "integration-device",
+	}, "", http.StatusUnauthorized, handler.CodeInvalidToken)
 }
 
 func requestAPI[T any](t *testing.T, baseURL, method, path string, body any, token string) T {
@@ -135,4 +158,42 @@ func requestAPI[T any](t *testing.T, baseURL, method, path string, body any, tok
 		t.Fatalf("%s %s: code %s", method, path, envelope.Code)
 	}
 	return envelope.Data
+}
+
+func requestError(t *testing.T, baseURL, method, path string, body any, token string, status int, code string) {
+	t.Helper()
+	var reader io.Reader
+	if body != nil {
+		encoded, err := json.Marshal(body)
+		if err != nil {
+			t.Fatal(err)
+		}
+		reader = bytes.NewReader(encoded)
+	}
+	request, err := http.NewRequest(method, baseURL+path, reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if body != nil {
+		request.Header.Set("Content-Type", "application/json")
+	}
+	if token != "" {
+		request.Header.Set("Authorization", "Bearer "+token)
+	}
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer response.Body.Close()
+	var envelope apiResponse[any]
+	if err := json.NewDecoder(response.Body).Decode(&envelope); err != nil {
+		t.Fatal(err)
+	}
+	if response.StatusCode != status || envelope.Code != code {
+		t.Fatalf("%s %s: status %d, code %s", method, path, response.StatusCode, envelope.Code)
+	}
+}
+
+func redisAuthKey(prefix, email string) string {
+	return prefix + fmt.Sprintf("%x", sha256.Sum256([]byte(email)))
 }
