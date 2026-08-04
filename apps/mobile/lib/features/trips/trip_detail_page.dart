@@ -191,6 +191,13 @@ class _DetailContent extends ConsumerWidget {
         icon: const Icon(Icons.photo_library_outlined),
         label: Text('查看行程照片 · $photoCount'),
       ),
+      const SizedBox(height: 8),
+      FilledButton.icon(
+        key: const Key('open-trip-share-preview'),
+        onPressed: () => context.push('/trips/${trip.id}/share'),
+        icon: const Icon(Icons.ios_share),
+        label: const Text('预览分享图'),
+      ),
     ],
   );
 }

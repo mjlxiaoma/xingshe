@@ -13,6 +13,7 @@ import 'features/auth/email_login_page.dart';
 import 'features/auth/verification_page.dart';
 import 'features/profile/profile_page.dart';
 import 'features/settings/settings_pages.dart';
+import 'features/share/trip_share_preview_page.dart';
 import 'features/spots/favorite_spots_page.dart';
 import 'features/spots/spot_detail_page.dart';
 import 'features/spots/spot_list_page.dart';
@@ -73,6 +74,11 @@ final _router = GoRouter(
       path: '/trips/:tripId/photos',
       builder: (_, state) =>
           TripPhotoGalleryPage(tripID: state.pathParameters['tripId']!),
+    ),
+    GoRoute(
+      path: '/trips/:tripId/share',
+      builder: (_, state) =>
+          TripSharePreviewPage(tripID: state.pathParameters['tripId']!),
     ),
     GoRoute(
       path: '/spots/:spotId',
