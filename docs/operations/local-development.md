@@ -1,6 +1,6 @@
 # 本地开发与启动
 
-本文描述当前可运行栈：Flutter Android 启动页、Go API、PostgreSQL 和 Redis。后续任务增加迁移及业务命令时必须同步更新本文。
+本文描述当前可运行栈：Flutter Android 客户端、Go API、PostgreSQL、Redis、数据库迁移和自动化检查。
 
 ## 1. 已验证工具链
 
@@ -41,7 +41,9 @@ $env:GOSUMDB='sum.golang.google.cn'
 Copy-Item .env.example .env
 ```
 
-`.env` 已被 Git 忽略。启动 API 前必须替换至少 32 字符的 `JWT_SECRET`；真实邮件使用 `SMTP_HOST`、`SMTP_PORT`、`SMTP_USER`、`SMTP_PASSWORD` 和 `SMTP_FROM`，网易邮箱配置为 `smtp.163.com:465` 并使用隐式 TLS。开发环境可将 SMTP 变量全部留空以使用不输出验证码或邮箱的占位 Mailer，生产环境必须完整配置。启用地图前必须填写 `AMAP_ANDROID_KEY`。真实 Key、密码、Token、Keystore、轨迹和照片不得提交。
+`.env` 已被 Git 忽略。启动 API 前必须替换至少 32 字符的 `JWT_SECRET`，并让 `DATABASE_URL` 中的用户名、密码、端口和数据库名与 `POSTGRES_*` 保持一致。`DATABASE_URL`、`REDIS_ADDR` 和 `MIGRATIONS_URL` 供直接运行 Go 命令使用；Compose 会为容器生成对应连接配置。
+
+真实邮件使用 `SMTP_HOST`、`SMTP_PORT`、`SMTP_USER`、`SMTP_PASSWORD` 和 `SMTP_FROM`，网易邮箱配置为 `smtp.163.com:465` 并使用隐式 TLS。开发环境可将 SMTP 变量全部留空以使用不输出验证码或邮箱的占位 Mailer，生产环境必须完整配置。`PRIVACY_CONTACT_EMAIL` 是隐私联系和外部账号删除申请的公开地址。启用地图前必须填写 `AMAP_ANDROID_KEY`。真实 Key、密码、Token、Keystore、轨迹和照片不得提交。
 
 `JWT_ACCESS_TTL` 和 `JWT_REFRESH_TTL` 使用 Go duration 格式，默认分别为 `2h` 和 `720h`。
 
@@ -87,13 +89,23 @@ docker compose exec api xingshe-migrate down
 ```powershell
 docker compose up -d postgres redis
 Set-Location services/api
+$envFile = Resolve-Path '..\..\.env'
+Get-Content $envFile | ForEach-Object {
+    if ($_ -match '^([A-Za-z_][A-Za-z0-9_]*)=(.*)$') {
+        $name = $Matches[1]
+        $value = $Matches[2].Trim().Trim('"').Trim("'")
+        [Environment]::SetEnvironmentVariable($name, $value, 'Process')
+    }
+}
+go run ./cmd/migrate up
 go test ./...
 go vet ./...
-$env:API_PORT='8080'
 go run ./cmd/api
 ```
 
-API 会读取 `APP_ENV`、数据库、Redis、JWT 和 SMTP 环境变量，校验 API/SMTP 端口，并在数据库、Redis、JWT 或部分 SMTP 配置不可用时拒绝启动。配置 SMTP 后验证码通过 465 隐式 TLS 发出；`APP_ENV=production` 禁止使用占位 Mailer。
+Go 不会自动读取 `.env`，上面的 PowerShell 代码只把配置注入当前进程且不打印值。API 会读取 `APP_ENV`、数据库、Redis、JWT 和 SMTP 环境变量，校验 API/SMTP 端口，并在数据库、Redis、JWT 或部分 SMTP 配置不可用时拒绝启动。配置 SMTP 后验证码通过 465 隐式 TLS 发出；`APP_ENV=production` 禁止使用占位 Mailer。
+
+需要回滚最近一次迁移时，在同一终端执行 `go run ./cmd/migrate down`。该命令每次只回滚一个版本，执行前先备份需要保留的数据。
 
 ## 5. 启动 Flutter Android
 
@@ -101,16 +113,17 @@ API 会读取 `APP_ENV`、数据库、Redis、JWT 和 SMTP 环境变量，校验
 
 ```powershell
 Set-Location apps/mobile
-flutter pub get
-dart format --set-exit-if-changed .
-flutter analyze
-flutter test
-flutter build apk --debug
+flutter pub get --enforce-lockfile
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze --no-pub
+flutter test --no-pub --concurrency=1
 flutter emulators --launch xingshe_api_36
 flutter devices
 $env:MOBILE_API_BASE_URL='http://10.0.2.2:8080/api/v1'
 $amapConfigLine = Get-Content ../../.env | Where-Object { $_ -like 'AMAP_ANDROID_KEY=*' } | Select-Object -Last 1
-$env:AMAP_ANDROID_KEY = $amapConfigLine.Substring($amapConfigLine.IndexOf('=') + 1).Trim()
+if (-not $amapConfigLine) { throw 'AMAP_ANDROID_KEY is missing' }
+$env:AMAP_ANDROID_KEY = $amapConfigLine.Substring($amapConfigLine.IndexOf('=') + 1).Trim().Trim('"').Trim("'")
+flutter build apk --debug --no-pub --dart-define=AMAP_ANDROID_KEY=$env:AMAP_ANDROID_KEY
 flutter run -d emulator-5554 --dart-define=MOBILE_API_BASE_URL=$env:MOBILE_API_BASE_URL --dart-define=AMAP_ANDROID_KEY=$env:AMAP_ANDROID_KEY
 ```
 
@@ -121,7 +134,7 @@ flutter run -d emulator-5554 --dart-define=MOBILE_API_BASE_URL=$env:MOBILE_API_B
 1. 在手机开发者选项中启用 USB 调试。
 2. 连接手机，执行 `adb devices` 并在手机上授权。
 3. 执行 `flutter run -d <device-id>`。
-4. 后续接入地图、后台定位、相机和分享后，必须按任务要求在真机逐项验收。
+4. 在真机逐项验证地图、后台定位、相机、相册和系统分享；模拟器结果不能替代真机验收。
 
 ## 6. 停止与清理
 
@@ -134,7 +147,7 @@ docker compose down
 
 `docker compose down` 保留数据库和 Redis 卷。仅在确认可以删除全部本地数据后执行 `docker compose down -v`。
 
-数据生命周期：PostgreSQL Volume 保存账号、机位和收藏等服务端业务数据；Redis 只保存带 TTL 的临时状态。手机 Drift 数据库保存本地行程、精确轨迹和照片关联，Android 自动云备份已禁用。后续拍摄照片写入系统相册 `Pictures/XingShe`，导入照片只保存持久化 `content://` URI；卸载应用不会删除系统相册原图，删除行程也默认只删除关联记录。
+数据生命周期：PostgreSQL Volume 保存账号、机位和收藏等服务端业务数据；Redis 只保存带 TTL 的临时状态。手机 Drift 数据库保存本地行程、精确轨迹和照片关联，Android 自动云备份已禁用。拍摄照片写入系统相册 `Pictures/XingShe`，导入照片只保存持久化 `content://` URI；分享 PNG 只写入应用缓存。卸载应用不会删除系统相册原图，删除行程也默认只删除关联记录。
 
 ## 7. 常见问题
 
