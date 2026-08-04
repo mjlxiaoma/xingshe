@@ -106,6 +106,22 @@ void main() {
     expect(pending, isEmpty);
   });
 
+  test('rejects invalid transitions and a second active trip', () async {
+    await _insertTrip(database, 'trip-1', 'draft');
+
+    await expectLater(controller.pause('trip-1'), throwsStateError);
+    await expectLater(controller.resume('trip-1'), throwsStateError);
+    await expectLater(controller.complete('trip-1'), throwsStateError);
+    await expectLater(controller.deleteCompleted('trip-1'), throwsStateError);
+
+    await controller.start('trip-1');
+    await _insertTrip(database, 'trip-2', 'draft');
+    await expectLater(controller.start('trip-2'), throwsStateError);
+    expect(await _status(database, 'trip-1'), 'recording');
+    expect(await _status(database, 'trip-2'), 'draft');
+    await expectLater(controller.deleteCompleted('trip-1'), throwsStateError);
+  });
+
   test('restores a paused trip after the native service is lost', () async {
     await _insertTrip(database, 'trip-1', 'paused');
 

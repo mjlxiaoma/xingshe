@@ -39,4 +39,43 @@ void main() {
       );
     },
   );
+
+  test('refreshes denied states and opens system settings on demand', () async {
+    var openedSettings = false;
+    final container = ProviderContainer(
+      overrides: [
+        permissionStatusReaderProvider.overrideWithValue(
+          (_) async => PermissionStatus.permanentlyDenied,
+        ),
+        permissionRequesterProvider.overrideWithValue(
+          (_) async => PermissionStatus.denied,
+        ),
+        appSettingsOpenerProvider.overrideWithValue(() async {
+          openedSettings = true;
+          return true;
+        }),
+      ],
+    );
+    addTearDown(container.dispose);
+    final controller = container.read(appPermissionsProvider.notifier);
+
+    expect(
+      await controller.refresh(AppPermission.location),
+      PermissionStatus.permanentlyDenied,
+    );
+    expect(
+      container.read(appPermissionsProvider)[AppPermission.location],
+      PermissionStatus.permanentlyDenied,
+    );
+    expect(
+      await controller.request(AppPermission.location),
+      PermissionStatus.denied,
+    );
+    expect(
+      container.read(appPermissionsProvider)[AppPermission.location],
+      PermissionStatus.denied,
+    );
+    expect(await controller.openSettings(), isTrue);
+    expect(openedSettings, isTrue);
+  });
 }
