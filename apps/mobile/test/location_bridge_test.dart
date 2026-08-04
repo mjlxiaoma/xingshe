@@ -42,19 +42,24 @@ void main() {
       ),
       () => Stream.value({
         'type': 'location',
+        'native_log_id': 'native-1',
         'trip_id': 'trip-1',
+        'coordinate_system': 'WGS84',
         'latitude': 30.2,
         'longitude': 120.1,
         'altitude': 12.0,
         'accuracy': 8.5,
         'speed': 1.2,
         'bearing': 90.0,
+        'source': 'gps',
         'recorded_at': '2026-01-01T10:00:00Z',
       }),
     );
 
     final point = await bridge.locations.first;
     expect(point.tripID, 'trip-1');
+    expect(point.nativeLogID, 'native-1');
+    expect(point.coordinateSystem, 'WGS84');
     expect(point.latitude, 30.2);
     expect(point.recordedAt.isUtc, isTrue);
     await expectLater(
@@ -82,6 +87,18 @@ void main() {
     expect(manifest, contains('android:foregroundServiceType="location"'));
     expect(service, contains('startForeground('));
     expect(service, contains('stopForeground(STOP_FOREGROUND_REMOVE)'));
-    expect(service, isNot(contains('Log.')));
+    expect(service, isNot(contains('android.util.Log')));
+  });
+
+  test('Room track buffer has unique IDs and query indexes', () {
+    final source = File(
+      'android/app/src/main/kotlin/com/xingshe/app/NativeTrackDatabase.kt',
+    ).readAsStringSync();
+
+    expect(source, contains('@PrimaryKey val nativeLogId: String'));
+    expect(source, contains('Index(value = ["tripId", "recordedAt"])'));
+    expect(source, contains('val coordinateSystem: String = "WGS84"'));
+    expect(source, contains('WHERE synced = 0'));
+    expect(source, contains('ORDER BY recordedAt, nativeLogId'));
   });
 }

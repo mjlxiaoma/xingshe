@@ -4,17 +4,22 @@ import 'package:flutter/services.dart';
 
 class NativeLocationPoint {
   const NativeLocationPoint({
+    required this.nativeLogID,
     required this.tripID,
+    required this.coordinateSystem,
     required this.latitude,
     required this.longitude,
     required this.accuracy,
     required this.recordedAt,
+    required this.source,
     this.altitude,
     this.speed,
     this.bearing,
   });
 
+  final String nativeLogID;
   final String tripID;
+  final String coordinateSystem;
   final double latitude;
   final double longitude;
   final double? altitude;
@@ -22,6 +27,7 @@ class NativeLocationPoint {
   final double? speed;
   final double? bearing;
   final DateTime recordedAt;
+  final String source;
 
   factory NativeLocationPoint.fromMap(Object? value) {
     final map = Map<String, Object?>.from(value as Map);
@@ -29,7 +35,9 @@ class NativeLocationPoint {
       throw const FormatException('Unsupported location event');
     }
     return NativeLocationPoint(
+      nativeLogID: map['native_log_id'] as String,
       tripID: map['trip_id'] as String,
+      coordinateSystem: map['coordinate_system'] as String,
       latitude: (map['latitude'] as num).toDouble(),
       longitude: (map['longitude'] as num).toDouble(),
       altitude: (map['altitude'] as num?)?.toDouble(),
@@ -37,6 +45,7 @@ class NativeLocationPoint {
       speed: (map['speed'] as num?)?.toDouble(),
       bearing: (map['bearing'] as num?)?.toDouble(),
       recordedAt: DateTime.parse(map['recorded_at'] as String).toUtc(),
+      source: map['source'] as String,
     );
   }
 }
@@ -110,14 +119,21 @@ class LocationBridge {
     return result['status'] as String;
   }
 
-  Future<List<NativeLocationPoint>> pendingPoints() async =>
-      (await _call('getPendingTrackPoints') as List)
+  Future<List<NativeLocationPoint>> pendingPoints({String? tripID}) async =>
+      (await _call('getPendingTrackPoints', {'trip_id': ?tripID}) as List)
           .map(NativeLocationPoint.fromMap)
           .toList(growable: false);
 
-  Future<int> clearPendingPoints() async {
+  Future<int> clearPendingPoints(List<String> nativeLogIDs) async {
+    if (nativeLogIDs.isEmpty) {
+      throw const LocationBridgeException(
+        'LOCATION_INVALID_ARGUMENT',
+        '待清理轨迹编号不能为空',
+      );
+    }
     final result = Map<String, Object?>.from(
-      await _call('clearPendingTrackPoints') as Map,
+      await _call('clearPendingTrackPoints', {'native_log_ids': nativeLogIDs})
+          as Map,
     );
     return result['cleared'] as int;
   }

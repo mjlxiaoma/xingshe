@@ -5,10 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import java.util.concurrent.Executors
 
 class LocationBridge(private val context: Context, messenger: BinaryMessenger) :
     MethodChannel.MethodCallHandler,
@@ -16,6 +19,8 @@ class LocationBridge(private val context: Context, messenger: BinaryMessenger) :
     private val methodChannel = MethodChannel(messenger, "com.xingshe.app/location")
     private val eventChannel = EventChannel(messenger, "com.xingshe.app/location_events")
     private var eventSink: EventChannel.EventSink? = null
+    private val databaseExecutor = Executors.newSingleThreadExecutor()
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     init {
         methodChannel.setMethodCallHandler(this)
@@ -26,8 +31,8 @@ class LocationBridge(private val context: Context, messenger: BinaryMessenger) :
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "getTrackingStatus" -> result.success(mapOf("status" to status()))
-            "getPendingTrackPoints" -> result.success(emptyList<Map<String, Any?>>())
-            "clearPendingTrackPoints" -> result.success(mapOf("cleared" to 0))
+            "getPendingTrackPoints" -> pending(call, result)
+            "clearPendingTrackPoints" -> clear(call, result)
             "startLocationTracking" -> start(call, result)
             "pauseLocationTracking" -> command(TripLocationService.ACTION_PAUSE, result)
             "resumeLocationTracking" -> command(TripLocationService.ACTION_RESUME, result)
@@ -94,6 +99,45 @@ class LocationBridge(private val context: Context, messenger: BinaryMessenger) :
     private fun emit(event: Map<String, Any?>) {
         eventSink?.success(event)
     }
+
+    private fun pending(call: MethodCall, result: MethodChannel.Result) {
+        val tripID = (call.arguments as? Map<*, *>)?.get("trip_id") as? String
+        databaseExecutor.execute {
+            val points = NativeTrackDatabase.get(context).logs().pending(tripID).map { it.toMap() }
+            mainHandler.post { result.success(points) }
+        }
+    }
+
+    private fun clear(call: MethodCall, result: MethodChannel.Result) {
+        val values = (call.arguments as? Map<*, *>)?.get("native_log_ids") as? List<*>
+        val ids = values?.filterIsInstance<String>() ?: emptyList()
+        if (ids.isEmpty()) {
+            result.error("LOCATION_INVALID_ARGUMENT", "待清理轨迹编号不能为空", null)
+            return
+        }
+        databaseExecutor.execute {
+            val count = NativeTrackDatabase.get(context).logs().delete(ids)
+            mainHandler.post { result.success(mapOf("cleared" to count)) }
+        }
+    }
+
+    private fun NativeTrackLog.toMap(): Map<String, Any?> = mapOf(
+        "type" to "location",
+        "native_log_id" to nativeLogId,
+        "trip_id" to tripId,
+        "coordinate_system" to coordinateSystem,
+        "latitude" to latitude,
+        "longitude" to longitude,
+        "altitude" to altitude,
+        "accuracy" to accuracy,
+        "speed" to speed,
+        "bearing" to bearing,
+        "source" to source,
+        "recorded_at" to java.text.SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            java.util.Locale.US,
+        ).apply { timeZone = java.util.TimeZone.getTimeZone("UTC") }.format(java.util.Date(recordedAt)),
+    )
 
     override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
         eventSink = events

@@ -14,16 +14,22 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.IBinder
+import android.os.Handler
+import android.os.Looper
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import java.util.UUID
+import java.util.concurrent.Executors
 
 class TripLocationService : Service(), LocationListener {
     private lateinit var locationManager: LocationManager
     private var tripID: String? = null
     private var intervalMs = 5000L
     private var minDistance = 10f
+    private val databaseExecutor = Executors.newSingleThreadExecutor()
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun onCreate() {
         super.onCreate()
@@ -46,23 +52,28 @@ class TripLocationService : Service(), LocationListener {
     override fun onLocationChanged(location: Location) {
         if (status() != "recording") return
         val currentTripID = tripID ?: return
-        eventListener?.invoke(
-            mapOf(
-                "type" to "location",
-                "trip_id" to currentTripID,
-                "latitude" to location.latitude,
-                "longitude" to location.longitude,
-                "altitude" to location.altitude,
-                "accuracy" to location.accuracy.toDouble(),
-                "speed" to location.speed.toDouble(),
-                "bearing" to location.bearing.toDouble(),
-                "recorded_at" to timestamp(location.time),
-            ),
+        val log = NativeTrackLog(
+            nativeLogId = UUID.randomUUID().toString(),
+            tripId = currentTripID,
+            latitude = location.latitude,
+            longitude = location.longitude,
+            altitude = location.altitude,
+            accuracy = location.accuracy.toDouble(),
+            speed = location.speed.toDouble(),
+            bearing = location.bearing.toDouble(),
+            recordedAt = location.time,
+            source = location.provider ?: "gps",
         )
+        databaseExecutor.execute {
+            if (NativeTrackDatabase.get(this).logs().insert(log) != -1L) {
+                mainHandler.post { eventListener?.invoke(log.toEvent()) }
+            }
+        }
     }
 
     override fun onDestroy() {
         locationManager.removeUpdates(this)
+        databaseExecutor.shutdown()
         super.onDestroy()
     }
 
@@ -159,6 +170,21 @@ class TripLocationService : Service(), LocationListener {
         "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
         Locale.US,
     ).apply { timeZone = TimeZone.getTimeZone("UTC") }.format(Date(time))
+
+    private fun NativeTrackLog.toEvent(): Map<String, Any?> = mapOf(
+        "type" to "location",
+        "native_log_id" to nativeLogId,
+        "trip_id" to tripId,
+        "coordinate_system" to coordinateSystem,
+        "latitude" to latitude,
+        "longitude" to longitude,
+        "altitude" to altitude,
+        "accuracy" to accuracy,
+        "speed" to speed,
+        "bearing" to bearing,
+        "source" to source,
+        "recorded_at" to timestamp(recordedAt),
+    )
 
     companion object {
         const val ACTION_START = "com.xingshe.app.location.START"
