@@ -43,6 +43,7 @@ class TripLocationService : Service(), LocationListener {
             ACTION_PAUSE -> pause()
             ACTION_RESUME -> resume()
             ACTION_STOP -> stop()
+            else -> restore()
         }
         return START_STICKY
     }
@@ -100,11 +101,23 @@ class TripLocationService : Service(), LocationListener {
     private fun resume() {
         val values = preferences()
         tripID = values.getString(KEY_TRIP_ID, null)
+        if (tripID == null) {
+            stop()
+            return
+        }
         intervalMs = values.getLong(KEY_INTERVAL_MS, 5000L)
         minDistance = values.getFloat(KEY_MIN_DISTANCE, 10f)
         values.edit().putString(KEY_STATUS, "recording").apply()
         startForeground(NOTIFICATION_ID, notification("正在记录行摄位置"))
         requestLocations()
+    }
+
+    private fun restore() {
+        when (status()) {
+            "recording" -> resume()
+            "paused" -> pause()
+            else -> stopSelf()
+        }
     }
 
     private fun stop() {

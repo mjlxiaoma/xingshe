@@ -37,9 +37,21 @@ class TrackSynchronizer {
     if (points.isEmpty) return 0;
 
     final nativeLogIDs = points.map((point) => point.nativeLogID).toList();
-    late final List<String> persistedIDs;
+    late final List<String> clearableIDs;
     await database.transaction(() async {
+      final tripIDs = points.map((point) => point.tripID).toSet().toList();
+      final trips = await (database.select(
+        database.localTrips,
+      )..where((row) => row.id.isIn(tripIDs))).get();
+      final statuses = {for (final trip in trips) trip.id: trip.status};
+      final completedIDs = <String>[];
       for (final point in points) {
+        final status = statuses[point.tripID];
+        if (status == null) continue;
+        if (status == 'completed') {
+          completedIDs.add(point.nativeLogID);
+          continue;
+        }
         await database
             .into(database.localTrackPoints)
             .insert(
@@ -62,14 +74,14 @@ class TrackSynchronizer {
       final persisted = await (database.select(
         database.localTrackPoints,
       )..where((row) => row.nativeLogId.isIn(nativeLogIDs))).get();
-      persistedIDs = persisted
-          .map((point) => point.nativeLogId)
-          .whereType<String>()
-          .toList(growable: false);
+      clearableIDs = {
+        ...completedIDs,
+        ...persisted.map((point) => point.nativeLogId).whereType<String>(),
+      }.toList(growable: false);
     });
 
-    return persistedIDs.isEmpty
+    return clearableIDs.isEmpty
         ? 0
-        : locationBridge.clearPendingPoints(persistedIDs);
+        : locationBridge.clearPendingPoints(clearableIDs);
   }
 }

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'core/permissions/app_permissions.dart';
 import 'core/auth/auth_session.dart';
 import 'core/location/track_synchronizer.dart';
+import 'core/location/trip_recording_controller.dart';
 import 'features/auth/email_login_page.dart';
 import 'features/auth/verification_page.dart';
 import 'features/profile/profile_page.dart';
@@ -79,6 +80,11 @@ class _XingSheAppState extends ConsumerState<XingSheApp> {
       await ref.read(trackSynchronizerProvider).synchronize();
     } on Object {
       // Room remains the retry buffer when the channel or Drift is unavailable.
+    }
+    try {
+      await ref.read(tripRecordingControllerProvider).restore();
+    } on Object {
+      // Drift remains the source of truth until native recovery can retry.
     }
   }
 
