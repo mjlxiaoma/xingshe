@@ -63,11 +63,24 @@ void main() {
   test(
     'configured Android provider creates a privacy-compliant AMap widget',
     () {
+      MapMarker? selected;
       const provider = AndroidMapProvider(configured: true);
       final widget = provider.buildMap(
         TestBuildContext(),
-        const MapScene(
-          center: MapCoordinate(latitude: 30.2741, longitude: 120.1551),
+        MapScene(
+          center: const MapCoordinate(latitude: 30.2741, longitude: 120.1551),
+          markers: const [
+            MapMarker(
+              id: 'spot-1',
+              title: '西湖日落',
+              position: MapCoordinate(
+                latitude: 39.908823,
+                longitude: 116.397470,
+                system: MapCoordinateSystem.wgs84,
+              ),
+            ),
+          ],
+          onMarkerTap: (marker) => selected = marker,
         ),
       );
 
@@ -82,6 +95,35 @@ void main() {
           hasAgree: true,
         ),
       );
+      expect(map.markers.single.id, 'spot-1');
+      expect(map.markers.single.infoWindow.title, '西湖日落');
+      expect(map.markers.single.position.latitude, closeTo(39.910226, 0.00002));
+      expect(
+        map.markers.single.position.longitude,
+        closeTo(116.403714, 0.00002),
+      );
+      map.markers.single.onTap?.call('spot-1');
+      expect(selected?.id, 'spot-1');
+    },
+  );
+
+  test(
+    'coordinate conversion preserves GCJ-02 and coordinates outside China',
+    () {
+      const gcj = MapCoordinate(latitude: 30.2, longitude: 120.1);
+      const paris = MapCoordinate(
+        latitude: 48.8566,
+        longitude: 2.3522,
+        system: MapCoordinateSystem.wgs84,
+      );
+
+      final sameGCJ = MapCoordinateConverter.toGCJ02(gcj);
+      final sameParis = MapCoordinateConverter.toGCJ02(paris);
+
+      expect(sameGCJ.latitude, gcj.latitude);
+      expect(sameGCJ.longitude, gcj.longitude);
+      expect(sameParis.latitude, paris.latitude);
+      expect(sameParis.longitude, paris.longitude);
     },
   );
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'core/map/map_provider.dart';
 import 'core/permissions/app_permissions.dart';
 import 'core/auth/auth_session.dart';
 import 'features/auth/email_login_page.dart';
@@ -10,6 +9,7 @@ import 'features/auth/verification_page.dart';
 import 'features/profile/profile_page.dart';
 import 'features/settings/settings_pages.dart';
 import 'features/spots/spot_list_page.dart';
+import 'features/spots/spot_map_page.dart';
 
 void main() => runApp(const ProviderScope(child: XingSheApp()));
 
@@ -28,7 +28,7 @@ final _router = GoRouter(
           _AppShell(location: state.uri.path, child: child),
       routes: [
         GoRoute(path: '/', builder: (_, _) => const _HomePage()),
-        GoRoute(path: '/map', builder: (_, _) => const _MapPage()),
+        GoRoute(path: '/map', builder: (_, _) => const SpotMapPage()),
         GoRoute(path: '/spots', builder: (_, _) => const SpotListPage()),
         GoRoute(path: '/trip', builder: (_, _) => const _TripPage()),
         GoRoute(path: '/me', builder: (_, _) => const ProfilePage()),
@@ -235,46 +235,6 @@ class _HomePage extends StatelessWidget {
       ),
     );
   }
-}
-
-class _MapPage extends ConsumerWidget {
-  const _MapPage();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final map = ref.watch(mapProviderProvider);
-    return SafeArea(
-      child: MapConsentGate(
-        mapProvider: map,
-        scene: const MapScene(
-          center: MapCoordinate(latitude: 30.2741, longitude: 120.1551),
-        ),
-        onDecline: () => context.go('/'),
-        onPrivacy: () => context.push('/privacy'),
-        mapOverlay: const _MapSearchBar(),
-      ),
-    );
-  }
-}
-
-class _MapSearchBar extends StatelessWidget {
-  const _MapSearchBar();
-
-  @override
-  Widget build(BuildContext context) => Material(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(8),
-    child: ListTile(
-      dense: true,
-      leading: const Icon(Icons.search, color: _muted),
-      title: const Text(
-        '搜索地点或摄影机位',
-        style: TextStyle(color: _muted, fontSize: 14),
-      ),
-      trailing: const Icon(Icons.chevron_right, color: _primary),
-      onTap: () => context.go('/spots'),
-    ),
-  );
 }
 
 class _TripPage extends StatelessWidget {

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -12,10 +14,96 @@ class MapConfig {
 
 @immutable
 class MapCoordinate {
-  const MapCoordinate({required this.latitude, required this.longitude});
+  const MapCoordinate({
+    required this.latitude,
+    required this.longitude,
+    this.system = MapCoordinateSystem.gcj02,
+  });
 
   final double latitude;
   final double longitude;
+  final MapCoordinateSystem system;
+}
+
+enum MapCoordinateSystem { wgs84, gcj02 }
+
+MapCoordinateSystem mapCoordinateSystemFromAPI(String value) =>
+    value == 'WGS84' ? MapCoordinateSystem.wgs84 : MapCoordinateSystem.gcj02;
+
+class MapCoordinateConverter {
+  static MapCoordinate toGCJ02(MapCoordinate coordinate) {
+    if (coordinate.system == MapCoordinateSystem.gcj02 ||
+        _outsideChina(coordinate)) {
+      return MapCoordinate(
+        latitude: coordinate.latitude,
+        longitude: coordinate.longitude,
+      );
+    }
+    const earthRadius = 6378245.0;
+    const eccentricity = 0.00669342162296594323;
+    var latitudeOffset = _latitudeOffset(
+      coordinate.longitude - 105,
+      coordinate.latitude - 35,
+    );
+    var longitudeOffset = _longitudeOffset(
+      coordinate.longitude - 105,
+      coordinate.latitude - 35,
+    );
+    final radians = coordinate.latitude / 180 * math.pi;
+    final magic = 1 - eccentricity * math.sin(radians) * math.sin(radians);
+    final root = math.sqrt(magic);
+    latitudeOffset =
+        (latitudeOffset * 180) /
+        ((earthRadius * (1 - eccentricity)) / (magic * root) * math.pi);
+    longitudeOffset =
+        (longitudeOffset * 180) /
+        (earthRadius / root * math.cos(radians) * math.pi);
+    return MapCoordinate(
+      latitude: coordinate.latitude + latitudeOffset,
+      longitude: coordinate.longitude + longitudeOffset,
+    );
+  }
+
+  static bool _outsideChina(MapCoordinate coordinate) =>
+      coordinate.longitude < 72.004 ||
+      coordinate.longitude > 137.8347 ||
+      coordinate.latitude < 0.8293 ||
+      coordinate.latitude > 55.8271;
+
+  static double _latitudeOffset(double x, double y) {
+    var value =
+        -100 +
+        2 * x +
+        3 * y +
+        0.2 * y * y +
+        0.1 * x * y +
+        0.2 * math.sqrt(x.abs());
+    value +=
+        (20 * math.sin(6 * x * math.pi) + 20 * math.sin(2 * x * math.pi)) *
+        2 /
+        3;
+    value +=
+        (20 * math.sin(y * math.pi) + 40 * math.sin(y / 3 * math.pi)) * 2 / 3;
+    return value +
+        (160 * math.sin(y / 12 * math.pi) + 320 * math.sin(y * math.pi / 30)) *
+            2 /
+            3;
+  }
+
+  static double _longitudeOffset(double x, double y) {
+    var value =
+        300 + x + 2 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * math.sqrt(x.abs());
+    value +=
+        (20 * math.sin(6 * x * math.pi) + 20 * math.sin(2 * x * math.pi)) *
+        2 /
+        3;
+    value +=
+        (20 * math.sin(x * math.pi) + 40 * math.sin(x / 3 * math.pi)) * 2 / 3;
+    return value +
+        (150 * math.sin(x / 12 * math.pi) + 300 * math.sin(x / 30 * math.pi)) *
+            2 /
+            3;
+  }
 }
 
 @immutable
@@ -144,6 +232,7 @@ class AndroidMapProvider implements MapProvider {
         ),
       );
     }
+    final center = MapCoordinateConverter.toGCJ02(scene.center);
     return amap.AMapWidget(
       key: const Key('amap-map'),
       privacyStatement: const amap_base.AMapPrivacyStatement(
@@ -152,9 +241,19 @@ class AndroidMapProvider implements MapProvider {
         hasAgree: true,
       ),
       initialCameraPosition: amap.CameraPosition(
-        target: amap_base.LatLng(scene.center.latitude, scene.center.longitude),
+        target: amap_base.LatLng(center.latitude, center.longitude),
         zoom: scene.zoom,
       ),
+      markers: scene.markers.map((marker) {
+        final position = MapCoordinateConverter.toGCJ02(marker.position);
+        final nativeMarker = amap.Marker(
+          position: amap_base.LatLng(position.latitude, position.longitude),
+          infoWindow: amap.InfoWindow(title: marker.title),
+          onTap: (_) => scene.onMarkerTap?.call(marker),
+        );
+        nativeMarker.setIdForCopy(marker.id);
+        return nativeMarker;
+      }).toSet(),
       compassEnabled: true,
       scaleEnabled: true,
     );
