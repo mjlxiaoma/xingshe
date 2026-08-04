@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xingshe/core/location/location_bridge.dart';
@@ -65,5 +67,21 @@ void main() {
         ),
       ),
     );
+  });
+
+  test('Android foreground location service is private and location typed', () {
+    final manifest = File(
+      'android/app/src/main/AndroidManifest.xml',
+    ).readAsStringSync();
+    final service = File(
+      'android/app/src/main/kotlin/com/xingshe/app/TripLocationService.kt',
+    ).readAsStringSync();
+
+    expect(manifest, contains('android:name=".TripLocationService"'));
+    expect(manifest, contains('android:exported="false"'));
+    expect(manifest, contains('android:foregroundServiceType="location"'));
+    expect(service, contains('startForeground('));
+    expect(service, contains('stopForeground(STOP_FOREGROUND_REMOVE)'));
+    expect(service, isNot(contains('Log.')));
   });
 }
