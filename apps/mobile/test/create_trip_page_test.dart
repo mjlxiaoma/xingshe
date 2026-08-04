@@ -98,6 +98,8 @@ void main() {
     expect(trip.spotId, 'spot-1');
     expect(trip.status, 'recording');
     expect(nativeStatus, 'recording');
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 1));
     expect(tester.takeException(), isNull);
   });
 }

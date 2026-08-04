@@ -197,38 +197,6 @@ class _CreateTripPageState extends ConsumerState<CreateTripPage> {
   }
 }
 
-class TripStartedPage extends StatelessWidget {
-  const TripStartedPage({super.key, required this.tripID});
-
-  final String tripID;
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    key: const Key('trip-active-page'),
-    backgroundColor: const Color(0xFFEAF0E8),
-    body: SafeArea(
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.route, size: 56, color: Color(0xFF2D6B3F)),
-            const SizedBox(height: 12),
-            const Text(
-              '行摄已开始',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '正在记录本地轨迹',
-              style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
-
 class _Header extends StatelessWidget {
   const _Header({required this.onClose});
 

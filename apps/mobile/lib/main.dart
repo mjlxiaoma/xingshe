@@ -14,6 +14,7 @@ import 'features/spots/favorite_spots_page.dart';
 import 'features/spots/spot_detail_page.dart';
 import 'features/spots/spot_list_page.dart';
 import 'features/spots/spot_map_page.dart';
+import 'features/trips/active_trip_page.dart';
 import 'features/trips/create_trip_page.dart';
 
 void main() => runApp(const ProviderScope(child: XingSheApp()));
@@ -54,7 +55,7 @@ final _router = GoRouter(
     GoRoute(
       path: '/trip/active/:tripId',
       builder: (_, state) =>
-          TripStartedPage(tripID: state.pathParameters['tripId']!),
+          ActiveTripPage(tripID: state.pathParameters['tripId']!),
     ),
     GoRoute(
       path: '/spots/:spotId',
@@ -88,7 +89,11 @@ class _XingSheAppState extends ConsumerState<XingSheApp> {
       // Room remains the retry buffer when the channel or Drift is unavailable.
     }
     try {
-      await ref.read(tripRecordingControllerProvider).restore();
+      final trip = await ref.read(tripRecordingControllerProvider).restore();
+      final path = _router.routeInformationProvider.value.uri.path;
+      if (mounted && trip != null && (path == '/' || path == '/trip')) {
+        _router.go('/trip/active/${trip.id}');
+      }
     } on Object {
       // Drift remains the source of truth until native recovery can retry.
     }
