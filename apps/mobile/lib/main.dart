@@ -242,38 +242,33 @@ class _MapPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final map = ref.watch(mapProviderProvider);
     return SafeArea(
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: map.buildMap(
-              context,
-              const MapScene(
-                center: MapCoordinate(latitude: 30.2741, longitude: 120.1551),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 16,
-            right: 16,
-            top: 16,
-            child: Material(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              child: const ListTile(
-                dense: true,
-                leading: Icon(Icons.search, color: _muted),
-                title: Text(
-                  '搜索地点或摄影机位',
-                  style: TextStyle(color: _muted, fontSize: 14),
-                ),
-                trailing: Icon(Icons.tune, color: _primary),
-              ),
-            ),
-          ),
-        ],
+      child: MapConsentGate(
+        mapProvider: map,
+        scene: const MapScene(
+          center: MapCoordinate(latitude: 30.2741, longitude: 120.1551),
+        ),
+        onDecline: () => context.go('/'),
+        onPrivacy: () => context.push('/privacy'),
+        mapOverlay: const _MapSearchBar(),
       ),
     );
   }
+}
+
+class _MapSearchBar extends StatelessWidget {
+  const _MapSearchBar();
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(8),
+    child: const ListTile(
+      dense: true,
+      leading: Icon(Icons.search, color: _muted),
+      title: Text('搜索地点或摄影机位', style: TextStyle(color: _muted, fontSize: 14)),
+      trailing: Icon(Icons.tune, color: _primary),
+    ),
+  );
 }
 
 class _TripPage extends StatelessWidget {

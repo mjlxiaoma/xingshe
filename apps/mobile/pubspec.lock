@@ -278,6 +278,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "6.0.0"
+  flutter_plugin_android_lifecycle:
+    dependency: transitive
+    description:
+      name: flutter_plugin_android_lifecycle
+      sha256: "3854fe5e3bff0b113c658f260b90c95dea17c92db0f2addeac2e343dd9969785"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.35"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -440,6 +448,22 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.12.0"
+  kw_amap_base:
+    dependency: "direct main"
+    description:
+      name: kw_amap_base
+      sha256: eb6e236d11acd178ffcde9bc14ebbdf5d2b0347295af4ecbfe187ff6fc182aa3
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.1"
+  kw_amap_map:
+    dependency: "direct main"
+    description:
+      name: kw_amap_map
+      sha256: "45e9f653c358414d6f065bc00aae1c69b5de4ce74450f80181cc54c8682e3ee7"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.1"
   leak_tracker:
     dependency: transitive
     description:

@@ -4,6 +4,10 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val amapAndroidKey = providers.gradleProperty("AMAP_ANDROID_KEY")
+    .orElse(providers.environmentVariable("AMAP_ANDROID_KEY"))
+    .orElse("")
+
 android {
     namespace = "com.xingshe.app"
     compileSdk = flutter.compileSdkVersion
@@ -22,6 +26,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["AMAP_ANDROID_KEY"] = amapAndroidKey.get()
     }
 
     buildTypes {
@@ -41,4 +46,8 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation("com.amap.api:3dmap:8.1.0")
 }

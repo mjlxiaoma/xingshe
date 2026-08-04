@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xingshe/core/auth/auth_session.dart';
 import 'package:xingshe/core/auth/token_store.dart';
+import 'package:xingshe/core/map/map_provider.dart';
 import 'package:xingshe/main.dart';
 
 void main() {
@@ -13,7 +14,12 @@ void main() {
     );
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [tokenStoreProvider.overrideWithValue(store)],
+        overrides: [
+          tokenStoreProvider.overrideWithValue(store),
+          mapConsentStoreProvider.overrideWithValue(
+            MapConsentStore.testing(() async => false, () async {}),
+          ),
+        ],
         child: const XingSheApp(),
       ),
     );
@@ -26,7 +32,7 @@ void main() {
 
     await tester.tap(find.text('地图'));
     await tester.pumpAndSettle();
-    expect(find.text('搜索地点或摄影机位'), findsOneWidget);
+    expect(find.text('使用地图前，请先了解位置数据'), findsOneWidget);
 
     await tester.tap(find.text('行摄'));
     await tester.pumpAndSettle();

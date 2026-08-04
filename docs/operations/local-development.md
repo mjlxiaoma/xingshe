@@ -109,11 +109,12 @@ flutter build apk --debug
 flutter emulators --launch xingshe_api_36
 flutter devices
 $env:MOBILE_API_BASE_URL='http://10.0.2.2:8080/api/v1'
-$env:AMAP_ANDROID_KEY=''
+$amapConfigLine = Get-Content ../../.env | Where-Object { $_ -like 'AMAP_ANDROID_KEY=*' } | Select-Object -Last 1
+$env:AMAP_ANDROID_KEY = $amapConfigLine.Substring($amapConfigLine.IndexOf('=') + 1).Trim()
 flutter run -d emulator-5554 --dart-define=MOBILE_API_BASE_URL=$env:MOBILE_API_BASE_URL --dart-define=AMAP_ANDROID_KEY=$env:AMAP_ANDROID_KEY
 ```
 
-`MOBILE_API_BASE_URL` 和 `AMAP_ANDROID_KEY` 是编译期配置；真机运行时将 API 地址改为开发机局域网地址，并从被忽略的 `.env` 读取真实高德 Key 后通过 `--dart-define` 传入。F01 阶段在空 Key 时使用可编译的 Android 占位适配器并显示开发提示；配置 Key 后继续完成真实 SDK 初始化和地图验收。
+`MOBILE_API_BASE_URL` 和 `AMAP_ANDROID_KEY` 是编译期配置。构建进程同时从环境变量读取 `AMAP_ANDROID_KEY` 并注入 Android Manifest，Flutter 侧的同名 `--dart-define` 只用于缺失配置门禁。真机运行时将 API 地址改为开发机局域网地址，并从被忽略的 `.env` 读取真实高德 Key；不要在终端、日志或脚本中输出 Key。未配置 Key 时地图页显示明确开发提示；配置后仍须先保存用户的地图隐私同意，再创建高德平台视图。
 
 真机运行：
 
