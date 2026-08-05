@@ -4,7 +4,7 @@
 
 Production deployment is outside the MVP and is intentionally not configured or executed. The repository has no production domain, HTTPS termination, managed database, object storage, formal Release signing or store submission configuration.
 
-Before any release, complete account deletion, external privacy contact, Android real-device acceptance, a formal security review, production secrets, Release signing and store privacy disclosures.
+The repository includes authenticated account deletion and a signed-out external request guide. Before any release, configure and publish the real privacy contact, complete Android real-device acceptance and a formal security review, and prepare production secrets, Release signing and store privacy disclosures.
 
 ## Recommended production shape
 
@@ -52,4 +52,6 @@ The server cannot back up or restore local trips, tracks or photo associations b
 - Restrict database access to the API and controlled migration/backup jobs.
 - Rotate JWT and SMTP secrets through a documented process; JWT rotation signs out existing sessions unless overlapping verification is implemented.
 - Publish the privacy contact and external deletion process before release.
+- Inject `PRIVACY_CONTACT_EMAIL` into the Android build with `--dart-define`; do not hardcode the real address in source or build scripts.
+- External deletion requests must be accepted without an active login, verified against account ownership, and processed through the same server-side deletion boundary as in-app requests.
 - Maintain incident procedures for credential exposure, unauthorized access, backup compromise and accidental deletion.

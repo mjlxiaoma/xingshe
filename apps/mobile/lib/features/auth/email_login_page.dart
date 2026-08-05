@@ -265,20 +265,13 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
                         ),
                       ),
                       const SizedBox(height: 18),
-                      const Center(
-                        child: Text.rich(
-                          TextSpan(
-                            text: '继续即表示你已阅读 ',
-                            style: TextStyle(color: muted, fontSize: 10),
-                            children: [
-                              TextSpan(
-                                text: '隐私说明',
-                                style: TextStyle(
-                                  color: primary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
+                      Center(
+                        child: TextButton(
+                          key: const Key('open-public-privacy'),
+                          onPressed: () => context.push('/privacy'),
+                          child: const Text(
+                            '隐私说明与账号删除',
+                            style: TextStyle(fontSize: 10),
                           ),
                         ),
                       ),

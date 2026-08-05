@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -6,6 +7,10 @@ import '../../core/api/api_providers.dart';
 import '../../core/auth/auth_session.dart';
 import '../../core/location/trip_recording_controller.dart';
 import '../profile/profile_page.dart';
+
+class PrivacyConfig {
+  static const contactEmail = String.fromEnvironment('PRIVACY_CONTACT_EMAIL');
+}
 
 typedef RevokeSession = Future<void> Function(String refreshToken);
 
@@ -395,7 +400,12 @@ class _DeletionWarning extends StatelessWidget {
 }
 
 class PrivacyPage extends StatelessWidget {
-  const PrivacyPage({super.key});
+  const PrivacyPage({
+    super.key,
+    this.contactEmail = PrivacyConfig.contactEmail,
+  });
+
+  final String contactEmail;
 
   @override
   Widget build(BuildContext context) {
@@ -411,43 +421,160 @@ class PrivacyPage extends StatelessWidget {
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
-        children: const [
-          _PrivacyHero(),
-          SizedBox(height: 12),
-          Text(
+        children: [
+          const _PrivacyHero(),
+          const SizedBox(height: 12),
+          const Text(
             '更新日期：2026.07.30 · MVP 说明版',
             style: TextStyle(color: Color(0xFF667268), fontSize: 9),
           ),
-          SizedBox(height: 8),
-          _PrivacyItem(
+          const SizedBox(height: 8),
+          const _PrivacyItem(
             icon: Icons.smartphone,
             title: '保存在本机',
             detail: '完整轨迹、原始照片及照片关联默认只保存在设备中。',
           ),
-          _PrivacyItem(
+          const _PrivacyItem(
             icon: Icons.cloud_outlined,
             title: '账号服务保存',
             detail: '服务端仅保存邮箱、昵称、机位与收藏等必要账号数据。',
           ),
-          _PrivacyItem(
+          const _PrivacyItem(
             icon: Icons.location_on,
             title: '定位使用时机',
             detail: '仅在你主动开始行摄后读取位置，结束行摄时停止后台定位服务。',
           ),
-          _PrivacyItem(
+          const _PrivacyItem(
             icon: Icons.key,
             title: '按需请求权限',
             detail: '定位、相机和照片权限只在对应功能使用前请求，可随时在系统设置中关闭。',
           ),
-          _PrivacyItem(
+          const _PrivacyItem(
             icon: Icons.share,
             title: '分享由你决定',
             detail: '分享图在本机生成，调用系统分享面板前由你预览确认。',
+          ),
+          const SizedBox(height: 18),
+          const _SectionLabel('隐私与删除'),
+          _PrivacyContact(email: contactEmail),
+          _PrivacyAction(
+            key: const Key('open-external-deletion-guide'),
+            icon: Icons.person_remove_outlined,
+            title: '账号删除外部申请',
+            detail: '无需登录即可查看申请方式',
+            onTap: () => context.push('/privacy/account-deletion'),
           ),
         ],
       ),
     );
   }
+}
+
+class ExternalAccountDeletionPage extends StatelessWidget {
+  const ExternalAccountDeletionPage({
+    super.key,
+    this.contactEmail = PrivacyConfig.contactEmail,
+  });
+
+  final String contactEmail;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      leading: IconButton.outlined(
+        onPressed: () =>
+            context.canPop() ? context.pop() : context.go('/privacy'),
+        icon: const Icon(Icons.arrow_back),
+        tooltip: '返回',
+      ),
+      title: const Text('账号删除申请'),
+      centerTitle: true,
+    ),
+    body: ListView(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      children: [
+        const Text(
+          '无法登录时，你仍可通过隐私联系邮箱申请删除账号。',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+        ),
+        const SizedBox(height: 16),
+        const _PrivacyItem(
+          icon: Icons.mail_outline,
+          title: '提交申请',
+          detail: '使用账号邮箱发送“账号删除申请”，说明需要删除的账号。',
+        ),
+        const _PrivacyItem(
+          icon: Icons.verified_user_outlined,
+          title: '核验身份',
+          detail: '处理前会核验账号所有权。不要发送密码、验证码、Token 或其他敏感凭据。',
+        ),
+        const _PrivacyItem(
+          icon: Icons.delete_outline,
+          title: '删除范围',
+          detail: '核验后删除服务端账号、Token 和收藏。本地行程及系统相册原图不在服务端，需在设备上单独处理。',
+        ),
+        const SizedBox(height: 18),
+        _PrivacyContact(email: contactEmail),
+      ],
+    ),
+  );
+}
+
+class _PrivacyContact extends StatelessWidget {
+  const _PrivacyContact({required this.email});
+
+  final String email;
+
+  @override
+  Widget build(BuildContext context) {
+    final configured = email.trim().isNotEmpty;
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: const Icon(Icons.alternate_email, color: Color(0xFF2D6B3F)),
+      title: const Text('隐私联系邮箱'),
+      subtitle: Text(configured ? email : '当前构建未配置隐私联系邮箱'),
+      trailing: IconButton(
+        key: const Key('copy-privacy-contact'),
+        onPressed: configured ? () => _copy(context) : null,
+        icon: const Icon(Icons.copy_outlined),
+        tooltip: '复制联系邮箱',
+      ),
+    );
+  }
+
+  Future<void> _copy(BuildContext context) async {
+    await Clipboard.setData(ClipboardData(text: email));
+    if (context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('隐私联系邮箱已复制')));
+    }
+  }
+}
+
+class _PrivacyAction extends StatelessWidget {
+  const _PrivacyAction({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.detail,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String detail;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => ListTile(
+    contentPadding: EdgeInsets.zero,
+    leading: Icon(icon, color: const Color(0xFFBA1A1A)),
+    title: Text(title),
+    subtitle: Text(detail),
+    trailing: const Icon(Icons.chevron_right),
+    onTap: onTap,
+  );
 }
 
 class _SectionLabel extends StatelessWidget {

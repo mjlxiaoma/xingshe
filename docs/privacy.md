@@ -48,7 +48,7 @@ Account deletion is a release gate. The approved behavior is:
 5. Offer a separate option to clear local trips; even then, system photo originals remain and require separate user action.
 6. Provide an external request route that does not require an active login through the public `PRIVACY_CONTACT_EMAIL` contact.
 
-The privacy page displays the configured public contact without storing a real address in source or the Pencil prototype. External requests require identity verification before deletion and must not ask users to send passwords, verification codes or Tokens.
+The privacy page and the signed-out login flow link to an external account-deletion guide. The app displays the public contact injected through `PRIVACY_CONTACT_EMAIL` without storing a real address in source or the Pencil prototype. External requests require identity verification before deletion and must not ask users to send passwords, verification codes or Tokens.
 
 ## Sharing and logs
 

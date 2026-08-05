@@ -123,11 +123,14 @@ $env:MOBILE_API_BASE_URL='http://10.0.2.2:8080/api/v1'
 $amapConfigLine = Get-Content ../../.env | Where-Object { $_ -like 'AMAP_ANDROID_KEY=*' } | Select-Object -Last 1
 if (-not $amapConfigLine) { throw 'AMAP_ANDROID_KEY is missing' }
 $env:AMAP_ANDROID_KEY = $amapConfigLine.Substring($amapConfigLine.IndexOf('=') + 1).Trim().Trim('"').Trim("'")
-flutter build apk --debug --no-pub --dart-define=AMAP_ANDROID_KEY=$env:AMAP_ANDROID_KEY
-flutter run -d emulator-5554 --dart-define=MOBILE_API_BASE_URL=$env:MOBILE_API_BASE_URL --dart-define=AMAP_ANDROID_KEY=$env:AMAP_ANDROID_KEY
+$privacyConfigLine = Get-Content ../../.env | Where-Object { $_ -like 'PRIVACY_CONTACT_EMAIL=*' } | Select-Object -Last 1
+if (-not $privacyConfigLine) { throw 'PRIVACY_CONTACT_EMAIL is missing' }
+$env:PRIVACY_CONTACT_EMAIL = $privacyConfigLine.Substring($privacyConfigLine.IndexOf('=') + 1).Trim().Trim('"').Trim("'")
+flutter build apk --debug --no-pub --dart-define=AMAP_ANDROID_KEY=$env:AMAP_ANDROID_KEY --dart-define=PRIVACY_CONTACT_EMAIL=$env:PRIVACY_CONTACT_EMAIL
+flutter run -d emulator-5554 --dart-define=MOBILE_API_BASE_URL=$env:MOBILE_API_BASE_URL --dart-define=AMAP_ANDROID_KEY=$env:AMAP_ANDROID_KEY --dart-define=PRIVACY_CONTACT_EMAIL=$env:PRIVACY_CONTACT_EMAIL
 ```
 
-`MOBILE_API_BASE_URL` 和 `AMAP_ANDROID_KEY` 是编译期配置。构建进程同时从环境变量读取 `AMAP_ANDROID_KEY` 并注入 Android Manifest，Flutter 侧的同名 `--dart-define` 只用于缺失配置门禁。真机运行时将 API 地址改为开发机局域网地址，并从被忽略的 `.env` 读取真实高德 Key；不要在终端、日志或脚本中输出 Key。未配置 Key 时地图页显示明确开发提示；配置后仍须先保存用户的地图隐私同意，再创建高德平台视图。
+`MOBILE_API_BASE_URL`、`AMAP_ANDROID_KEY` 和 `PRIVACY_CONTACT_EMAIL` 是编译期配置。构建进程同时从环境变量读取 `AMAP_ANDROID_KEY` 并注入 Android Manifest，Flutter 侧的地图参数用于缺失配置门禁，隐私联系参数用于公开联系和外部删除说明。真机运行时将 API 地址改为开发机局域网地址，并从被忽略的 `.env` 读取真实配置；不要在终端、日志或脚本中输出其值。未配置 Key 时地图页显示明确开发提示；配置后仍须先保存用户的地图隐私同意，再创建高德平台视图。
 
 真机运行：
 

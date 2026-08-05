@@ -62,6 +62,10 @@ final _router = GoRouter(
       builder: (_, _) => const AccountDeletionPage(),
     ),
     GoRoute(path: '/privacy', builder: (_, _) => const PrivacyPage()),
+    GoRoute(
+      path: '/privacy/account-deletion',
+      builder: (_, _) => const ExternalAccountDeletionPage(),
+    ),
     GoRoute(path: '/favorites', builder: (_, _) => const FavoriteSpotsPage()),
     GoRoute(path: '/trip', builder: (_, _) => const CreateTripPage()),
     GoRoute(
