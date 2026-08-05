@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/api/api_providers.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/location/trip_recording_controller.dart';
 import '../profile/profile_page.dart';
 
 typedef RevokeSession = Future<void> Function(String refreshToken);
@@ -30,6 +31,26 @@ final logoutProvider = Provider<Future<void> Function()>((ref) {
     } finally {
       await ref.read(authSessionProvider.notifier).expire();
     }
+  };
+});
+
+typedef DeleteAccount = Future<bool> Function(bool clearLocalTrips);
+
+final deleteAccountProvider = Provider<DeleteAccount>((ref) {
+  return (clearLocalTrips) async {
+    await ref
+        .read(apiClientProvider)
+        .request<void>('/me', method: 'DELETE', decode: (_) {});
+    var localTripsCleared = true;
+    if (clearLocalTrips) {
+      try {
+        await ref.read(tripRecordingControllerProvider).deleteAllLocalTrips();
+      } on Object {
+        localTripsCleared = false;
+      }
+    }
+    await ref.read(authSessionProvider.notifier).expire();
+    return localTripsCleared;
   };
 });
 
@@ -121,6 +142,17 @@ class SettingsPage extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 22),
+          TextButton.icon(
+            key: const Key('open-account-deletion'),
+            onPressed: () => context.push('/account/delete'),
+            style: TextButton.styleFrom(
+              foregroundColor: const Color(0xFFBA1A1A),
+              minimumSize: const Size.fromHeight(46),
+            ),
+            icon: const Icon(Icons.person_remove_outlined),
+            label: const Text('删除账号'),
+          ),
+          const SizedBox(height: 6),
           OutlinedButton.icon(
             onPressed: () => _confirmLogout(context, ref),
             style: OutlinedButton.styleFrom(
@@ -175,6 +207,191 @@ class SettingsPage extends ConsumerWidget {
     final count = parts.first.length.clamp(1, 3);
     return '${parts.first.substring(0, count)}***@${parts.last}';
   }
+}
+
+class AccountDeletionPage extends ConsumerStatefulWidget {
+  const AccountDeletionPage({super.key});
+
+  @override
+  ConsumerState<AccountDeletionPage> createState() =>
+      _AccountDeletionPageState();
+}
+
+class _AccountDeletionPageState extends ConsumerState<AccountDeletionPage> {
+  bool _clearLocalTrips = false;
+  bool _deleting = false;
+  String? _error;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton.outlined(
+          onPressed: _deleting ? null : () => context.pop(),
+          icon: const Icon(Icons.arrow_back),
+          tooltip: '返回',
+        ),
+        title: const Text('删除账号'),
+        centerTitle: true,
+      ),
+      body: _deleting
+          ? const Center(
+              key: Key('account-deletion-progress'),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 14),
+                  Text('正在删除账号…'),
+                ],
+              ),
+            )
+          : ListView(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+              children: [
+                const _DeletionWarning(),
+                const SizedBox(height: 18),
+                const _SectionLabel('本地数据'),
+                const SizedBox(height: 6),
+                CheckboxListTile(
+                  key: const Key('clear-local-trips-option'),
+                  value: _clearLocalTrips,
+                  onChanged: (value) =>
+                      setState(() => _clearLocalTrips = value ?? false),
+                  contentPadding: EdgeInsets.zero,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  title: const Text('同时清理本地行程'),
+                  subtitle: const Text('默认保留。勾选后会删除行程、轨迹和照片关联，不删除系统相册原图。'),
+                ),
+                if (_error != null) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    key: const Key('account-deletion-error'),
+                    padding: const EdgeInsets.all(12),
+                    color: const Color(0xFFFFEDEA),
+                    child: Text(
+                      _error!,
+                      style: const TextStyle(color: Color(0xFFBA1A1A)),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 24),
+                FilledButton.icon(
+                  key: const Key('account-deletion-submit'),
+                  onPressed: _confirmAndDelete,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFFBA1A1A),
+                  ),
+                  icon: const Icon(Icons.delete_forever_outlined),
+                  label: Text(_error == null ? '继续删除' : '重试删除'),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton(
+                  key: const Key('cancel-account-deletion'),
+                  onPressed: () => context.pop(),
+                  child: const Text('取消操作'),
+                ),
+              ],
+            ),
+    );
+  }
+
+  Future<void> _confirmAndDelete() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('确认永久删除账号？'),
+        content: Text(
+          _clearLocalTrips
+              ? '服务端账号、Token 和收藏将删除；本机行程也将清理。系统相册原图仍需单独处理。'
+              : '服务端账号、Token 和收藏将删除；本地行程和系统相册原图将保留。',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('返回'),
+          ),
+          FilledButton(
+            key: const Key('confirm-account-deletion'),
+            onPressed: () => Navigator.pop(context, true),
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFFBA1A1A),
+            ),
+            child: const Text('确认删除'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() {
+      _deleting = true;
+      _error = null;
+    });
+    try {
+      final localTripsCleared = await ref.read(deleteAccountProvider)(
+        _clearLocalTrips,
+      );
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          key: const Key('account-deletion-success'),
+          title: const Text('账号已删除'),
+          content: Text(
+            !localTripsCleared
+                ? '服务端账号已删除，但本地行程清理失败，可在行程页继续手动删除。系统相册原图仍保留。'
+                : _clearLocalTrips
+                ? '服务端账号和本地行程已删除。系统相册原图仍保留。'
+                : '服务端账号已删除，本地行程和系统相册原图已保留。',
+          ),
+          actions: [
+            FilledButton(
+              key: const Key('finish-account-deletion'),
+              onPressed: () => Navigator.pop(context),
+              child: const Text('完成'),
+            ),
+          ],
+        ),
+      );
+      if (mounted) context.go('/login');
+    } on Object {
+      if (mounted) {
+        setState(() {
+          _deleting = false;
+          _error = '删除失败，请检查网络后重试。本地行程不会因本次失败而删除。';
+        });
+      }
+    }
+  }
+}
+
+class _DeletionWarning extends StatelessWidget {
+  const _DeletionWarning();
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(16),
+    color: const Color(0xFFFFEDEA),
+    child: const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(Icons.warning_amber_rounded, color: Color(0xFFBA1A1A), size: 34),
+        SizedBox(height: 10),
+        Text(
+          '此操作无法撤销',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+        ),
+        SizedBox(height: 10),
+        Text('• 服务端账号、登录 Token 和收藏将永久删除。'),
+        SizedBox(height: 6),
+        Text('• 本地行程默认保留，你可选择一并清理。'),
+        SizedBox(height: 6),
+        Text('• 系统相册原图不会自动删除，需在系统相册单独处理。'),
+      ],
+    ),
+  );
 }
 
 class PrivacyPage extends StatelessWidget {

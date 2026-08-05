@@ -127,6 +127,17 @@ class TripRecordingController {
     if (deleted != 1) throw StateError('行程不存在');
   }
 
+  Future<void> deleteAllLocalTrips() async {
+    await locationBridge.stop();
+    final pending = await locationBridge.pendingPoints();
+    if (pending.isNotEmpty) {
+      await locationBridge.clearPendingPoints(
+        pending.map((point) => point.nativeLogID).toList(growable: false),
+      );
+    }
+    await database.delete(database.localTrips).go();
+  }
+
   Future<LocalTrip?> restore() async {
     final trip = await _activeTrip();
     if (trip == null) return null;

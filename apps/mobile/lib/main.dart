@@ -57,6 +57,10 @@ final _router = GoRouter(
       builder: (_, state) => VerificationPage(email: state.extra as String),
     ),
     GoRoute(path: '/settings', builder: (_, _) => const SettingsPage()),
+    GoRoute(
+      path: '/account/delete',
+      builder: (_, _) => const AccountDeletionPage(),
+    ),
     GoRoute(path: '/privacy', builder: (_, _) => const PrivacyPage()),
     GoRoute(path: '/favorites', builder: (_, _) => const FavoriteSpotsPage()),
     GoRoute(path: '/trip', builder: (_, _) => const CreateTripPage()),

@@ -212,6 +212,22 @@ void main() {
       'content://trip-2/photo',
     );
   });
+
+  test(
+    'deletes all local trips after stopping and clearing native logs',
+    () async {
+      await _insertTrip(database, 'trip-1', 'recording');
+      await _insertTrip(database, 'trip-2', 'completed');
+      pending.add(_point('trip-1', 'native-1'));
+      nativeStatus = 'recording';
+
+      await controller.deleteAllLocalTrips();
+
+      expect(nativeStatus, 'idle');
+      expect(pending, isEmpty);
+      expect(await database.select(database.localTrips).get(), isEmpty);
+    },
+  );
 }
 
 Future<void> _insertTrip(LocalTripDatabase database, String id, String status) {
